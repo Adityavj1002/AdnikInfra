@@ -1,0 +1,112 @@
+@layer base {
+  html {
+    color-scheme: light;
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: var(--font-text);
+    font-size: 100%;
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    scroll-padding-block-start: calc(var(--header-height) + var(--space-4));
+  }
+
+  body {
+    background-color: var(--surface);
+    font-size: var(--text-base);
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+  }
+
+  h3,
+  h4 {
+    font-weight: 650;
+    line-height: var(--leading-snug);
+  }
+
+  /* Long words must never force sideways scrolling on 280px foldables. */
+  @media (max-width: 22.5rem) {
+    h1,
+    h2,
+    h3 {
+      hyphens: auto;
+    }
+  }
+
+  p {
+    max-inline-size: 70ch;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  summary {
+    touch-action: manipulation;
+  }
+
+  @media (hover: hover) {
+    a:hover {
+      color: var(--text-accent);
+    }
+  }
+
+  ::selection {
+    background-color: var(--c-gold);
+    color: var(--c-ink);
+  }
+
+  /* Ink ring framed by a gold halo: gold alone fails the 3:1 non-text contrast minimum. */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--focus-halo);
+  }
+
+  :target {
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-4));
+  }
+
+  .skip-link {
+    position: fixed;
+    inset-block-start: calc(var(--space-3) + var(--safe-top));
+    inset-inline-start: calc(var(--space-3) + var(--safe-left));
+    z-index: var(--z-skip);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-inverse);
+    color: var(--text-on-inverse);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(calc(-100% - var(--space-8) - var(--safe-top)));
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  main:focus {
+    outline: none;
+  }
+}

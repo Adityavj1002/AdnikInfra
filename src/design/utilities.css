@@ -1,0 +1,36 @@
+@layer utilities {
+  .visually-hidden:not(:focus):not(:active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Gentle rise-in as sections scroll into view: progressive enhancement, motion-safe only. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+}

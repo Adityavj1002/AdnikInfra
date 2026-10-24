@@ -1,0 +1,210 @@
+@layer components {
+  .nav {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-6);
+  }
+
+  .inline {
+    display: none;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0 auto 0 var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+
+  .inlineLink {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .inlineLink[aria-current='page'] {
+    background-color: var(--surface);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (hover: hover) {
+    .inlineLink:hover {
+      background-color: var(--surface);
+      color: var(--text);
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .contactLink,
+  .visit {
+    display: none;
+  }
+
+  .callText {
+    display: none;
+  }
+
+  .call {
+    padding-inline: var(--space-3);
+  }
+
+  .menuButton,
+  .closeButton {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--tap);
+    block-size: var(--tap);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-raised);
+    color: var(--text);
+  }
+
+  .menuButton svg,
+  .closeButton svg {
+    inline-size: 1.35rem;
+    block-size: 1.35rem;
+  }
+
+  @media (min-width: 40rem) {
+    .visit {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .inline {
+      display: flex;
+    }
+
+    .contactLink {
+      display: inline-flex;
+    }
+
+    .callText {
+      display: inline;
+    }
+
+    .call {
+      padding-inline: var(--space-4);
+    }
+
+    .menuButton {
+      display: none;
+    }
+  }
+
+  /* ── Full-screen sheet (Popover API) ── */
+  .sheet {
+    position: fixed;
+    inset: 0;
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: 100dvh;
+    max-block-size: none;
+    margin: 0;
+    padding: calc(var(--space-4) + var(--safe-top)) calc(var(--gutter) + var(--safe-right)) calc(var(--space-6) + var(--safe-bottom))
+      calc(var(--gutter) + var(--safe-left));
+    border: 0;
+    background-color: var(--surface);
+    color: var(--text);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .sheet:popover-open {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--space-6);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet:popover-open {
+      animation: sheet-in 260ms var(--ease);
+    }
+  }
+
+  @keyframes sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+  }
+
+  .sheetHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block-end: var(--space-4);
+    border-block-end: 1px solid var(--border);
+  }
+
+  .sheetList {
+    display: grid;
+    align-content: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sheetLink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-block-size: 4rem;
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--border);
+    text-decoration: none;
+  }
+
+  .sheetLink > span {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .sheetLink svg {
+    flex: none;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    color: var(--text-subtle);
+  }
+
+  .sheetLabel {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+
+  .sheetNote {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .sheetLink[aria-current='page'] .sheetLabel {
+    color: var(--text-accent);
+  }
+
+  .sheetFoot {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  /* Freeze the page behind the open sheet. */
+  :global(html):has(.sheet:popover-open) {
+    overflow: hidden;
+  }
+}

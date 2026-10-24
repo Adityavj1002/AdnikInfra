@@ -1,0 +1,167 @@
+@layer components {
+  .form {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .row {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 40rem) {
+    .form:not(.compact) .row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .compact {
+    gap: var(--space-4);
+  }
+
+  /* Visit fields appear only when "site visit" is the topic, or always on the compact card. */
+  .visit {
+    display: none;
+  }
+
+  .form:has(input[name='topic'][value='site-visit']:checked) .visit,
+  .form:has(input[type='hidden'][name='topic'][value='site-visit']) .visit {
+    display: grid;
+  }
+
+  .legend {
+    margin-block-end: var(--space-2);
+    padding: 0;
+  }
+
+  /* Radio pills: each label is a full-size touch target. */
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-raised);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .pill input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .pill:has(input:checked) {
+    border-color: var(--c-ink);
+    background-color: var(--c-ink);
+    color: #fff;
+  }
+
+  .pill:has(input:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--focus-halo);
+  }
+
+  .context {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-tint);
+    font-size: var(--text-sm);
+  }
+
+  .submit {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  .compact .submit {
+    justify-items: stretch;
+  }
+
+  .privacy {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .summary {
+    padding: var(--space-5);
+    border: 2px solid var(--text-error);
+    border-radius: var(--radius);
+    background-color: #fff;
+  }
+
+  .summary:focus {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  .summaryTitle {
+    margin-block-end: var(--space-2);
+    font-size: var(--text-lg);
+  }
+
+  .summaryList {
+    display: grid;
+    gap: var(--space-1);
+    padding-inline-start: 1.1em;
+  }
+
+  .summaryList a {
+    display: inline-block;
+    min-block-size: 1.75rem;
+    color: var(--text-error);
+    font-weight: 600;
+  }
+
+  .panel {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-inline-start: 4px solid var(--c-success);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+  }
+
+  .panelWarn {
+    border-inline-start-color: var(--text-error);
+  }
+
+  .panelTitle {
+    font-size: var(--text-2xl);
+  }
+
+  .panelTitle:focus {
+    outline: none;
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--space-2);
+    padding-inline-start: 1.2em;
+    color: var(--text-muted);
+  }
+
+  .honeypot {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

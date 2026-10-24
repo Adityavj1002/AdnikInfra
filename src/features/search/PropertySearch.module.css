@@ -1,0 +1,46 @@
+@layer components {
+  .search {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+  }
+
+  .hero {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .bar {
+    border: 1px solid var(--border);
+  }
+
+  .field {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .label {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .submit {
+    align-self: end;
+  }
+
+  @media (min-width: 48rem) {
+    .search {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      align-items: end;
+      padding: var(--space-5);
+    }
+
+    .bar {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    }
+  }
+}

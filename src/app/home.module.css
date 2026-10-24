@@ -1,0 +1,270 @@
+@layer components {
+  .h2 {
+    font-size: var(--text-3xl);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-block-size: min(46rem, calc(100svh - var(--header-height)));
+    color: #fff;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .heroImage {
+    z-index: -2;
+    object-fit: cover;
+  }
+
+  .heroScrim {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgb(10 10 10 / 0.72) 0%, rgb(10 10 10 / 0.35) 55%, rgb(10 10 10 / 0.1) 100%),
+      linear-gradient(0deg, rgb(10 10 10 / 0.55) 0%, rgb(10 10 10 / 0) 45%);
+  }
+
+  .heroInner {
+    display: grid;
+    gap: var(--space-5);
+    padding-block: var(--space-12) calc(var(--space-12) + 4.5rem);
+  }
+
+  .heroEyebrow {
+    color: var(--c-gold);
+  }
+
+  .heroTitle {
+    max-inline-size: 15ch;
+    color: #fff;
+    font-size: var(--text-5xl);
+    font-weight: 800;
+  }
+
+  .heroLead {
+    max-inline-size: 36rem;
+    color: rgb(255 255 255 / 0.9);
+    font-size: var(--text-lg);
+  }
+
+  .heroActions,
+  .heroActionsDark {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* Search card overlaps the bottom of the hero. */
+  .searchWrap {
+    position: relative;
+    z-index: 2;
+    margin-block-start: -4.5rem;
+  }
+
+  /* ── 6 Category Cards Grid (Matching reference screenshot) ── */
+  .categoriesGrid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: 1fr;
+    margin-block-start: var(--space-6);
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .categoriesGrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .categoriesGrid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.75rem;
+    }
+  }
+
+  .categoryCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .categoryCardHighlight {
+    border-color: #ea580c;
+  }
+
+  @media (hover: hover) {
+    .categoryCard:hover {
+      border-color: #ea580c;
+      box-shadow:
+        0 14px 28px -6px rgb(234 88 12 / 0.12),
+        0 8px 12px -4px rgb(0 0 0 / 0.04);
+      transform: translateY(-2px);
+      color: inherit;
+    }
+
+    .categoryCard:hover .categoryArrow {
+      transform: translate(3px, -3px);
+    }
+  }
+
+  .categoryTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-block-end: var(--space-5);
+  }
+
+  .categoryIcon {
+    display: grid;
+    place-items: center;
+    color: #ea580c;
+  }
+
+  .categoryIcon svg {
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+  }
+
+  .categoryNumber {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: #cbd5e1;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    user-select: none;
+  }
+
+  .categoryContent {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .categoryTitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1.1rem + 0.3vw, 1.35rem);
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 var(--space-3) 0;
+    line-height: var(--leading-snug);
+  }
+
+  .categoryBody {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
+    margin: 0 0 var(--space-6) 0;
+  }
+
+  .categoryFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: var(--space-3);
+  }
+
+  .categoryCta {
+    font-family: var(--font-text);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .categoryArrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ea580c;
+    transition: transform 0.2s var(--ease);
+  }
+
+  .categoryArrow svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  .statsInner {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .fromRate {
+    font-size: var(--text-lg);
+  }
+
+  .fromRate strong {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+  }
+
+  /* ── Guides ── */
+  .posts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post {
+    display: grid;
+    gap: var(--space-3);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .postMedia {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--c-stone);
+  }
+
+  .postMedia img {
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease);
+  }
+
+  .postMeta {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .postTitle {
+    font-size: var(--text-xl);
+  }
+
+  @media (hover: hover) {
+    .post:hover {
+      color: inherit;
+    }
+
+    .post:hover .postTitle {
+      color: var(--text-accent);
+    }
+
+    .post:hover img {
+      transform: scale(1.04);
+    }
+  }
+}

@@ -1,0 +1,42 @@
+@layer components {
+  .wrap {
+    padding-block-start: var(--space-3);
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+  }
+
+  .item {
+    display: inline-flex;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  .separator {
+    inline-size: 1rem;
+    block-size: 1rem;
+    margin-inline: var(--space-1);
+    color: var(--text-subtle);
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .current {
+    color: var(--text);
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+}

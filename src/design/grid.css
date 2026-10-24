@@ -1,0 +1,90 @@
+/* Page layout primitives: container, section rhythm, responsive grids. */
+@layer layout {
+  .container {
+    inline-size: 100%;
+    max-inline-size: calc(var(--container) + var(--gutter) * 2);
+    margin-inline: auto;
+    /* Never closer to the edge than the notch / rounded-corner safe areas in landscape. */
+    padding-inline: max(var(--gutter), var(--safe-left)) max(var(--gutter), var(--safe-right));
+  }
+
+  .section {
+    padding-block: var(--space-section);
+  }
+
+  .section--tight {
+    padding-block: calc(var(--space-section) * 0.6);
+  }
+
+  .section--raised {
+    background-color: var(--surface-raised);
+  }
+
+  .section--tint {
+    background-color: var(--surface-tint);
+  }
+
+  .section--dark {
+    background-color: var(--surface-inverse);
+    color: var(--text-on-inverse);
+  }
+
+  .section--dark :is(h1, h2, h3, h4) {
+    color: var(--text-on-inverse);
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--stack, var(--space-6));
+    align-content: start;
+  }
+
+  /* Flowing tiles: as many columns as fit, never narrower than --min. */
+  .grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--min, 18rem)), 1fr));
+    gap: var(--grid-gap, var(--space-6));
+  }
+
+  /* Card lists: 1 column on phones, 2 on tablets, 3 on desktop — never a half-empty row of 4. */
+  .grid-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 40rem) {
+    .grid-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .grid-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-12);
+    }
+
+    .split--wide-start {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+
+    .split--wide-end {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+}

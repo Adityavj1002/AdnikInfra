@@ -1,0 +1,34 @@
+@layer components {
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    padding-block: var(--space-6) var(--space-2);
+  }
+
+  .count {
+    font-weight: 600;
+  }
+
+  .emptyActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  .sell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+
+  .sellTitle {
+    margin-block-end: var(--space-2);
+    font-size: var(--text-2xl);
+  }
+}

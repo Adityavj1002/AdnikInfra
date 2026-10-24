@@ -1,0 +1,46 @@
+@layer components {
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-8);
+    margin-block-end: var(--space-8);
+  }
+
+  .text {
+    display: grid;
+    gap: var(--space-3);
+    max-inline-size: 44rem;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+  }
+
+  .intro {
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+  }
+
+  :global(.section--dark) .intro {
+    color: var(--text-on-inverse-muted);
+  }
+
+  :global(.section--dark) :global(.eyebrow) {
+    color: var(--c-gold);
+  }
+
+  .center {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .center .text {
+    justify-items: center;
+  }
+
+  .center .intro p {
+    margin-inline: auto;
+  }
+}

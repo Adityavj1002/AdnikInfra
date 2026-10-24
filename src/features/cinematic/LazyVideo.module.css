@@ -1,0 +1,59 @@
+@layer components {
+  .figure {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+  }
+
+  .frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background-color: var(--surface-inverse);
+    overflow: hidden;
+  }
+
+  .video {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .toggle {
+    position: absolute;
+    inset-inline-end: var(--space-s);
+    inset-block-end: var(--space-s);
+    min-block-size: var(--tap);
+    padding-inline: var(--space-s);
+    border: var(--hairline) solid var(--c-gold);
+    background-color: color-mix(in srgb, var(--c-ink) 70%, transparent);
+    color: var(--c-gold);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .caption {
+    display: grid;
+    gap: var(--space-2xs);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+
+  .transcript summary {
+    min-block-size: var(--tap);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .transcript p + p {
+    margin-block-start: var(--space-2xs);
+  }
+
+  @media (min-width: 64rem) {
+    .frame {
+      aspect-ratio: 2.39 / 1;
+    }
+  }
+}

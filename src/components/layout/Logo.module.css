@@ -1,0 +1,77 @@
+@layer components {
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .mark {
+    flex: none;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+  }
+
+  .tile {
+    fill: var(--c-ink);
+  }
+
+  .roof {
+    fill: none;
+    stroke: var(--c-gold);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .walls,
+  .door {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+  }
+
+  .text {
+    display: grid;
+    line-height: 1.1;
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .tag {
+    display: none;
+    color: var(--text-subtle);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 30rem) {
+    .tag {
+      display: block;
+    }
+  }
+
+  .inverse .tile {
+    fill: #fff;
+  }
+
+  .inverse .walls,
+  .inverse .door {
+    stroke: var(--c-ink);
+  }
+
+  .inverse .name {
+    color: #fff;
+  }
+
+  .inverse .tag {
+    color: var(--text-on-inverse-muted);
+  }
+}

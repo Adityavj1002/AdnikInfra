@@ -1,0 +1,37 @@
+@layer components {
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+    margin: 0;
+  }
+
+  @media (min-width: 60rem) {
+    .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Number above label visually; label stays first in the DOM for a natural <dt>/<dd> read. */
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-1);
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--c-gold);
+  }
+
+  .value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .label {
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-sm);
+  }
+}

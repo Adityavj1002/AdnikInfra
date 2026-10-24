@@ -1,0 +1,343 @@
+/*
+ * Shared UI primitives: buttons, badges, chips, form controls, prose.
+ * Every interactive primitive is at least --tap (44px) tall on every device.
+ */
+@layer components {
+  /* ── Buttons ───────────────────────────────────────────── */
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-block-size: calc(var(--tap) + 0.25rem);
+    padding: var(--space-2) var(--space-6);
+    border: 1.5px solid var(--surface-inverse);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-inverse);
+    color: var(--text-on-inverse);
+    font-family: var(--font-text);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .button svg {
+    flex: none;
+    inline-size: 1.15em;
+    block-size: 1.15em;
+  }
+
+  .button:active {
+    transform: translateY(1px);
+  }
+
+  .button--gold {
+    border-color: var(--c-gold);
+    background-color: var(--c-gold);
+    color: var(--c-ink);
+  }
+
+  .button--outline {
+    background-color: transparent;
+    color: var(--text);
+  }
+
+  .button--light {
+    border-color: rgb(255 255 255 / 0.85);
+    background-color: transparent;
+    color: #fff;
+  }
+
+  .button--block {
+    inline-size: 100%;
+  }
+
+  .button--small {
+    min-block-size: var(--tap);
+    padding-inline: var(--space-4);
+  }
+
+  .button[disabled],
+  .button[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) {
+    .button:hover {
+      border-color: #000;
+      background-color: #000;
+      color: #fff;
+    }
+
+    .button--gold:hover {
+      border-color: var(--c-gold-bright);
+      background-color: var(--c-gold-bright);
+      color: var(--c-ink);
+    }
+
+    .button--outline:hover {
+      background-color: var(--surface-inverse);
+      color: var(--text-on-inverse);
+    }
+
+    .button--light:hover {
+      border-color: #fff;
+      background-color: #fff;
+      color: var(--c-ink);
+    }
+  }
+
+  /* Text link with an arrow icon. */
+  .link-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .link-more svg {
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .link-more:hover svg {
+      transform: translateX(3px);
+    }
+  }
+
+  /* ── Badges ────────────────────────────────────────────── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--c-stone);
+    color: var(--c-ink);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .badge--gold {
+    background-color: var(--c-gold);
+  }
+
+  .badge--success {
+    background-color: var(--c-success-tint);
+    color: var(--c-success);
+  }
+
+  .badge--info {
+    background-color: var(--c-info-tint);
+    color: var(--c-info);
+  }
+
+  .badge--dark {
+    background-color: var(--c-ink);
+    color: #fff;
+  }
+
+  /* Grid, not flex: when the label wraps on narrow screens it stays beside the dash. */
+  .eyebrow {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-accent);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .eyebrow::before {
+    content: '';
+    inline-size: 1.75rem;
+    block-size: 2px;
+    background-color: currentColor;
+  }
+
+  /* ── Chips (filters, quick links) ──────────────────────── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background-color: var(--surface-raised);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .chip[aria-current='true'],
+  .chip[aria-current='page'] {
+    border-color: var(--c-ink);
+    background-color: var(--c-ink);
+    color: #fff;
+  }
+
+  @media (hover: hover) {
+    .chip:hover {
+      border-color: var(--c-ink);
+      color: inherit;
+    }
+  }
+
+  /* ── Form controls ─────────────────────────────────────── */
+  .field {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .field__label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .field__optional {
+    color: var(--text-subtle);
+    font-weight: 400;
+  }
+
+  .field__hint {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .field__error {
+    color: var(--text-error);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .input,
+  .textarea,
+  .select {
+    inline-size: 100%;
+    min-block-size: calc(var(--tap) + 0.25rem);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-raised);
+    /* 16px minimum stops iOS Safari zooming the page on focus. */
+    font-size: max(1rem, var(--text-base));
+    appearance: none;
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .input:hover,
+  .textarea:hover,
+  .select:hover {
+    border-color: var(--c-ink-3);
+  }
+
+  .textarea {
+    min-block-size: 8rem;
+    resize: vertical;
+  }
+
+  .select {
+    padding-inline-end: var(--space-10);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right var(--space-4) center;
+    background-repeat: no-repeat;
+  }
+
+  .input[aria-invalid='true'],
+  .textarea[aria-invalid='true'],
+  .select[aria-invalid='true'] {
+    border-color: var(--text-error);
+    box-shadow: 0 0 0 1px var(--text-error);
+  }
+
+  /* Radio / checkbox rows: the whole row is the touch target. */
+  .choice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    min-block-size: var(--tap);
+    padding-block: var(--space-2);
+    cursor: pointer;
+  }
+
+  .choice input {
+    flex: none;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-block-start: 0.15rem;
+    accent-color: var(--c-ink);
+  }
+
+  .fieldset {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* ── Long-form prose (blog, legal) ─────────────────────── */
+  .prose {
+    font-size: var(--text-lg);
+    line-height: 1.75;
+  }
+
+  .prose > * + * {
+    margin-block-start: var(--space-5);
+  }
+
+  .prose h2 {
+    margin-block-start: var(--space-10);
+    font-size: var(--text-2xl);
+  }
+
+  .prose ul,
+  .prose ol {
+    display: grid;
+    gap: var(--space-2);
+    padding-inline-start: 1.25em;
+  }
+
+  .list-plain {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Icon sized to its text. */
+  .icon {
+    flex: none;
+    inline-size: 1.25em;
+    block-size: 1.25em;
+  }
+}

@@ -1,0 +1,114 @@
+@layer components {
+  .footer {
+    padding-block: var(--space-12) calc(var(--space-6) + var(--safe-bottom));
+    background-color: var(--surface-inverse);
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-sm);
+  }
+
+  .footer a {
+    color: inherit;
+  }
+
+  @media (hover: hover) {
+    .footer a:hover {
+      color: #fff;
+    }
+  }
+
+  .top {
+    display: grid;
+    gap: var(--space-10);
+    padding-block-end: var(--space-10);
+  }
+
+  .brand {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+  }
+
+  .about {
+    max-inline-size: 36ch;
+  }
+
+  .contact {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-block-size: var(--tap);
+  }
+
+  .contact :global(.icon) {
+    color: var(--c-gold);
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+    gap: var(--space-8) var(--space-6);
+  }
+
+  .columnTitle {
+    margin-block-end: var(--space-3);
+    color: #fff;
+    font-size: var(--text-base);
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    text-decoration: none;
+  }
+
+  .disclaimer {
+    display: grid;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+    font-size: var(--text-xs);
+  }
+
+  .disclaimer p {
+    max-inline-size: none;
+  }
+
+  .sample {
+    color: var(--c-gold);
+  }
+
+  .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-6);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+  }
+
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 64rem) {
+    .top {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: var(--space-12);
+    }
+  }
+}
