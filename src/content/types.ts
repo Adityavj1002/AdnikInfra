@@ -13,7 +13,25 @@ export type GeoPoint = Readonly<{ lat: number; lng: number }>
 
 export type Faq = Readonly<{ question: string; answer: string }>
 
-export type Area = Readonly<{ value: number; unit: 'sqft' | 'sqyd' }>
+export type FaqGroup = Readonly<{ slug: string; title: string; faqs: readonly Faq[] }>
+
+/** A town near Jaipur that we serve: its own landing page under /locations/near-jaipur. */
+export type Town = Readonly<{
+  slug: string
+  name: string
+  corridor: string
+  direction: string
+  /** Approximate road distance from central Jaipur, rounded to 5 km. */
+  distanceKm: number
+  /** ≤ 160 chars: card text and meta description. */
+  summary: string
+  intro: readonly string[]
+  offers: readonly string[]
+  faqs: readonly Faq[]
+}>
+
+/** Agricultural land is sold by the acre; plots by the square yard; built space by the square foot. */
+export type Area = Readonly<{ value: number; unit: 'sqft' | 'sqyd' | 'acre' }>
 
 export type Locality = Readonly<{
   slug: string
@@ -83,7 +101,7 @@ export type Project = Readonly<{
   updatedAt: string
 }>
 
-export type PropertyType = 'apartment' | 'villa' | 'plot' | 'commercial'
+export type PropertyType = 'apartment' | 'villa' | 'plot' | 'commercial' | 'agricultural'
 
 export type Property = Readonly<{
   slug: string

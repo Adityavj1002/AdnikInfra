@@ -2,6 +2,7 @@ import type { Area, Configuration, Money, ProjectStatus, ProjectType, PropertyTy
 
 const LOCALE = 'en-IN'
 const SQFT_PER_SQYD = 9
+const SQYD_PER_ACRE = 4_840
 
 const grouped = new Intl.NumberFormat(LOCALE)
 const dateFormat = new Intl.DateTimeFormat(LOCALE, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -28,9 +29,15 @@ export function formatRupees(amount: number): string {
   return `₹${grouped.format(Math.round(amount))}`
 }
 
+export const areaUnitLabel: Readonly<Record<Area['unit'], string>> = { sqft: 'sq ft', sqyd: 'sq yd', acre: 'acres' }
+
 export function formatArea(area: Area): string {
   if (area.unit === 'sqyd') {
     return `${grouped.format(area.value)} sq yd (${grouped.format(area.value * SQFT_PER_SQYD)} sq ft)`
+  }
+  if (area.unit === 'acre') {
+    const acres = `${trimDecimals(area.value, 2)} ${area.value === 1 ? 'acre' : 'acres'}`
+    return `${acres} (${grouped.format(Math.round(area.value * SQYD_PER_ACRE))} sq yd)`
   }
   return `${grouped.format(area.value)} sq ft`
 }
@@ -38,7 +45,7 @@ export function formatArea(area: Area): string {
 export function formatAreaRange(area: Configuration['area']): string {
   if (!Array.isArray(area)) return formatArea(area as Area)
   const [min, max] = area as readonly [Area, Area]
-  const unit = min.unit === 'sqyd' ? 'sq yd' : 'sq ft'
+  const unit = areaUnitLabel[min.unit]
   return `${grouped.format(min.value)}–${grouped.format(max.value)} ${unit}`
 }
 
@@ -65,6 +72,7 @@ export const propertyTypeLabel: Readonly<Record<PropertyType, string>> = {
   villa: 'Villa',
   plot: 'Plot',
   commercial: 'Commercial',
+  agricultural: 'Agricultural land',
 }
 
 export const possessionLabel = { ready: 'Ready to move', 'under-construction': 'Under construction' } as const

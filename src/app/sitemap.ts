@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { connection } from 'next/server'
-import { getLocalities, getPosts, getProjects, getProperties } from '@/content/repository'
+import { getLocalities, getPosts, getProjects, getProperties, getTowns } from '@/content/repository'
 import { routes } from '@/lib/routes'
 import { absoluteUrl } from '@/seo/schema'
 
@@ -10,7 +10,13 @@ const latest = (dates: readonly string[]): string => [...dates].sort().at(-1) ??
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connection()
-  const [projects, properties, localities, posts] = await Promise.all([getProjects(), getProperties(), getLocalities(), getPosts()])
+  const [projects, properties, localities, posts, towns] = await Promise.all([
+    getProjects(),
+    getProperties(),
+    getLocalities(),
+    getPosts(),
+    getTowns(),
+  ])
 
   const entry = (path: string, lastModified: string, priority: number, images?: readonly string[]): Entry => ({
     url: absoluteUrl(path),
@@ -34,10 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(routes.construction, siteUpdated, 0.9),
     entry(routes.locations, localitiesUpdated, 0.7),
     ...localities.map((l) => entry(routes.location(l.slug), l.updatedAt, 0.8)),
+    entry(routes.nearJaipur, siteUpdated, 0.8),
+    ...towns.map((t) => entry(routes.town(t.slug), siteUpdated, 0.8)),
     entry(routes.about, siteUpdated, 0.5),
     entry(routes.blog, postsUpdated, 0.6),
     ...posts.map((p) => entry(routes.post(p.slug), p.updatedAt, 0.6)),
     entry(routes.contact, siteUpdated, 0.6),
+    entry(routes.faq, '2026-10-24', 0.5),
+    entry(routes.terms, '2026-10-24', 0.2),
     entry(routes.privacy, '2026-10-24', 0.2),
     entry(routes.disclaimer, '2026-10-24', 0.2),
     entry(routes.accessibility, '2026-10-24', 0.2),

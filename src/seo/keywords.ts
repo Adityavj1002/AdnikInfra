@@ -1,4 +1,4 @@
-import type { Locality, Post, Project, Property } from '@/content/types'
+import type { Locality, Post, Project, Property, Town } from '@/content/types'
 import { routes } from '@/lib/routes'
 
 /**
@@ -14,7 +14,13 @@ export type KeywordTarget = Readonly<{ primary: string; supporting: readonly str
 export const staticKeywords = {
   [routes.home]: {
     primary: 'builders in Jaipur',
-    supporting: ['real estate developers in Jaipur', 'modern homes in Jaipur', 'villas and apartments in Jaipur'],
+    supporting: [
+      'real estate developers in Jaipur',
+      'construction company in Jaipur',
+      'modern homes in Jaipur',
+      'property near Jaipur',
+      'agricultural land near Jaipur',
+    ],
   },
   [routes.projects]: {
     primary: 'new residential projects in Jaipur',
@@ -22,7 +28,13 @@ export const staticKeywords = {
   },
   [routes.properties]: {
     primary: 'property for sale in Jaipur',
-    supporting: ['flats for sale in Jaipur', 'villas for sale in Jaipur', 'plots for sale in Jaipur', 'resale property Jaipur'],
+    supporting: [
+      'real estate in Jaipur',
+      'flats for sale in Jaipur',
+      'plots for sale in Jaipur',
+      'agricultural land for sale in Jaipur',
+      'resale property Jaipur',
+    ],
   },
   [routes.construction]: {
     primary: 'home construction company in Jaipur',
@@ -45,6 +57,14 @@ export const staticKeywords = {
     primary: 'home buying and construction guides',
     supporting: ['Jaipur real estate guide', 'house construction tips'],
   },
+  [routes.nearJaipur]: {
+    primary: 'property and construction near Jaipur',
+    supporting: ['plots near Jaipur', 'land near Jaipur', 'house construction near Jaipur', 'Tonk Road property'],
+  },
+  [routes.faq]: {
+    primary: 'frequently asked questions about property in Jaipur',
+    supporting: ['stamp duty in Jaipur', 'RERA Rajasthan', 'home loan Jaipur', 'land-use conversion Rajasthan'],
+  },
   [routes.contact]: {
     primary: 'contact Adnik Infra',
     supporting: ['book a site visit', 'get a construction quote'],
@@ -55,6 +75,19 @@ export function localityKeywords(locality: Locality): KeywordTarget {
   return {
     primary: `property in ${locality.name}, Jaipur`,
     supporting: [`builders in ${locality.name}`, `villas in ${locality.name}`, `flats in ${locality.name}`],
+  }
+}
+
+export function townKeywords(town: Town): KeywordTarget {
+  return {
+    primary: `property and construction in ${town.name}`,
+    supporting: [
+      `plots in ${town.name}`,
+      `agricultural land in ${town.name}`,
+      `house construction in ${town.name}`,
+      `builders in ${town.name}`,
+      `real estate in ${town.name}`,
+    ],
   }
 }
 

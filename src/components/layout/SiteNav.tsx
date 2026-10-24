@@ -13,7 +13,7 @@ const items = [
   { href: routes.projects, label: 'Projects', note: 'Villas, apartments and plots' },
   { href: routes.properties, label: 'Real Estate', note: 'Ready and resale homes' },
   { href: routes.construction, label: 'Construction', note: 'Build on your own plot' },
-  { href: routes.locations, label: 'Locations', note: 'Areas across Jaipur' },
+  { href: routes.locations, label: 'Locations', note: 'Jaipur and nearby towns' },
   { href: routes.about, label: 'About', note: 'Who we are' },
 ] as const
 

@@ -15,7 +15,8 @@ import type {
   WebSite,
 } from 'schema-dts'
 import { site } from '@/config/site'
-import type { ConstructionPackage, Faq, Film, Locality, Post, Project, Property } from '@/content/types'
+import type { ConstructionPackage, Faq, Film, Locality, Post, Project, Property, Town } from '@/content/types'
+import { areaUnitLabel } from '@/lib/format'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 
@@ -36,6 +37,7 @@ export const ids = {
   builder: nodeId(routes.construction, 'builder'),
   sales: nodeId(routes.properties, 'sales'),
   locality: (slug: string) => nodeId(routes.location(slug), 'place'),
+  town: (slug: string) => nodeId(routes.town(slug), 'place'),
 }
 
 export function graph(...nodes: readonly Thing[]): Graph {
@@ -58,7 +60,11 @@ function businessDetails() {
 /** Site-wide entities, rendered once from the root layout. */
 export function siteNodes(): readonly Thing[] {
   const parent = ref(ids.organization)
-  const areaServed = ref(ids.city)
+  // The city plus the nearby towns we work in, so "near Jaipur" searches match too.
+  const areaServed = [
+    ref(ids.city),
+    ...site.serviceArea.towns.map((town) => ({ '@type': 'Place' as const, name: `${town}, ${site.state}` })),
+  ]
 
   const website: WebSite = {
     '@type': 'WebSite',
@@ -82,7 +88,8 @@ export function siteNodes(): readonly Thing[] {
     '@id': ids.organization,
     name: site.name,
     url: absoluteUrl(routes.home),
-    logo: absoluteUrl('/icon.svg'),
+    // Google wants a raster logo of at least 112px that reads on white.
+    logo: absoluteUrl('/brand/adnik-infra-logo-512.png'),
     description: site.description,
     areaServed,
     ...(site.business.profiles.length > 0 ? { sameAs: [...site.business.profiles] } : {}),
@@ -167,6 +174,30 @@ export function localityNode(locality: Locality): Place {
   }
 }
 
+/** A town near Jaipur, plus what we offer there as a Service the builder provides. */
+export function townNodes(town: Town): readonly Thing[] {
+  const url = absoluteUrl(routes.town(town.slug))
+  return [
+    {
+      '@type': 'Place',
+      '@id': ids.town(town.slug),
+      name: `${town.name}, ${site.state}`,
+      url,
+      description: town.summary,
+      containedInPlace: { '@type': 'State', name: site.state },
+    } as Place,
+    {
+      '@type': 'Service',
+      '@id': `${url}#service`,
+      name: `Real estate and construction in ${town.name}`,
+      serviceType: town.offers.join(', '),
+      provider: ref(ids.organization),
+      areaServed: ref(ids.town(town.slug)),
+      url,
+    } as Service,
+  ]
+}
+
 export function faqNode(pagePath: string, faqs: readonly Faq[]): FAQPage {
   return {
     '@type': 'FAQPage',
@@ -236,6 +267,7 @@ const accommodationType: Record<Property['type'], string> = {
   villa: 'SingleFamilyResidence',
   plot: 'Place',
   commercial: 'Place',
+  agricultural: 'Place',
 }
 
 export function propertyNode(property: Property): RealEstateListing {
@@ -267,7 +299,7 @@ export function propertyNode(property: Property): RealEstateListing {
       floorSize: {
         '@type': 'QuantitativeValue',
         value: property.area.value,
-        unitText: property.area.unit === 'sqyd' ? 'sq yd' : 'sq ft',
+        unitText: areaUnitLabel[property.area.unit],
       },
     },
   } as RealEstateListing

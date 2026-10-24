@@ -47,8 +47,8 @@
     align-items: center;
     min-block-size: var(--tap);
     padding-inline: var(--space-4);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-control);
+    border-radius: var(--radius-sm);
     background-color: var(--surface-raised);
     font-size: var(--text-sm);
     font-weight: 500;
@@ -65,9 +65,10 @@
   }
 
   .pill:has(input:checked) {
-    border-color: var(--c-ink);
-    background-color: var(--c-ink);
-    color: #fff;
+    border-color: var(--c-gold-ink);
+    background-color: var(--surface-tint);
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px var(--c-gold-ink);
   }
 
   .pill:has(input:focus-visible) {

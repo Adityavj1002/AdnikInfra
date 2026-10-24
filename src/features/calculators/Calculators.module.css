@@ -77,8 +77,8 @@
     margin-block-start: -0.56rem;
     border: 3px solid #fff;
     border-radius: 50%;
-    background-color: var(--c-ink);
-    box-shadow: 0 0 0 1px var(--c-ink), var(--shadow-sm);
+    background-color: var(--c-gold-ink);
+    box-shadow: 0 0 0 1px var(--c-gold-ink), var(--shadow-sm);
     appearance: none;
   }
 
@@ -87,8 +87,8 @@
     block-size: 1.5rem;
     border: 3px solid #fff;
     border-radius: 50%;
-    background-color: var(--c-ink);
-    box-shadow: 0 0 0 1px var(--c-ink);
+    background-color: var(--c-gold-ink);
+    box-shadow: 0 0 0 1px var(--c-gold-ink);
   }
 
   .segments {
@@ -124,9 +124,9 @@
 
   .segment:has(input:checked),
   .package:has(input:checked) {
-    border-color: var(--c-ink);
-    background-color: var(--c-ink);
-    color: #fff;
+    border-color: var(--c-gold-ink);
+    background-color: var(--surface-tint);
+    box-shadow: inset 0 0 0 1px var(--c-gold-ink);
   }
 
   .segment:has(input:focus-visible),
@@ -162,20 +162,21 @@
     align-content: start;
     gap: var(--space-4);
     padding: var(--space-6);
-    border-radius: var(--radius);
-    background-color: var(--surface-inverse);
-    color: #fff;
+    border: 1px solid var(--border-gold);
+    border-block-start: 2px solid var(--c-gold);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-ivory);
   }
 
   .resultLabel {
-    color: var(--text-on-inverse-muted);
+    color: var(--text-muted);
     font-size: var(--text-sm);
   }
 
   .resultValue {
     font-family: var(--font-display);
     font-size: var(--text-4xl);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
     letter-spacing: var(--tracking-tight);
   }
@@ -183,14 +184,14 @@
   .split {
     block-size: 8px;
     border-radius: 4px;
-    background-color: var(--c-gold-bright);
+    background-color: var(--border-gold);
     overflow: hidden;
   }
 
   .splitPrincipal {
     display: block;
     block-size: 100%;
-    background-color: #fff;
+    background-color: var(--c-gold-ink);
   }
 
   .breakdown {
@@ -205,11 +206,11 @@
     justify-content: space-between;
     gap: var(--space-4);
     padding-block-end: var(--space-2);
-    border-block-end: 1px solid rgb(255 255 255 / 0.12);
+    border-block-end: 1px solid var(--border-gold);
   }
 
   .breakdown dt {
-    color: var(--text-on-inverse-muted);
+    color: var(--text-muted);
   }
 
   .breakdown dd {
@@ -219,7 +220,7 @@
   }
 
   .note {
-    color: var(--text-on-inverse-muted);
+    color: var(--text-subtle);
     font-size: var(--text-xs);
   }
 }

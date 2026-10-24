@@ -41,6 +41,19 @@ export default function DisclaimerPage() {
             Visiting this website, or submitting an enquiry, does not book any property. Bookings are made only through a
             written agreement signed by both parties.
           </p>
+          <h2>Photo credits</h2>
+          <p>
+            Some images are architectural renderings used under the{' '}
+            <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener noreferrer" target="_blank">
+              Creative Commons Attribution 4.0
+            </a>{' '}
+            licence: “3D Rendering of Modern Luxury Villa Exterior with Pool” and “Contemporary Residence with Gable
+            Windows” by Tuantranseo, via{' '}
+            <a href="https://commons.wikimedia.org/wiki/User:Tuantranseo" rel="noopener noreferrer" target="_blank">
+              Wikimedia Commons
+            </a>
+            , resized.
+          </p>
         </div>
       </div>
     </>

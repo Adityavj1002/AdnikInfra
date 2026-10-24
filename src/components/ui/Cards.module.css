@@ -2,13 +2,12 @@
   .card {
     display: flex;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-sm);
     background-color: var(--surface-raised);
-    box-shadow: var(--shadow-sm);
     overflow: hidden;
     transition:
-      box-shadow var(--dur) var(--ease),
-      transform var(--dur) var(--ease);
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
   }
 
   .link {
@@ -35,7 +34,6 @@
     position: absolute;
     inset-block-start: var(--space-3);
     inset-inline-start: var(--space-3);
-    box-shadow: var(--shadow-sm);
   }
 
   .body {
@@ -105,7 +103,7 @@
     display: grid;
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.2;
   }
 
@@ -121,9 +119,11 @@
     place-items: center;
     inline-size: var(--tap);
     block-size: var(--tap);
-    border-radius: 50%;
-    background-color: var(--surface);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-sm);
+    color: var(--text-accent);
     transition:
+      border-color var(--dur) var(--ease),
       background-color var(--dur) var(--ease),
       color var(--dur) var(--ease);
   }
@@ -135,17 +135,18 @@
 
   @media (hover: hover) {
     .card:hover {
+      border-color: var(--border-gold);
       box-shadow: var(--shadow-lg);
-      transform: translateY(-3px);
     }
 
     .card:hover .image {
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
 
     .card:hover .arrow {
-      background-color: var(--c-ink);
-      color: #fff;
+      border-color: var(--c-gold);
+      background-color: var(--c-gold);
+      color: var(--c-ink);
     }
 
     .link:hover {

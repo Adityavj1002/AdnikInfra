@@ -14,7 +14,7 @@ import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/config/site'
-import { display, text } from '@/design/fonts'
+import { display, displayRupee, text, textRupee } from '@/design/fonts'
 import { graph, siteNodes } from '@/seo/schema'
 import { env } from '@/security/env'
 
@@ -26,16 +26,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-    apple: [
-      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-  },
+  // Icons come from the file conventions in this folder: favicon.ico, icon.svg, apple-icon.png.
   formatDetection: { telephone: false, email: false, address: false },
   // Previews and staging must never be indexed; production opts in via SITE_INDEXABLE.
   robots: env.SITE_INDEXABLE ? undefined : { index: false, follow: false },
@@ -55,7 +46,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   await connection()
 
   return (
-    <html lang={site.language} className={`${display.variable} ${text.variable}`}>
+    <html lang={site.language} className={`${display.variable} ${text.variable} ${displayRupee.variable} ${textRupee.variable}`}>
       <body>
         <JsonLd graph={graph(...siteNodes())} />
         <a className="skip-link" href="#main">

@@ -1,0 +1,138 @@
+/* Customer-friendly legal and help pages: a plain-language summary first, then the detail. */
+@layer components {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 64rem) {
+    .layout {
+      grid-template-columns: 16rem minmax(0, 1fr);
+      align-items: start;
+      gap: var(--space-12);
+    }
+
+    .toc {
+      position: sticky;
+      inset-block-start: calc(var(--header-height) + var(--space-6));
+    }
+  }
+
+  .toc {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+  }
+
+  .tocTitle {
+    color: var(--text-accent);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .tocList {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tocList a {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-decoration: none;
+  }
+
+  @media (hover: hover) {
+    .tocList a:hover {
+      color: var(--text-accent);
+    }
+  }
+
+  .summary {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-end: var(--space-10);
+    padding: var(--space-6);
+    border: 1px solid var(--border-gold);
+    border-block-start: 3px solid var(--c-gold);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-ivory);
+  }
+
+  .summaryTitle {
+    font-size: var(--text-xl);
+  }
+
+  .summaryList {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .summaryList li {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .summaryList :global(.icon) {
+    margin-block-start: 0.2em;
+    color: var(--text-accent);
+  }
+
+  .updated {
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .group + .group {
+    margin-block-start: var(--space-12);
+  }
+
+  .groupTitle {
+    margin-block-end: var(--space-5);
+    font-size: var(--text-2xl);
+  }
+
+  /* Prose sections get room to breathe and an anchor offset below the sticky header. */
+  .section {
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-6));
+  }
+
+  .help {
+    --focus-ring: var(--c-gold-light);
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-12);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+    background-color: var(--c-navy);
+    color: var(--c-cream);
+  }
+
+  .helpTitle {
+    color: var(--c-cream);
+    font-size: var(--text-2xl);
+  }
+
+  .help p {
+    color: #c9d1dc;
+  }
+
+  .helpActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+}

@@ -74,7 +74,17 @@
   }
 
   .highlights :global(.icon) {
-    color: var(--c-success);
+    color: var(--text-accent);
+  }
+
+  .offersTitle {
+    margin-block-start: var(--space-4);
+    font-size: var(--text-xl);
+  }
+
+  .corridorTitle {
+    margin-block-end: var(--space-6);
+    font-size: var(--text-2xl);
   }
 
   .intro {

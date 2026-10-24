@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Adnik Infra</title>
+  <path d="M42 10h5v42h-5zM49 19h5v33h-5zM56 28h5v24h-5z" fill="#17140f"/>
+  <g stroke="#fff" stroke-width="2.2" stroke-linejoin="round" paint-order="stroke">
+    <path d="M22 6h9l18 46h-9.5z" fill="#17140f"/>
+    <path d="M22 6h9L13 52H3z" fill="#b8913a"/>
+    <path d="M8 40c18-6 38-1 55 12H51C40 45 26 42 8 44z" fill="#b8913a"/>
+  </g>
+</svg>

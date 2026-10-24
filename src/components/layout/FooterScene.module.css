@@ -1,0 +1,57 @@
+@layer components {
+  .scene {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    overflow: visible;
+  }
+
+  .model {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+
+  .shadow {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .model {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .villa {
+      animation-delay: -2s;
+    }
+
+    .house {
+      animation-delay: -4s;
+    }
+
+    .shadow {
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    .shadow:nth-of-type(2) {
+      animation-delay: -2s;
+    }
+
+    .shadow:nth-of-type(3) {
+      animation-delay: -4s;
+    }
+  }
+
+  @keyframes float {
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes breathe {
+    50% {
+      opacity: 0.18;
+      transform: scale(0.92);
+    }
+  }
+}

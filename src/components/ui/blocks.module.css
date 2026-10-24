@@ -18,7 +18,7 @@
   .media {
     position: relative;
     aspect-ratio: 4 / 3;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     background-color: var(--c-stone);
   }
@@ -27,7 +27,7 @@
     object-fit: cover;
   }
 
-  /* Icon feature tiles */
+  /* Feature list: open columns under a gold hairline rather than boxed tiles. */
   /* 1 / 2 / 3 columns so six tiles always read as balanced rows. */
   .features {
     display: grid;
@@ -60,29 +60,18 @@
     display: grid;
     align-content: start;
     gap: var(--space-3);
-    padding: var(--space-6);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background-color: var(--surface-raised);
-  }
-
-  :global(.section--raised) .feature {
-    background-color: var(--surface);
+    padding-block: var(--space-6) var(--space-2);
+    border-block-start: 1px solid var(--border-gold);
   }
 
   .featureIcon {
-    display: grid;
-    place-items: center;
-    inline-size: 3rem;
-    block-size: 3rem;
-    border-radius: var(--radius);
-    background-color: var(--surface-tint);
+    display: flex;
     color: var(--text-accent);
   }
 
   .featureIcon svg {
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
   }
 
   .featureTitle {
@@ -122,9 +111,9 @@
     place-items: center;
     inline-size: 2.75rem;
     block-size: 2.75rem;
-    border-radius: 50%;
-    background-color: var(--c-ink);
-    color: var(--c-gold);
+    border: 1px solid var(--c-gold);
+    border-radius: var(--radius-sm);
+    color: var(--text-accent);
     font-family: var(--font-display);
     font-size: var(--text-sm);
     font-weight: 700;
@@ -161,13 +150,16 @@
 
   .checks :global(.icon) {
     margin-block-start: 0.15em;
-    color: var(--c-success);
+    color: var(--text-accent);
   }
 
   /* Data table (configurations, packages) */
   .tableWrap {
+    /* Containing block for visually-hidden labels inside the table: without it they are
+       positioned against the page, escape this scroller and widen phones by ~20px. */
+    position: relative;
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-sm);
     background-color: var(--surface-raised);
     overflow-x: auto;
   }
@@ -264,7 +256,7 @@
     margin-block-start: var(--space-8);
     padding-block: var(--space-2);
     border-block-end: 1px solid var(--border);
-    background-color: rgb(249 248 246 / 0.94);
+    background-color: rgb(251 248 242 / 0.94);
     backdrop-filter: blur(8px);
   }
 
@@ -287,7 +279,7 @@
     align-items: center;
     min-block-size: var(--tap);
     padding-inline: var(--space-3);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
     font-size: var(--text-sm);
     font-weight: 500;

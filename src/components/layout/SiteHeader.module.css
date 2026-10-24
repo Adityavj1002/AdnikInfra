@@ -1,12 +1,48 @@
+/*
+ * Ordinary pages: a frosted white header with navy text. On the home page the header floats
+ * over the navy hero with cream text that never changes, so it is always readable; only its
+ * background thickens from clear to navy glass as you scroll. Browsers without scroll
+ * timelines (and people who prefer reduced motion) get the navy glass straight away.
+ *
+ * Colours are plain custom properties read by the logo and nav (with light-page fallbacks).
+ */
 @layer components {
   .header {
     position: sticky;
     inset-block-start: 0;
     z-index: var(--z-header);
     padding-block-start: var(--safe-top);
-    border-block-end: 1px solid var(--border);
+    border-block-end: 1px solid var(--border-gold);
     background-color: rgb(255 255 255 / 0.92);
-    backdrop-filter: saturate(1.4) blur(12px);
+    color: var(--text);
+    backdrop-filter: saturate(1.4) blur(14px);
+  }
+
+  :global(html:has([data-header-overlay])) .header {
+    --hdr-fg: var(--c-cream);
+    --hdr-muted: #d5dbe3;
+    --logo-text: var(--c-cream);
+    --logo-accent: var(--c-gold-light);
+    --logo-tag: #c9d1dc;
+    --logo-ink: var(--c-cream);
+    --logo-knockout: var(--c-navy-deep);
+    --focus-ring: var(--c-gold-light);
+    position: fixed;
+    inset-inline: 0;
+    border-block-end-color: rgb(212 180 92 / 0.25);
+    background-color: rgb(11 21 36 / 0.86);
+    color: var(--c-cream);
+    backdrop-filter: saturate(1.3) blur(16px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      :global(html:has([data-header-overlay])) .header {
+        animation: header-glass linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 40vh;
+      }
+    }
   }
 
   .bar {
@@ -21,6 +57,7 @@
     display: inline-flex;
     align-items: center;
     min-block-size: var(--tap);
+    border-radius: var(--radius-sm);
     color: inherit;
     text-decoration: none;
   }
@@ -29,5 +66,14 @@
     .brand:hover {
       color: inherit;
     }
+  }
+}
+
+/* Clear over the hero photograph at the top; navy glass once you scroll. */
+@keyframes header-glass {
+  from {
+    border-block-end-color: rgb(212 180 92 / 0);
+    background-color: rgb(11 21 36 / 0);
+    backdrop-filter: saturate(1) blur(0);
   }
 }

@@ -4,6 +4,8 @@ import { pages, viewports } from './fixtures'
 test.describe('responsive layout', () => {
   for (const { path } of pages) {
     test(`${path} never scrolls sideways, on any device`, async ({ page }) => {
+      // One full page load per device: budget scales with the device list, not a flat 30s.
+      test.setTimeout(viewports.length * 10_000)
       const problems: string[] = []
       for (const viewport of viewports) {
         await page.setViewportSize({ width: viewport.width, height: viewport.height })

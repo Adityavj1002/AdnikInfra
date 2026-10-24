@@ -19,8 +19,15 @@ export type PostalAddress = Readonly<{
 export type SiteConfig = Readonly<{
   name: string
   descriptor: string
+  /** Short line under the wordmark in the logo lockup. */
+  tagline: string
   city: string
   state: string
+  /**
+   * Where we build and sell beyond the city limits: highway corridors and nearby towns.
+   * Feeds schema.org areaServed, the home page and the FAQ.
+   */
+  serviceArea: Readonly<{ corridors: readonly string[]; towns: readonly string[] }>
   /** Default meta description: 50–160 characters (unit-tested). */
   description: string
   language: string
@@ -49,14 +56,20 @@ export type SiteConfig = Readonly<{
 export const site: SiteConfig = {
   name: 'Adnik Infra',
   descriptor: 'Builders & Real Estate Developers',
+  tagline: 'Builders & Developers',
   city: 'Jaipur',
   state: 'Rajasthan',
+  serviceArea: {
+    corridors: ['Tonk Road', 'Ajmer Road', 'Diggi Road', 'Delhi Road', 'Sikar Road', 'Agra Road'],
+    towns: ['Chaksu', 'Niwai', 'Tonk', 'Bilwa', 'Phagi', 'Malpura', 'Shivdaspura', 'Bagru', 'Chomu', 'Bassi', 'Kanota', 'Kukas', 'Achrol'],
+  },
   description:
-    'Adnik Infra: trusted builders in Jaipur for modern villas, apartments and plots — plus home construction on your own plot, from design to handover.',
+    'Adnik Infra: builders and real estate developers in Jaipur and nearby towns. Modern villas, plots, agricultural land and home construction on your plot.',
   language: 'en',
   locale: 'en-IN',
   ogLocale: 'en_IN',
   contact: {
+    email: 'support@adnikinfra.com',
     hours: 'Mon–Sat, 10 am – 7 pm',
     responseTime: 'We reply within one working day.',
   },

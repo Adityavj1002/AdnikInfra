@@ -4,7 +4,8 @@ import { packages, posts } from '@/content/fixtures/company'
 import { localities } from '@/content/fixtures/localities'
 import { projects } from '@/content/fixtures/projects'
 import { properties } from '@/content/fixtures/properties'
-import { localityKeywords, postKeywords, projectKeywords, propertyKeywords, staticKeywords } from '@/seo/keywords'
+import { towns } from '@/content/fixtures/towns'
+import { localityKeywords, postKeywords, projectKeywords, propertyKeywords, staticKeywords, townKeywords } from '@/seo/keywords'
 import { safeJsonLd } from '@/seo/safe-json-ld'
 import {
   breadcrumbNode,
@@ -51,6 +52,7 @@ describe('keyword ownership', () => {
     const primaries = [
       ...Object.values(staticKeywords).map((k) => k.primary),
       ...localities.map((l) => localityKeywords(l).primary),
+      ...towns.map((t) => townKeywords(t).primary),
       ...projects.map((p) => projectKeywords(p, localityOf(p.localitySlug)).primary),
       ...properties.map((p) => propertyKeywords(p).primary),
       ...posts.map((p) => postKeywords(p).primary),
@@ -86,6 +88,7 @@ describe('meta descriptions', () => {
     ...projects.map((p) => [p.slug, p.summary] as const),
     ...properties.map((p) => [p.slug, p.summary] as const),
     ...localities.map((l) => [l.slug, l.summary] as const),
+    ...towns.map((t) => [t.slug, t.summary] as const),
     ...posts.map((p) => [p.slug, p.summary] as const),
   ])('%s summary works as a meta description', (_slug, summary) => {
     expect(summary.length).toBeGreaterThanOrEqual(50)
@@ -165,5 +168,17 @@ describe('JSON-LD graph integrity', () => {
       offers: { lowPrice: number; highPrice: number }
     }
     expect(villa.offers.lowPrice).toBeLessThan(villa.offers.highPrice)
+  })
+})
+
+describe('towns near Jaipur', () => {
+  it('has a landing page for every town in the service area, and no strays', () => {
+    expect(towns.map((t) => t.name).sort()).toEqual([...site.serviceArea.towns].sort())
+  })
+
+  it('gives every town its own copy, so no two pages are near-duplicates', () => {
+    const intros = towns.map((t) => t.intro.join(' '))
+    expect(new Set(intros).size).toBe(towns.length)
+    for (const town of towns) expect(town.intro.join(' ')).toContain(town.name)
   })
 })

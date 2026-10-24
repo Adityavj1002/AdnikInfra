@@ -5,6 +5,7 @@ export const PROPERTY_TYPES: readonly Readonly<{ value: PropertyType; label: str
   { value: 'villa', label: 'Villa / House' },
   { value: 'plot', label: 'Plot' },
   { value: 'commercial', label: 'Commercial' },
+  { value: 'agricultural', label: 'Agricultural land' },
 ]
 
 /** Budget buckets: the value is the upper bound in rupees. */

@@ -3,76 +3,412 @@
     font-size: var(--text-3xl);
   }
 
-  /* ── Hero ── */
-  .hero {
-    position: relative;
-    display: grid;
-    align-items: end;
-    min-block-size: min(46rem, calc(100svh - var(--header-height)));
-    color: #fff;
-    isolation: isolate;
-    overflow: hidden;
-  }
-
-  .heroImage {
-    z-index: -2;
-    object-fit: cover;
-  }
-
-  .heroScrim {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(90deg, rgb(10 10 10 / 0.72) 0%, rgb(10 10 10 / 0.35) 55%, rgb(10 10 10 / 0.1) 100%),
-      linear-gradient(0deg, rgb(10 10 10 / 0.55) 0%, rgb(10 10 10 / 0) 45%);
-  }
-
-  .heroInner {
-    display: grid;
-    gap: var(--space-5);
-    padding-block: var(--space-12) calc(var(--space-12) + 4.5rem);
-  }
-
-  .heroEyebrow {
-    color: var(--c-gold);
-  }
-
-  .heroTitle {
-    max-inline-size: 15ch;
-    color: #fff;
-    font-size: var(--text-5xl);
-    font-weight: 800;
-  }
-
-  .heroLead {
-    max-inline-size: 36rem;
-    color: rgb(255 255 255 / 0.9);
-    font-size: var(--text-lg);
-  }
-
-  .heroActions,
-  .heroActionsDark {
+  .actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
   }
 
-  /* Search card overlaps the bottom of the hero. */
+  /* ── Hero: navy stage, dusk photograph, glass panels ── */
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    /* The header floats over the hero (SiteHeader.module.css), so the hero runs to the top. */
+    min-block-size: max(40rem, 100svh);
+    padding-block: calc(var(--header-height) + var(--safe-top)) 6.5rem;
+    background-color: var(--c-navy-deep);
+    color: var(--c-cream);
+    isolation: isolate;
+    overflow: hidden;
+    --focus-ring: var(--c-gold-light);
+  }
+
+
+  .heroStage {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    perspective: 1200px;
+    transform-origin: 50% 0%;
+  }
+
+  .heroImage {
+    object-fit: cover;
+    object-position: 60% 55%;
+  }
+
+  .heroShade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgb(11 21 36 / 0.94) 0%, rgb(11 21 36 / 0.76) 36%, rgb(11 21 36 / 0.22) 68%, rgb(11 21 36 / 0.06) 100%),
+      linear-gradient(0deg, rgb(11 21 36 / 0.92) 0%, rgb(11 21 36 / 0) 40%);
+  }
+
+  /* Phones: the copy sits over the whole photo, so darken it evenly. */
+  @media (max-width: 47.99rem) {
+    .heroShade {
+      background: linear-gradient(180deg, rgb(11 21 36 / 0.7) 0%, rgb(11 21 36 / 0.82) 55%, rgb(11 21 36 / 0.95) 100%);
+    }
+  }
+
+  /* Architectural hairline frame inset from the edges. */
+  .heroFrame {
+    position: absolute;
+    inset: clamp(0.6rem, 1.6vw, 1.5rem);
+    inset-block-start: calc(var(--header-height) + var(--safe-top) + clamp(0.4rem, 1vw, 0.75rem));
+    z-index: -1;
+    border: 1px solid rgb(212 180 92 / 0.3);
+    pointer-events: none;
+  }
+
+  .heroGrid {
+    display: grid;
+    align-items: center;
+    gap: var(--space-10);
+    padding-block: clamp(2.75rem, 1.5rem + 5vw, 6rem) var(--space-8);
+  }
+
+  @media (min-width: 64rem) {
+    .heroGrid {
+      grid-template-columns: minmax(0, 1fr) 21rem;
+    }
+  }
+
+  .heroCopy {
+    display: grid;
+    gap: var(--space-5);
+    max-inline-size: 46rem;
+  }
+
+  .heroEyebrow {
+    color: var(--c-gold-bright);
+  }
+
+  .heroEyebrow::before {
+    background-color: var(--c-gold-bright);
+  }
+
+  .heroTitle {
+    max-inline-size: 15ch;
+    color: var(--c-cream);
+    font-size: clamp(2.5rem, 1.4rem + 4.8vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .heroAccent {
+    color: var(--c-gold-light);
+  }
+
+  .heroLead {
+    max-inline-size: 36rem;
+    color: #d5dbe3;
+    font-size: var(--text-lg);
+  }
+
+  .heroActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-start: var(--space-2);
+  }
+
+  .glassButton {
+    border-color: var(--glass-border);
+    background-color: rgb(255 255 255 / 0.08);
+    color: var(--c-cream);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  @media (hover: hover) {
+    .glassButton:hover {
+      border-color: var(--c-cream);
+      background-color: var(--c-cream);
+      color: var(--c-navy);
+    }
+  }
+
+  /* Featured project: a glass card turned in 3D that straightens on hover. Desktop only. */
+  .heroCard {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .heroCard {
+      position: relative;
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-3);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      background-color: var(--glass-bg);
+      color: var(--c-cream);
+      text-decoration: none;
+      backdrop-filter: var(--glass-blur);
+      box-shadow:
+        0 40px 80px rgb(3 8 16 / 0.5),
+        inset 0 1px 0 rgb(255 255 255 / 0.12);
+      transform: perspective(1200px) rotateY(-16deg) rotateX(6deg);
+      transition:
+        transform var(--dur-slow) var(--ease),
+        border-color var(--dur) var(--ease);
+    }
+
+    .heroCard:hover,
+    .heroCard:focus-visible {
+      border-color: rgb(212 180 92 / 0.6);
+      color: var(--c-cream);
+      transform: perspective(1200px) rotateY(0) rotateX(0) translateY(-6px);
+    }
+  }
+
+  .heroCardMedia {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--c-navy-2);
+  }
+
+  .heroCardMedia img {
+    object-fit: cover;
+  }
+
+  .heroCardBody {
+    display: grid;
+    gap: var(--space-1);
+    padding: 0 var(--space-2) var(--space-2);
+  }
+
+  .heroCardKicker {
+    color: var(--c-gold-bright);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .heroCardTitle {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+  }
+
+  .heroCardMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+  }
+
+  .heroCardPrice {
+    margin-block-start: var(--space-2);
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+  }
+
+  .heroCardPrice strong {
+    color: var(--c-gold-light);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .heroCardArrow {
+    position: absolute;
+    inset-block-start: var(--space-5);
+    inset-inline-end: var(--space-5);
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    padding: 0.6rem;
+    border-radius: 50%;
+    background-color: var(--c-gold);
+    color: var(--c-navy);
+  }
+
+  /* Company figures on a glass bar at the foot of the hero. */
+  .heroStats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .heroStat {
+    display: flex;
+    flex-direction: column-reverse;
+    /* In a reversed column this pins the figure to the top, whatever the label's length. */
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .heroStat:nth-child(even) {
+    border-inline-start: 1px solid var(--glass-border);
+  }
+
+  .heroStat:nth-child(n + 3) {
+    border-block-start: 1px solid var(--glass-border);
+  }
+
+  @media (min-width: 48rem) {
+    .heroStats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .heroStat:nth-child(n + 2) {
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--glass-border);
+    }
+  }
+
+  .heroStat dt {
+    color: #c9d1dc;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .heroStat dd {
+    margin: 0;
+    color: var(--c-gold-light);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  /*
+   * Motion, only for people who have not asked to reduce it: the photograph tilts down into
+   * place on load, then sinks back with depth as you scroll; the card swings in.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .heroImage {
+      animation: hero-tilt 2.4s var(--ease) backwards;
+    }
+
+    .heroCard {
+      animation: hero-card-in 1.4s var(--ease) 0.35s backwards;
+    }
+
+    @supports (animation-timeline: scroll()) {
+      .heroStage {
+        animation: hero-depth linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 100vh;
+      }
+    }
+  }
+
+  @keyframes hero-tilt {
+    from {
+      opacity: 0.25;
+      transform: scale(1.22) rotateX(10deg);
+    }
+  }
+
+  @keyframes hero-card-in {
+    from {
+      opacity: 0;
+      transform: perspective(1200px) rotateY(-38deg) rotateX(12deg) translateX(3rem);
+    }
+  }
+
+  @keyframes hero-depth {
+    to {
+      transform: translateY(16%) scale(1.08);
+      filter: brightness(0.7);
+    }
+  }
+
+  /* Search card overlaps the foot of the hero. */
   .searchWrap {
     position: relative;
     z-index: 2;
     margin-block-start: -4.5rem;
   }
 
-  /* ── 6 Category Cards Grid (Matching reference screenshot) ── */
+  /* ── Browse by type ── */
+  .types {
+    margin-block-start: var(--space-8);
+  }
+
+  .typeList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .typeTile {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    block-size: 100%;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    color: inherit;
+    text-decoration: none;
+    transform: perspective(800px) translateZ(0);
+    transition:
+      transform var(--dur-slow) var(--ease),
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .typeTile:hover {
+      border-color: var(--border-gold);
+      color: inherit;
+      box-shadow: var(--shadow-lg);
+      transform: perspective(800px) rotateX(8deg) translateY(-5px);
+    }
+  }
+
+  .typeIcon {
+    inline-size: 2rem;
+    block-size: 2rem;
+    margin-block-end: var(--space-3);
+    color: var(--text-accent);
+  }
+
+  .typeLabel {
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+  }
+
+  .typeCount {
+    color: var(--text-subtle);
+    font-size: var(--text-xs);
+  }
+
+  /* ── Services: square cards, hairline borders, gold line icons ── */
   .categoriesGrid {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
-    grid-template-columns: 1fr;
-    margin-block-start: var(--space-6);
-    list-style: none;
+    margin: var(--space-6) 0 0;
     padding: 0;
+    list-style: none;
   }
 
   @media (min-width: 48rem) {
@@ -85,7 +421,6 @@
   @media (min-width: 64rem) {
     .categoriesGrid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.75rem;
     }
   }
 
@@ -93,31 +428,54 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+    block-size: 100%;
+    padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border-radius: 0;
     background-color: var(--surface-raised);
     color: inherit;
     text-decoration: none;
+    transform: perspective(900px) translateZ(0);
     transition:
       border-color var(--dur) var(--ease),
       box-shadow var(--dur) var(--ease),
-      transform var(--dur) var(--ease);
+      transform var(--dur-slow) var(--ease);
+  }
+
+  /* Gold rule that draws across the top edge on hover and focus. */
+  .categoryCard::before {
+    content: '';
+    position: absolute;
+    inset: -1px -1px auto;
+    block-size: 2px;
+    background-color: var(--c-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease);
   }
 
   .categoryCardHighlight {
-    border-color: #ea580c;
+    border-color: var(--border-gold);
+  }
+
+  .categoryCardHighlight::before {
+    transform: scaleX(1);
+  }
+
+  .categoryCard:focus-visible::before {
+    transform: scaleX(1);
   }
 
   @media (hover: hover) {
     .categoryCard:hover {
-      border-color: #ea580c;
-      box-shadow:
-        0 14px 28px -6px rgb(234 88 12 / 0.12),
-        0 8px 12px -4px rgb(0 0 0 / 0.04);
-      transform: translateY(-2px);
+      border-color: var(--border-gold);
+      box-shadow: var(--shadow-lg);
       color: inherit;
+      transform: perspective(900px) rotateX(4deg) translateY(-6px);
+    }
+
+    .categoryCard:hover::before {
+      transform: scaleX(1);
     }
 
     .categoryCard:hover .categoryArrow {
@@ -129,27 +487,28 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-block-end: var(--space-5);
+    margin-block-end: var(--space-8);
   }
 
   .categoryIcon {
     display: grid;
     place-items: center;
-    color: #ea580c;
+    color: var(--text-accent);
   }
 
   .categoryIcon svg {
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
   }
 
   .categoryNumber {
+    color: var(--border-gold);
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
-    font-weight: 800;
-    color: #cbd5e1;
+    font-size: clamp(2rem, 1.7rem + 1vw, 2.75rem);
+    font-weight: 700;
     line-height: 1;
     letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
     user-select: none;
   }
 
@@ -160,42 +519,41 @@
   }
 
   .categoryTitle {
-    font-family: var(--font-display);
-    font-size: clamp(1.15rem, 1.1rem + 0.3vw, 1.35rem);
-    font-weight: 700;
+    margin: 0 0 var(--space-3);
     color: var(--text);
-    margin: 0 0 var(--space-3) 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem);
+    font-weight: 500;
     line-height: var(--leading-snug);
   }
 
   .categoryBody {
+    margin: 0 0 var(--space-8);
     color: var(--text-muted);
     font-size: var(--text-sm);
     line-height: var(--leading-body);
-    margin: 0 0 var(--space-6) 0;
   }
 
   .categoryFooter {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: auto;
-    padding-top: var(--space-3);
+    margin-block-start: auto;
   }
 
   .categoryCta {
+    color: var(--text);
     font-family: var(--font-text);
     font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--text);
+    font-weight: 700;
   }
 
   .categoryArrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #ea580c;
-    transition: transform 0.2s var(--ease);
+    color: var(--text-accent);
+    transition: transform var(--dur) var(--ease);
   }
 
   .categoryArrow svg {
@@ -203,9 +561,577 @@
     block-size: 1.25rem;
   }
 
-  .statsInner {
+  /* ── Project spotlight: two photographs layered in 3D ── */
+  .spotlight {
+    display: grid;
+    align-items: center;
+    gap: var(--space-8);
+    margin-block-end: var(--space-12);
+  }
+
+  @media (min-width: 64rem) {
+    .spotlight {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-12);
+    }
+  }
+
+  .spotlightMedia {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    perspective: 1400px;
+  }
+
+  /* Gold offset frame behind the photographs. */
+  .spotlightMedia::before {
+    content: '';
+    position: absolute;
+    inset: 12% 0 0 18%;
+    border: 1px solid var(--c-gold);
+    border-radius: var(--radius-lg);
+  }
+
+  .spotlightBack,
+  .spotlightFront {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--c-stone);
+  }
+
+  .spotlightBack {
+    inset: 0 30% 34% 0;
+    box-shadow: var(--shadow-md);
+    transform: rotateY(14deg) translateZ(-60px);
+    transform-origin: left center;
+  }
+
+  .spotlightFront {
+    inset: 20% 6% 6% 14%;
+    box-shadow: var(--shadow-lg);
+    transform: rotateY(-8deg) translateZ(20px);
+    transform-origin: right center;
+    transition: transform 0.9s var(--ease);
+  }
+
+  .spotlightBack img,
+  .spotlightFront img {
+    object-fit: cover;
+  }
+
+  @media (hover: hover) {
+    .spotlight:hover .spotlightFront {
+      transform: rotateY(0) translateZ(40px);
+    }
+  }
+
+  .spotlightBadge {
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-start: var(--space-4);
+  }
+
+  .spotlightBody {
     display: grid;
     gap: var(--space-4);
+  }
+
+  .spotlightTitle {
+    font-size: var(--text-3xl);
+  }
+
+  .spotlightPlace {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--text-muted);
+  }
+
+  .spotlightLead {
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .spotlightConfigs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .spotlightConfigs li {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-tint);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .spotlightPrice {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-4);
+    border-block: 1px solid var(--border);
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .spotlightPrice strong {
+    color: var(--text-accent);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .moreProjects {
+    margin-block-start: var(--space-4);
+  }
+
+  /* ── Promise: deep navy with a faint blueprint grid ── */
+  .promise {
+    --focus-ring: var(--c-gold-light);
+    position: relative;
+    background-color: var(--c-navy);
+    color: var(--c-cream);
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .promise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(212 180 92 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(212 180 92 / 0.08) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 80% 0%, black 0%, transparent 70%);
+  }
+
+  .promiseHead {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 48rem;
+    margin-block-end: var(--space-12);
+  }
+
+  .promiseEyebrow {
+    color: var(--c-gold-bright);
+  }
+
+  .promiseEyebrow::before {
+    background-color: var(--c-gold-bright);
+  }
+
+  .promiseTitle {
+    color: var(--c-cream);
+    font-size: var(--text-4xl);
+  }
+
+  .promiseAccent {
+    color: var(--c-gold-light);
+  }
+
+  .promiseIntro {
+    color: #c9d1dc;
+    font-size: var(--text-lg);
+  }
+
+  /* One-pixel gaps over a gold background draw the hairlines between cells. */
+  .promiseList {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgb(212 180 92 / 0.2);
+    background-color: rgb(212 180 92 / 0.2);
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .promiseList {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .promiseList {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .promiseItem {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-8) var(--space-6);
+    background-color: var(--c-navy);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .promiseItem:hover {
+      background-color: var(--c-navy-2);
+    }
+  }
+
+  .promiseNum {
+    position: absolute;
+    inset-block-start: var(--space-6);
+    inset-inline-end: var(--space-6);
+    color: rgb(212 180 92 / 0.4);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .promiseIcon {
+    inline-size: 2rem;
+    block-size: 2rem;
+    color: var(--c-gold-bright);
+  }
+
+  .promiseItemTitle {
+    color: var(--c-cream);
+    font-size: var(--text-lg);
+  }
+
+  .promiseBody {
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+  }
+
+  /* ── Construction: an isometric house stack drawn in CSS 3D ── */
+  .build {
+    display: grid;
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  @media (min-width: 60rem) {
+    .build {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+  }
+
+  .iso {
+    display: grid;
+    place-items: center;
+    min-block-size: clamp(19rem, 14rem + 18vw, 28rem);
+  }
+
+  .isoScene {
+    position: relative;
+    inline-size: clamp(11rem, 8rem + 14vw, 17rem);
+    aspect-ratio: 1;
+    /* The first translate is in screen space: it re-centres the stack once the layers rise. */
+    transform: translateY(3.5rem) rotateX(58deg) rotateZ(-42deg);
+    transform-style: preserve-3d;
+  }
+
+  .isoPlate {
+    --z: 0;
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--c-gold);
+    background-color: var(--c-cream);
+    box-shadow: -1.25rem 1.25rem 2.5rem rgb(15 27 45 / 0.14);
+    transform: translateZ(calc(var(--z) * 1rem));
+  }
+
+  /* Plan: a drawing grid. */
+  .isoPlate:nth-child(1) {
+    background-image:
+      linear-gradient(rgb(15 27 45 / 0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(15 27 45 / 0.14) 1px, transparent 1px);
+    background-size: 12.5% 12.5%;
+  }
+
+  /* Foundation: column footings on stone. */
+  .isoPlate:nth-child(2) {
+    --z: 2.6;
+    background-color: #e4ddcc;
+    background-image: radial-gradient(circle, var(--c-navy) 0 0.28rem, transparent 0.32rem);
+    background-size: 33.33% 33.33%;
+    background-position: center;
+  }
+
+  /* Walls: room partitions. */
+  .isoPlate:nth-child(3) {
+    --z: 5.2;
+    border: 0.3rem solid var(--c-navy);
+    background-image:
+      linear-gradient(90deg, transparent 47%, var(--c-navy) 47% 51%, transparent 51%),
+      linear-gradient(transparent 58%, var(--c-navy) 58% 62%, transparent 62%);
+  }
+
+  /* Finishes: gold floor planks. */
+  .isoPlate:nth-child(4) {
+    --z: 7.8;
+    border-color: var(--c-gold-ink);
+    background-color: var(--c-gold);
+    background-image: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.16) 0 2px, transparent 2px 1.4rem);
+  }
+
+  .isoLabel {
+    position: absolute;
+    inset-inline-start: 0.6rem;
+    inset-block-end: 0.45rem;
+    padding: 0.1rem 0.35rem;
+    background-color: var(--c-navy);
+    color: var(--c-cream);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* The layers rise apart as the section scrolls into view. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .isoPlate {
+        animation: iso-rise linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 40%;
+      }
+    }
+  }
+
+  @keyframes iso-rise {
+    from {
+      transform: translateZ(0);
+    }
+  }
+
+  .steps {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: build;
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) 0 var(--space-4) 3.25rem;
+    border-block-start: 1px solid var(--border);
+    counter-increment: build;
+  }
+
+  .step::before {
+    content: counter(build, decimal-leading-zero);
+    position: absolute;
+    inset-block-start: var(--space-4);
+    inset-inline-start: 0;
+    color: var(--text-accent);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+  }
+
+  .stepTitle {
+    font-size: var(--text-lg);
+  }
+
+  .stepBody {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* ── Locations: typographic rows, then the towns around Jaipur on navy ── */
+  .places {
+    display: grid;
+    align-items: start;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 60rem) {
+    .places {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-12);
+    }
+  }
+
+  .localityList {
+    margin: 0;
+    padding: 0;
+    border-block-start: 1px solid var(--border-gold);
+    list-style: none;
+  }
+
+  .localityRow {
+    display: grid;
+    grid-template-areas: 'name arrow' 'zone arrow';
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0 var(--space-4);
+    min-block-size: var(--tap);
+    padding-block: var(--space-4);
+    border-block-end: 1px solid var(--border-gold);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (min-width: 40rem) {
+    .localityRow {
+      grid-template-areas: 'name zone arrow';
+      grid-template-columns: minmax(0, 1fr) auto auto;
+    }
+  }
+
+  .localityName {
+    grid-area: name;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    transition:
+      color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .localityZone {
+    grid-area: zone;
+    color: var(--text-subtle);
+    font-size: var(--text-sm);
+  }
+
+  .localityArrow {
+    grid-area: arrow;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    color: var(--text-accent);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .localityRow:hover {
+      color: inherit;
+    }
+
+    .localityRow:hover .localityName {
+      color: var(--text-accent);
+      transform: translateX(6px);
+    }
+
+    .localityRow:hover .localityArrow {
+      transform: translate(3px, -3px);
+    }
+  }
+
+  .nearby {
+    display: grid;
+  }
+
+  .nearbyMedia {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--c-stone);
+  }
+
+  .nearbyMedia img {
+    object-fit: cover;
+  }
+
+  .nearbyCard {
+    position: relative;
+    display: grid;
+    gap: var(--space-2);
+    margin: -3.5rem var(--space-4) 0;
+    padding: var(--space-6);
+    border-block-start: 2px solid var(--c-gold);
+    border-radius: var(--radius-lg);
+    background-color: var(--c-navy);
+    color: var(--c-cream);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (min-width: 60rem) {
+    .nearbyCard {
+      margin: -6rem 0 0 var(--space-10);
+    }
+  }
+
+  .nearbyTitle {
+    color: var(--c-cream);
+    font-size: var(--text-xl);
+  }
+
+  .nearbyBody {
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+  }
+
+  .nearbyLabel {
+    margin-block-start: var(--space-3);
+    color: var(--c-gold-bright);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags li:not(:has(a)) {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgb(212 180 92 / 0.35);
+    border-radius: var(--radius-sm);
+    color: var(--c-cream);
+    font-size: var(--text-sm);
+  }
+
+  .tagLink {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    padding-inline: 0.8rem;
+    border: 1px solid rgb(212 180 92 / 0.45);
+    border-radius: var(--radius-sm);
+    color: var(--c-cream);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .tagLink:hover {
+      background-color: var(--c-gold);
+      color: var(--c-navy);
+    }
+  }
+
+  .nearbyMore {
+    justify-self: start;
+    margin-block-start: var(--space-2);
+    color: var(--c-gold-light);
+  }
+
+  @media (hover: hover) {
+    .nearbyMore:hover {
+      color: var(--c-cream);
+    }
   }
 
   .fromRate {
@@ -235,7 +1161,7 @@
     position: relative;
     display: block;
     aspect-ratio: 16 / 10;
-    border-radius: var(--radius-lg);
+    border-radius: 0;
     overflow: hidden;
     background-color: var(--c-stone);
   }

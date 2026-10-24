@@ -1,79 +1,56 @@
 @layer components {
+  /* Everything is sized in em from one font-size, so the lockup scales as a unit. */
   .logo {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: 0.7em;
+    font-size: 1rem;
   }
 
-  .mark,
-  .markImage {
+  .lg {
+    font-size: 1.15rem;
+  }
+
+  .mark {
     flex: none;
-    inline-size: 2.5rem;
-    block-size: 2.5rem;
-    object-fit: contain;
-  }
-
-  .tile {
-    fill: var(--c-ink);
-  }
-
-  .roof {
-    fill: none;
-    stroke: var(--c-gold);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .walls,
-  .door {
-    fill: none;
-    stroke: #fff;
-    stroke-width: 2.2;
-    stroke-linejoin: round;
+    inline-size: 2.6em;
+    block-size: 2.6em;
   }
 
   .text {
     display: grid;
-    line-height: 1.1;
+    gap: 0.4em;
+    line-height: 1;
   }
 
+  /* Colours come from variables so the header and the navy footer can retint the lockup. */
   .name {
+    color: var(--logo-text, var(--c-ink));
     font-family: var(--font-display);
-    font-size: 1.125rem;
+    font-size: 1.2em;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
     white-space: nowrap;
+  }
+
+  .accent {
+    color: var(--logo-accent, var(--c-gold-ink));
   }
 
   .tag {
-    display: none;
-    color: var(--text-subtle);
-    font-size: 0.75rem;
-    font-weight: 500;
+    color: var(--logo-tag, var(--text-subtle));
+    font-size: 0.6em;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     white-space: nowrap;
   }
 
-  @media (min-width: 30rem) {
-    .tag {
-      display: block;
+  /* On the narrowest phones the tagline would crowd the menu button. */
+  @media (max-width: 22.5rem) {
+    .logo:not(.lg) .tag {
+      display: none;
     }
-  }
-
-  .inverse .tile {
-    fill: #fff;
-  }
-
-  .inverse .walls,
-  .inverse .door {
-    stroke: var(--c-ink);
-  }
-
-  .inverse .name {
-    color: #fff;
-  }
-
-  .inverse .tag {
-    color: var(--text-on-inverse-muted);
   }
 }

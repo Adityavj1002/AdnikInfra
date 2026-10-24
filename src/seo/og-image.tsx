@@ -2,6 +2,7 @@ import 'server-only'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
+import { BRAND_GOLD, BRAND_INK, LogoMark } from '@/components/layout/LogoMark'
 import { site } from '@/config/site'
 
 export const ogSize = { width: 1200, height: 630 } as const
@@ -21,14 +22,16 @@ type Card = Readonly<{
   facts?: readonly Readonly<{ term: string; detail: string }>[]
 }>
 
-const INK = '#1a1a1a'
-const GOLD = '#c5a880'
-const MUTED = 'rgba(255,255,255,0.7)'
+const IVORY = '#fcfaf5'
+const GOLD_INK = '#7c5e1a'
+const MUTED = '#4d473d'
+const LINE = '#dccb9f'
 
 /** Branded share card: what people see when a page is shared on WhatsApp, Facebook, LinkedIn or X. */
 export async function renderOgCard({ eyebrow, title, facts = [] }: Card): Promise<ImageResponse> {
   const [bold, regular, semibold] = await fonts
   const titleSize = title.length > 40 ? 64 : 80
+  const [first = site.name, ...rest] = site.name.split(' ')
 
   return new ImageResponse(
     (
@@ -40,38 +43,27 @@ export async function renderOgCard({ eyebrow, title, facts = [] }: Card): Promis
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 64,
-          background: INK,
-          color: '#fff',
+          background: IVORY,
+          borderTop: `10px solid ${BRAND_GOLD}`,
+          color: BRAND_INK,
           fontFamily: 'Inter',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 16,
-              background: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: INK,
-              fontFamily: 'Plus Jakarta Sans',
-              fontSize: 30,
-            }}
-          >
-            VB
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'Plus Jakarta Sans', fontSize: 32 }}>{site.name}</span>
-            <span style={{ fontSize: 20, color: MUTED }}>
-              {site.descriptor} · {site.city}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <LogoMark size={76} knockout={IVORY} ink={BRAND_INK} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <span style={{ display: 'flex', fontFamily: 'Plus Jakarta Sans', fontSize: 34, letterSpacing: 3 }}>
+              {first.toUpperCase()}
+              {rest.length > 0 && <span style={{ color: GOLD_INK, marginLeft: 12 }}>{rest.join(' ').toUpperCase()}</span>}
+            </span>
+            <span style={{ fontFamily: 'Inter SemiBold', fontSize: 16, letterSpacing: 4, color: MUTED }}>
+              {`${site.tagline} · ${site.city}`.toUpperCase()}
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <span style={{ color: GOLD, fontFamily: 'Inter SemiBold', fontSize: 24, letterSpacing: 2, textTransform: 'uppercase' }}>
+          <span style={{ color: GOLD_INK, fontFamily: 'Inter SemiBold', fontSize: 24, letterSpacing: 3, textTransform: 'uppercase' }}>
             {eyebrow}
           </span>
           <span style={{ fontFamily: 'Plus Jakarta Sans', fontSize: titleSize, lineHeight: 1.05, letterSpacing: -2, maxWidth: 1050 }}>
@@ -88,9 +80,10 @@ export async function renderOgCard({ eyebrow, title, facts = [] }: Card): Promis
                 flexDirection: 'column',
                 gap: 4,
                 padding: '16px 24px',
-                borderRadius: 16,
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.14)',
+                borderRadius: 4,
+                background: '#ffffff',
+                border: `1px solid ${LINE}`,
+                borderTop: `3px solid ${BRAND_GOLD}`,
               }}
             >
               <span style={{ color: MUTED, fontSize: 18 }}>{fact.term}</span>

@@ -43,7 +43,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(180deg, rgb(10 10 10 / 0.15) 0%, rgb(10 10 10 / 0.35) 45%, rgb(10 10 10 / 0.78) 100%);
+    background: linear-gradient(180deg, rgb(11 21 36 / 0.2) 0%, rgb(11 21 36 / 0.45) 45%, rgb(11 21 36 / 0.85) 100%);
   }
 
   .photoInner {
@@ -53,7 +53,11 @@
   }
 
   .photoEyebrow {
-    color: var(--c-gold);
+    color: var(--c-gold-bright);
+  }
+
+  .photoEyebrow::before {
+    background-color: var(--c-gold-bright);
   }
 
   .photoTitle {

@@ -1,8 +1,21 @@
 @layer components {
+  /* Deep navy with a soft gold glow; the logo and focus ring switch to their on-dark colours. */
   .footer {
+    --logo-text: var(--c-cream);
+    --logo-accent: var(--c-gold-light);
+    --logo-tag: #c9d1dc;
+    --logo-ink: var(--c-cream);
+    --logo-knockout: var(--c-navy);
+    --focus-ring: var(--c-gold-light);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     padding-block: var(--space-12) calc(var(--space-6) + var(--safe-bottom));
-    background-color: var(--surface-inverse);
-    color: var(--text-on-inverse-muted);
+    border-block-start: 2px solid var(--c-gold);
+    background:
+      radial-gradient(ellipse 60% 50% at 85% 10%, rgb(212 180 92 / 0.14), transparent 70%),
+      linear-gradient(180deg, var(--c-navy) 0%, var(--c-navy-deep) 100%);
+    color: #c9d1dc;
     font-size: var(--text-sm);
   }
 
@@ -12,14 +25,78 @@
 
   @media (hover: hover) {
     .footer a:hover {
-      color: #fff;
+      color: var(--c-gold-light);
     }
   }
 
+  /* ── Feature row: pitch and sign-up beside the isometric scene ── */
+  .feature {
+    display: grid;
+    align-items: center;
+    gap: var(--space-8);
+    padding-block-end: var(--space-12);
+  }
+
+  @media (min-width: 64rem) {
+    .feature {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: var(--space-12);
+    }
+  }
+
+  .pitch {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 36rem;
+  }
+
+  .pitchEyebrow {
+    color: var(--c-gold-bright);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .pitchTitle {
+    color: var(--c-cream);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .pitchAccent {
+    color: var(--c-gold-light);
+  }
+
+  .scene {
+    order: -1;
+    max-inline-size: 34rem;
+    justify-self: center;
+  }
+
+  @media (min-width: 64rem) {
+    .scene {
+      order: 0;
+      justify-self: end;
+    }
+  }
+
+  /* ── Brand and link columns ── */
   .top {
     display: grid;
     gap: var(--space-10);
-    padding-block-end: var(--space-10);
+    padding-block: var(--space-10);
+    border-block-start: 1px solid rgb(212 180 92 / 0.2);
+  }
+
+  @media (min-width: 64rem) {
+    .top {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: var(--space-12);
+    }
   }
 
   .brand {
@@ -29,12 +106,13 @@
   }
 
   .about {
-    max-inline-size: 36ch;
+    max-inline-size: 44ch;
+    line-height: var(--leading-body);
   }
 
   .contact {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-1);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -45,22 +123,47 @@
     align-items: center;
     gap: var(--space-3);
     min-block-size: var(--tap);
+    overflow-wrap: anywhere;
   }
 
   .contact :global(.icon) {
-    color: var(--c-gold);
+    color: var(--c-gold-bright);
+  }
+
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap);
+    padding-inline: var(--space-4);
+    border: 1px solid rgb(212 180 92 / 0.35);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    text-transform: capitalize;
   }
 
   .columns {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
     gap: var(--space-8) var(--space-6);
   }
 
   .columnTitle {
     margin-block-end: var(--space-3);
-    color: #fff;
-    font-size: var(--text-base);
+    color: var(--c-gold-bright);
+    font-family: var(--font-text);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
   }
 
   .link {
@@ -70,22 +173,7 @@
     text-decoration: none;
   }
 
-  .disclaimer {
-    display: grid;
-    gap: var(--space-3);
-    padding-block: var(--space-6);
-    border-block-start: 1px solid rgb(255 255 255 / 0.12);
-    font-size: var(--text-xs);
-  }
-
-  .disclaimer p {
-    max-inline-size: none;
-  }
-
-  .sample {
-    color: var(--c-gold);
-  }
-
+  /* ── Fine print ── */
   .bottom {
     display: flex;
     flex-wrap: wrap;
@@ -93,7 +181,34 @@
     justify-content: space-between;
     gap: var(--space-2) var(--space-6);
     padding-block-start: var(--space-4);
-    border-block-start: 1px solid rgb(255 255 255 / 0.12);
+    border-block-start: 1px solid rgb(212 180 92 / 0.2);
+  }
+
+  .copyright {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35em;
+    max-inline-size: none;
+  }
+
+  /* "Powered by [logo] Naigrowth": inline, and underlined like a link should be. */
+  .footer .credit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-block-size: var(--tap);
+    color: var(--c-cream);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgb(226 199 127 / 0.6);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+
+  .creditLogo {
+    flex: none;
+    border-radius: var(--radius-sm);
   }
 
   .legal {
@@ -103,12 +218,5 @@
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-
-  @media (min-width: 64rem) {
-    .top {
-      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-      gap: var(--space-12);
-    }
   }
 }

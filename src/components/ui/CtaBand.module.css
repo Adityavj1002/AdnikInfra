@@ -1,5 +1,6 @@
 @layer components {
   .band {
+    --focus-ring: var(--c-gold-light);
     position: relative;
     isolation: isolate;
     overflow: hidden;
@@ -15,7 +16,7 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(90deg, rgb(15 15 15 / 0.92) 0%, rgb(15 15 15 / 0.78) 55%, rgb(15 15 15 / 0.45) 100%);
+    background: linear-gradient(90deg, rgb(11 21 36 / 0.92) 0%, rgb(11 21 36 / 0.74) 55%, rgb(11 21 36 / 0.35) 100%);
   }
 
   .inner {

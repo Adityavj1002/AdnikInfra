@@ -41,7 +41,7 @@ test('contact: a valid enquiry gets a reference and next steps', async ({ page }
 
   const status = page.getByRole('status')
   await expect(status).toContainText('Thank you, आशा.')
-  await expect(status).toContainText(/VB-[A-Z2-9]{6}/)
+  await expect(status).toContainText(/ADN-[A-Z2-9]{6}/)
 })
 
 test('contact: choosing "site visit" reveals the date fields (pure CSS, no JS needed)', async ({ page }) => {
@@ -68,7 +68,7 @@ test('project page: the site-visit card books a visit', async ({ page }) => {
   await card.getByRole('combobox', { name: /Preferred time/ }).selectOption('evening')
   await card.getByRole('checkbox').check()
   await card.getByRole('button', { name: 'Book a free site visit' }).click()
-  await expect(card.getByRole('status')).toContainText(/VB-[A-Z2-9]{6}/)
+  await expect(card.getByRole('status')).toContainText(/ADN-[A-Z2-9]{6}/)
   await expect(card.getByRole('status')).toContainText('confirm the date')
 })
 
@@ -80,6 +80,6 @@ test('forms work without JavaScript (progressive enhancement)', async ({ browser
   await phoneField(page).fill('9829012345')
   await page.getByRole('checkbox').check()
   await page.getByRole('button', { name: 'Send enquiry' }).click()
-  await expect(page.getByRole('status')).toContainText(/VB-[A-Z2-9]{6}/)
+  await expect(page.getByRole('status')).toContainText(/ADN-[A-Z2-9]{6}/)
   await context.close()
 })

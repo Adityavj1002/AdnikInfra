@@ -67,6 +67,22 @@ export default async function LocationsPage() {
           })}
         </ul>
       </section>
+      <section className="section section--tight section--ivory" aria-labelledby="near-title">
+        <div className={`container ${styles.intro}`}>
+          <h2 id="near-title" className={styles.corridorTitle}>
+            Beyond the city: towns near Jaipur
+          </h2>
+          <p>
+            We also sell plots and agricultural land, and build homes, in the towns around Jaipur: Chaksu, Niwai, Tonk,
+            Phagi, Malpura, Bagru, Chomu and more.
+          </p>
+          <p>
+            <Link href={routes.nearJaipur} className="link-more">
+              Property and construction near Jaipur <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+            </Link>
+          </p>
+        </div>
+      </section>
       <CtaBand
         id="locations-cta"
         title="Not sure which area suits you?"

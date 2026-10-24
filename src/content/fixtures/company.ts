@@ -1,3 +1,4 @@
+import { site } from '@/config/site'
 import { photos } from '../images'
 import type { ConstructionPackage, Post, Stat } from '../types'
 
@@ -48,8 +49,9 @@ export const packages: readonly ConstructionPackage[] = [
 
 export const stats: readonly Stat[] = [
   { value: '12+', label: 'Years building in Jaipur' },
-  { value: '650+', label: 'Homes delivered' },
-  { value: '18 lakh', label: 'Sq ft built and underway' },
+  // Supplied by the client (2026-10-24).
+  { value: '60+', label: 'Homes delivered' },
+  { value: String(site.serviceArea.towns.length), label: 'Towns served near Jaipur' },
   { value: '6', label: 'Localities across Jaipur' },
 ]
 

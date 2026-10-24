@@ -1,0 +1,84 @@
+@layer components {
+  /* Glass card on the navy footer. position: relative contains the honeypot. */
+  .form {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background-color: rgb(255 255 255 / 0.05);
+    box-shadow:
+      0 24px 48px rgb(3 8 16 / 0.35),
+      inset 0 1px 0 rgb(255 255 255 / 0.1);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--c-cream);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .title :global(.icon) {
+    color: var(--c-gold-bright);
+  }
+
+  .label {
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .input {
+    flex: 1 1 12rem;
+    min-inline-size: 0;
+    border-color: rgb(255 255 255 / 0.25);
+    background-color: rgb(255 255 255 / 0.96);
+  }
+
+  .submit {
+    flex: 0 0 auto;
+  }
+
+  .note {
+    color: #aab4c2;
+    font-size: var(--text-xs);
+  }
+
+  .note a {
+    color: var(--c-gold-light);
+  }
+
+  .status:empty {
+    display: none;
+  }
+
+  .status {
+    color: var(--c-gold-light);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .statusError {
+    color: #ffb4a8;
+  }
+
+  .trap {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}

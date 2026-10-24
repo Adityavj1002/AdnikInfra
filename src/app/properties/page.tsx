@@ -31,8 +31,8 @@ const filterSchema = z.object({
 })
 
 const description =
-  'Real estate for sale in Jaipur: ready-to-move flats, villas, plots and commercial spaces, verified by Adnik Infra. Filter by area, budget and bedrooms.'
-const { title } = buildTitle({ name: 'Real Estate for Sale in Jaipur' })
+  'Real estate for sale in Jaipur: flats, villas, plots, commercial spaces and agricultural land, verified by Adnik Infra. Filter by area and budget.'
+const { title } = buildTitle({ name: 'Real Estate & Property for Sale in Jaipur' })
 const crumbs: readonly Crumb[] = [
   { name: 'Home', path: routes.home },
   { name: 'Real Estate', path: routes.properties },
@@ -86,8 +86,8 @@ export default async function PropertiesPage({ searchParams }: PageProps) {
       <Breadcrumbs crumbs={crumbs} />
       <PageHero
         eyebrow="Real Estate"
-        title="Real estate for sale in Jaipur"
-        lead={<p>Flats, villas, plots and offices, each one visited and checked by our team before it’s listed.</p>}
+        title="Real estate & property for sale in Jaipur"
+        lead={<p>Flats, villas, plots, offices and agricultural land, each one visited and checked by our team before it’s listed.</p>}
       />
 
       <div className="container">

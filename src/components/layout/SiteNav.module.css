@@ -21,24 +21,28 @@
     align-items: center;
     min-block-size: var(--tap);
     padding-inline: var(--space-3);
-    border-radius: var(--radius-pill);
-    color: var(--text-muted);
+    color: var(--hdr-muted, var(--text-muted));
     font-size: var(--text-sm);
     font-weight: 500;
     text-decoration: none;
-    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+    /* Gold underline marks the current page; it is drawn, not a background, so it reads on white. */
+    background-image: linear-gradient(var(--c-gold), var(--c-gold));
+    background-position: center bottom 0.55rem;
+    background-repeat: no-repeat;
+    background-size: 0 1px;
+    transition: background-size var(--dur) var(--ease), color var(--dur) var(--ease);
   }
 
   .inlineLink[aria-current='page'] {
-    background-color: var(--surface);
-    color: var(--text);
+    color: var(--hdr-fg, var(--text));
     font-weight: 600;
+    background-size: calc(100% - var(--space-6)) 1px;
   }
 
   @media (hover: hover) {
     .inlineLink:hover {
-      background-color: var(--surface);
-      color: var(--text);
+      color: var(--hdr-fg, var(--text));
+      background-size: calc(100% - var(--space-6)) 1px;
     }
   }
 
@@ -67,10 +71,15 @@
     place-items: center;
     inline-size: var(--tap);
     block-size: var(--tap);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-pill);
-    background-color: var(--surface-raised);
-    color: var(--text);
+    border: 1px solid color-mix(in srgb, var(--hdr-fg, var(--text)) 30%, transparent);
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    color: var(--hdr-fg, var(--text));
+  }
+
+  .call {
+    border-color: var(--hdr-fg, var(--c-ink));
+    color: var(--hdr-fg, var(--text));
   }
 
   .menuButton svg,
@@ -118,6 +127,15 @@
     margin: 0;
     padding: calc(var(--space-4) + var(--safe-top)) calc(var(--gutter) + var(--safe-right)) calc(var(--space-6) + var(--safe-bottom))
       calc(var(--gutter) + var(--safe-left));
+    /* The sheet is always light: reset the header's (possibly cream) colours inside it. */
+    --hdr-fg: var(--c-ink);
+    --hdr-muted: var(--c-ink-2);
+    --logo-text: var(--c-ink);
+    --logo-accent: var(--c-gold-ink);
+    --logo-tag: var(--c-ink-3);
+    --logo-ink: #17140f;
+    --logo-knockout: var(--c-bg);
+    --focus-ring: var(--c-gold-ink);
     border: 0;
     background-color: var(--surface);
     color: var(--text);
@@ -186,7 +204,7 @@
   .sheetLabel {
     font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .sheetNote {

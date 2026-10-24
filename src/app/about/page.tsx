@@ -70,7 +70,7 @@ export default async function AboutPage() {
       </section>
 
       {stats.length > 0 && (
-        <section className="section section--dark" aria-label="Company figures">
+        <section className="section section--ivory" aria-label="Company figures">
           <div className="container">
             <StatsBand stats={stats} label="Company figures" />
           </div>

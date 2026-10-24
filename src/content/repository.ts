@@ -1,11 +1,14 @@
 import 'server-only'
 import { isSlug } from '@/lib/slug'
 import { packages, posts, stats } from './fixtures/company'
+import { faqGroups } from './fixtures/faqs'
 import { localities } from './fixtures/localities'
 import { projects } from './fixtures/projects'
 import { properties } from './fixtures/properties'
+import { towns } from './fixtures/towns'
 import type {
   ConstructionPackage,
+  FaqGroup,
   Locality,
   Post,
   Project,
@@ -14,6 +17,7 @@ import type {
   Property,
   PropertyType,
   Stat,
+  Town,
 } from './types'
 
 /**
@@ -88,6 +92,18 @@ export async function getPackages(): Promise<readonly ConstructionPackage[]> {
 }
 
 /** Company stats are sample placeholders until the client confirms real figures. */
+export async function getTowns(): Promise<readonly Town[]> {
+  return towns
+}
+
+export async function getTown(slug: string): Promise<Town | undefined> {
+  return towns.find((town) => town.slug === slug)
+}
+
+export async function getFaqGroups(): Promise<readonly FaqGroup[]> {
+  return faqGroups
+}
+
 export async function getStats(): Promise<readonly Stat[]> {
   return stats
 }

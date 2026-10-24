@@ -1,44 +1,75 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { site } from '@/config/site'
-import { getLocalities, getProjects, isSampleContent } from '@/content/repository'
+import { services } from '@/content/services'
+import { ListingAlerts } from '@/features/alerts/ListingAlerts'
 import { routes } from '@/lib/routes'
+import { FooterScene } from './FooterScene'
 import { Logo } from './Logo'
 import styles from './SiteFooter.module.css'
 
-export async function SiteFooter() {
-  const [localities, projects] = await Promise.all([getLocalities(), getProjects()])
+type FooterLink = Readonly<{ href: string; label: string }>
+
+const quickLinks: readonly FooterLink[] = [
+  { href: routes.home, label: 'Home' },
+  { href: routes.projects, label: 'Projects' },
+  { href: routes.properties, label: 'Real estate' },
+  { href: routes.construction, label: 'Home construction' },
+  { href: routes.about, label: 'About us' },
+  { href: routes.blog, label: 'Guides & blog' },
+  { href: routes.faq, label: 'FAQs' },
+  { href: routes.contact, label: 'Contact' },
+]
+
+const areaLinks: readonly FooterLink[] = [
+  { href: routes.locations, label: 'Jaipur' },
+  { href: routes.town('chaksu'), label: 'Chaksu' },
+  { href: routes.town('niwai'), label: 'Niwai' },
+  { href: routes.location('tonk-road'), label: 'Tonk Road' },
+  { href: routes.town('bilwa'), label: 'Bilwa' },
+  { href: routes.nearJaipur, label: 'All areas near Jaipur' },
+]
+
+const legalLinks: readonly FooterLink[] = [
+  { href: routes.privacy, label: 'Privacy policy' },
+  { href: routes.terms, label: 'Terms of use' },
+  { href: routes.disclaimer, label: 'Disclaimer' },
+  { href: routes.accessibility, label: 'Accessibility' },
+]
+
+/** Navy footer: pitch and sign-up beside isometric miniatures, then link columns, then the fine print. */
+export function SiteFooter() {
   const { email, phone, whatsapp, hours } = site.contact
   const address = site.business.address
+  const profiles = site.business.profiles
 
   const columns = [
-    {
-      title: 'Our projects',
-      links: [...projects.slice(0, 4).map((p) => ({ href: routes.project(p.slug), label: p.name })), { href: routes.projects, label: 'All projects' }],
-    },
-    {
-      title: 'Real Estate in Jaipur',
-      links: [...localities.map((l) => ({ href: routes.location(l.slug), label: l.name })), { href: routes.properties, label: 'All Real Estate' }],
-    },
-    {
-      title: 'Company',
-      links: [
-        { href: routes.construction, label: 'Home construction' },
-        { href: routes.about, label: 'About us' },
-        { href: routes.blog, label: 'Guides & blog' },
-        { href: routes.contact, label: 'Contact' },
-      ],
-    },
+    { title: 'Quick links', links: quickLinks },
+    { title: 'Services', links: services.map((service) => ({ href: service.href, label: service.title })) },
+    { title: 'Jaipur & nearby', links: areaLinks },
   ] as const
 
   return (
     <footer className={styles.footer}>
+      <div className={`container ${styles.feature}`}>
+        <div className={styles.pitch}>
+          <p className={styles.pitchEyebrow}>Jaipur &amp; nearby towns</p>
+          <p className={styles.pitchTitle}>
+            Find, build or sell your property with <span className={styles.pitchAccent}>one trusted team</span>.
+          </p>
+          <ListingAlerts />
+        </div>
+        <FooterScene className={styles.scene} />
+      </div>
+
       <div className={`container ${styles.top}`}>
         <div className={styles.brand}>
-          <Logo inverse />
+          <Logo size="lg" />
           <p className={styles.about}>
-            Builders and real estate developers in Jaipur. We build modern villas, apartments and plotted communities,
-            and construct homes on our customers’ own plots.
+            Adnik Infra is a real estate and construction company serving Jaipur, Chaksu, Niwai, Tonk Road, Bilwa and
+            nearby towns. We build modern villas and independent homes, sell plots, flats and agricultural land, and
+            deliver construction projects with clear paperwork and written, all-inclusive pricing.
           </p>
           <ul role="list" className={styles.contact}>
             {phone && (
@@ -74,6 +105,17 @@ export async function SiteFooter() {
               <span>{hours}</span>
             </li>
           </ul>
+          {profiles.length > 0 && (
+            <ul role="list" className={styles.social} aria-label="Adnik Infra on social media">
+              {profiles.map((url) => (
+                <li key={url}>
+                  <a href={url} target="_blank" rel="noopener noreferrer me">
+                    {new URL(url).hostname.replace(/^www\./, '').split('.')[0]}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <nav aria-label="Footer" className={styles.columns}>
@@ -94,39 +136,24 @@ export async function SiteFooter() {
         </nav>
       </div>
 
-      <div className={`container ${styles.disclaimer}`}>
-        <p>
-          <strong>Disclaimer:</strong> Images, layouts and specifications shown are for representation only and may change.
-          Prices exclude registration, stamp duty and other statutory charges. Check each project’s registration on the
-          Rajasthan RERA website before booking. <Link href={routes.disclaimer}>Read the full disclaimer</Link>.
-        </p>
-        {isSampleContent && (
-          <p className={styles.sample}>
-            Sample content: projects, prices, figures and photographs on this site are placeholders while it is being built.
-          </p>
-        )}
-      </div>
-
       <div className={`container ${styles.bottom}`}>
-        <p>
-          © {new Date().getFullYear()} {site.name}, {site.city}
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} {site.name}. Powered by{' '}
+          {/* Agency credit. New tab, and no noreferrer so Naigrowth still sees the referral. */}
+          <a className={styles.credit} href="https://naigrowth.com" target="_blank" rel="noopener">
+            <Image src="/brand/naigrowth-logo.png" alt="" width={22} height={22} className={styles.creditLogo} />
+            Naigrowth
+            <span className="visually-hidden"> (opens in a new tab)</span>
+          </a>
         </p>
         <ul role="list" className={styles.legal}>
-          <li>
-            <Link href={routes.privacy} className={styles.link}>
-              Privacy
-            </Link>
-          </li>
-          <li>
-            <Link href={routes.disclaimer} className={styles.link}>
-              Disclaimer
-            </Link>
-          </li>
-          <li>
-            <Link href={routes.accessibility} className={styles.link}>
-              Accessibility
-            </Link>
-          </li>
+          {legalLinks.map((link) => (
+            <li key={link.href}>
+              <Link href={link.href} className={styles.link}>
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </footer>

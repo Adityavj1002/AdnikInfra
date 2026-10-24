@@ -1,12 +1,11 @@
 # Image credits
 
-Placeholder photography for development. All images are **CC0 / public domain** (free for commercial use, no attribution required), found via [Openverse](https://openverse.org).
+Placeholder photography for development. Images are **CC0 / public domain** (free for commercial use, no attribution required), found via [Openverse](https://openverse.org), except the two **CC BY 4.0** renderings marked below, which require the credit shown on the Disclaimer page.
 
-**Replace every image with Vijay Builders' own project renders and site photos before launch**: RERA rules treat imagery that misrepresents a project as misleading advertising.
+**Replace every image with Adnik Infra's own project renders and site photos before launch**: RERA rules treat imagery that misrepresents a project as misleading advertising.
 
 | File | Licence | Source | Original |
 |---|---|---|---|
-| `hero-villa-dusk.jpg` | CC0 | rawpixel | [Modern house architecture](https://www.rawpixel.com/image/5907441/photo-image-light-public-domain-house) |
 | `villa-pool.jpg` | CC0 | rawpixel | [Free modern house, villa, swimming](https://www.rawpixel.com/image/5907779/photo-image-public-domain-free-cc0) |
 | `house-modern-day.jpg` | CC0 | rawpixel | [Modern house, real estate](https://www.rawpixel.com/image/6043057/photo-image-public-domain-house-home) |
 | `house-glass-night.jpg` | CC0 | rawpixel | [Modern house, real estate image](https://www.rawpixel.com/image/6032206/photo-image-aesthetic-public-domain-house) |
@@ -29,3 +28,6 @@ Placeholder photography for development. All images are **CC0 / public domain** 
 | `floor-plan.jpg` | CC0 | rawpixel | [link](https://www.rawpixel.com/image/5942848/free-public-domain-cc0-photo) |
 | `handover-keys.jpg` | CC0 | rawpixel | [House Keys](https://www.rawpixel.com/image/5969541/house-keys) |
 | `jaipur-aerial.jpg` | CC0 | wordpress | [A panoramic view of Jaipur city from Nah](https://wordpress.org/photos/photo/89166f141c/) |
+| `agricultural-land.jpg` | CC0 | StockSnap | [Grass Field](https://stocksnap.io/photo/grass-field-PWKFFLPK2W) |
+| `hero-villa-pool.jpg` | **CC BY 4.0** | Wikimedia Commons, by Tuantranseo | [3D Rendering of Modern Luxury Villa Exterior with Pool](https://commons.wikimedia.org/wiki/File:3D_Rendering_of_Modern_Luxury_Villa_Exterior_with_Pool.jpg) (resized) |
+| `house-gable.jpg` | **CC BY 4.0** | Wikimedia Commons, by Tuantranseo | [Contemporary Residence with Gable Windows](https://commons.wikimedia.org/wiki/File:Contemporary_Residence_with_Gable_Windows_%E2%80%93_3D_Architectural_Visualization.jpg) (resized) |

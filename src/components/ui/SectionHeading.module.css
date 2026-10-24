@@ -23,14 +23,6 @@
     font-size: var(--text-lg);
   }
 
-  :global(.section--dark) .intro {
-    color: var(--text-on-inverse-muted);
-  }
-
-  :global(.section--dark) :global(.eyebrow) {
-    color: var(--c-gold);
-  }
-
   .center {
     justify-content: center;
     text-align: center;

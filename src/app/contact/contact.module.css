@@ -47,7 +47,10 @@
 
   .channels li > span {
     display: grid;
+    min-inline-size: 0;
     font-weight: 600;
+    /* An email address has no spaces; let it break rather than push the page sideways. */
+    overflow-wrap: anywhere;
   }
 
   .channels a {
@@ -64,14 +67,14 @@
 
   .promise {
     padding: var(--space-6);
-    border-radius: var(--radius-lg);
-    background-color: var(--surface-inverse);
-    color: #fff;
+    border: 1px solid var(--border-gold);
+    border-block-start: 2px solid var(--c-gold);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-ivory);
   }
 
   .promiseTitle {
     margin-block-end: var(--space-3);
-    color: #fff;
     font-size: var(--text-lg);
   }
 
@@ -79,7 +82,11 @@
     display: grid;
     gap: var(--space-2);
     padding-inline-start: 1.2em;
-    color: var(--text-on-inverse-muted);
+    color: var(--text-muted);
     font-size: var(--text-sm);
+  }
+
+  .promiseList ::marker {
+    color: var(--c-gold);
   }
 }

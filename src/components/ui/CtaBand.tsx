@@ -17,7 +17,7 @@ export function CtaBand({
 }: Readonly<{ id: string; title: string; body: string; primary: Action; secondary?: Action }>) {
   return (
     <section className={styles.band} aria-labelledby={id}>
-      <Image src={photos.handoverKeys.src} alt="" fill sizes="100vw" placeholder="blur" className={styles.bg} />
+      <Image src={photos.houseGable.src} alt="" fill sizes="100vw" placeholder="blur" className={styles.bg} />
       <div className={styles.scrim} aria-hidden="true" />
       <div className={`container ${styles.inner}`}>
         <h2 id={id} className={styles.title}>

@@ -51,7 +51,7 @@ export const projects: readonly Project[] = [
       { place: 'Shopping and markets', km: 2.5 },
     ],
     geo: { lat: 26.8197, lng: 75.858 },
-    gallery: [photos.heroVillaDusk, photos.villaPool, photos.livingRoom, photos.kitchenIsland, photos.bedroomMaster, photos.bathroom],
+    gallery: [photos.houseGable, photos.heroVillaPool, photos.villaPool, photos.livingRoom, photos.kitchenIsland, photos.bedroomMaster, photos.bathroom],
     updates: [
       { date: '2026-10-05', text: 'Phase 1 villa structures complete; brickwork and plumbing under way.' },
       { date: '2026-08-20', text: 'Clubhouse foundation poured and internal roads laid.' },

@@ -1,21 +1,28 @@
-import Image from 'next/image'
 import { site } from '@/config/site'
+import { LogoMark } from './LogoMark'
 import styles from './Logo.module.css'
 
-export function Logo({ inverse = false }: Readonly<{ inverse?: boolean }>) {
+/**
+ * Mark + wordmark lockup. The wordmark is live text (uppercased in CSS), so screen readers
+ * hear "Adnik Infra", not letters, and the link's accessible name is the brand.
+ */
+export function Logo({ size = 'md' }: Readonly<{ size?: 'md' | 'lg' }>) {
+  const [first = site.name, ...rest] = site.name.split(' ')
+
   return (
-    <span className={`${styles.logo} ${inverse ? styles.inverse : ''}`}>
-      <Image
-        src="/icon.png"
-        alt={`${site.name} logo`}
-        width={42}
-        height={42}
-        className={styles.markImage}
-        priority
-      />
+    <span className={`${styles.logo} ${size === 'lg' ? styles.lg : ''}`}>
+      <LogoMark className={styles.mark} />
       <span className={styles.text}>
-        <span className={styles.name}>{site.name}</span>
-        <span className={styles.tag}>{site.descriptor}</span>
+        <span className={styles.name}>
+          {first}
+          {rest.length > 0 && (
+            <>
+              {' '}
+              <span className={styles.accent}>{rest.join(' ')}</span>
+            </>
+          )}
+        </span>
+        <span className={styles.tag}>{site.tagline}</span>
       </span>
     </span>
   )

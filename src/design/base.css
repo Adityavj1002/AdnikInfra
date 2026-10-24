@@ -31,7 +31,7 @@
 
   h3,
   h4 {
-    font-weight: 650;
+    font-weight: 600;
     line-height: var(--leading-snug);
   }
 
@@ -71,15 +71,14 @@
   }
 
   ::selection {
-    background-color: var(--c-gold);
+    background-color: var(--c-gold-bright);
     color: var(--c-ink);
   }
 
-  /* Ink ring framed by a gold halo: gold alone fails the 3:1 non-text contrast minimum. */
+  /* A slim offset ring. Dark sections switch --focus-ring to light gold, keeping 3:1 or better. */
   :focus-visible {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 5px var(--focus-halo);
+    outline-offset: 3px;
   }
 
   :target {

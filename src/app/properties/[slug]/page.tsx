@@ -9,6 +9,7 @@ import { PropertyCard } from '@/components/ui/Cards'
 import { KeyFacts, type Fact } from '@/components/ui/KeyFacts'
 import blocks from '@/components/ui/blocks.module.css'
 import { getLocality, getProperties, getProperty, isValidSlug } from '@/content/repository'
+import type { PropertyType } from '@/content/types'
 import { EmiCalculator } from '@/features/calculators/EmiCalculator'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { Gallery } from '@/features/gallery/Gallery'
@@ -20,6 +21,14 @@ import { buildTitle } from '@/seo/titles'
 import styles from '@/components/ui/detail.module.css'
 
 type PageProps = Readonly<{ params: Promise<{ slug: string }> }>
+
+const areaFactLabel: Readonly<Record<PropertyType, string>> = {
+  apartment: 'Area',
+  villa: 'Area',
+  commercial: 'Area',
+  plot: 'Plot size',
+  agricultural: 'Land area',
+}
 
 async function load(slug: string) {
   if (!isValidSlug(slug)) return undefined
@@ -56,7 +65,7 @@ export default async function PropertyPage({ params }: PageProps) {
   const facts: Fact[] = [
     { label: 'Type', value: propertyTypeLabel[property.type], icon: Layers },
     ...(property.bhk ? [{ label: 'Bedrooms', value: `${property.bhk} BHK`, icon: BedDouble }] : []),
-    { label: property.type === 'plot' ? 'Plot size' : 'Area', value: formatArea(property.area), icon: Ruler },
+    { label: areaFactLabel[property.type], value: formatArea(property.area), icon: Ruler },
     { label: 'Possession', value: possessionLabel[property.possession], icon: Key },
     ...(property.furnishing ? [{ label: 'Furnishing', value: furnishingLabel[property.furnishing], icon: Sofa }] : []),
     ...(property.facing ? [{ label: 'Facing', value: property.facing, icon: Compass }] : []),

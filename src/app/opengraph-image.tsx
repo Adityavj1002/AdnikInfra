@@ -7,7 +7,7 @@ export const contentType = ogContentType
 
 export default function Image() {
   return renderOgCard({
-    eyebrow: `${site.city} · Since day one`,
+    eyebrow: `${site.city} · Builders & real estate`,
     title: 'Modern homes by trusted builders in Jaipur',
     facts: [
       { term: 'Projects', detail: 'Villas · Apartments · Plots' },

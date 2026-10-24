@@ -17,7 +17,8 @@ export default defineConfig([
       'no-new-func': 'error',
       'no-script-url': 'error',
       'react/no-danger': 'error',
-      'react/jsx-no-target-blank': 'error',
+      // noopener is required; noreferrer is optional so referral credit links keep their referrer.
+      'react/jsx-no-target-blank': ['error', { allowReferrer: true }],
       'no-restricted-properties': [
         'error',
         { property: 'innerHTML', message: htmlSinkMessage },
