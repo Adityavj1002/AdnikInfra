@@ -26,6 +26,16 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   formatDetection: { telephone: false, email: false, address: false },
   // Previews and staging must never be indexed; production opts in via SITE_INDEXABLE.
   robots: env.SITE_INDEXABLE ? undefined : { index: false, follow: false },

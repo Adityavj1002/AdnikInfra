@@ -5,10 +5,12 @@
     gap: var(--space-3);
   }
 
-  .mark {
+  .mark,
+  .markImage {
     flex: none;
     inline-size: 2.5rem;
     block-size: 2.5rem;
+    object-fit: contain;
   }
 
   .tile {
