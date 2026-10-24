@@ -113,7 +113,7 @@ export function StatusPanel({ state, nextSteps }: Readonly<{ state: FormState; n
   const message =
     state.status === 'rate-limited'
       ? 'We’ve received several messages from this connection. Please wait a few minutes and try again.'
-      : 'Our enquiry desk is being set up and can’t accept messages online just yet. Please try again soon.'
+      : 'Your message didn’t reach us because of a problem on our side, not yours. Please try again in a few minutes.'
 
   return (
     <div className={`${styles.panel} ${styles.panelWarn}`} role="alert">

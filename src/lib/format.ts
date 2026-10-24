@@ -77,6 +77,11 @@ export const propertyTypeLabel: Readonly<Record<PropertyType, string>> = {
 
 export const possessionLabel = { ready: 'Ready to move', 'under-construction': 'Under construction' } as const
 
+/** Land isn't "moved into": a ready plot or farm parcel is ready for registry. */
+export function possessionText(type: PropertyType, possession: keyof typeof possessionLabel): string {
+  return possession === 'ready' && (type === 'plot' || type === 'agricultural') ? 'Ready for registry' : possessionLabel[possession]
+}
+
 export const furnishingLabel = {
   unfurnished: 'Unfurnished',
   'semi-furnished': 'Semi-furnished',

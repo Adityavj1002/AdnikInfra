@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next'
 import { staticSecurityHeaders } from './src/security/headers'
+// Validates every environment variable when the app builds or starts. A misconfiguration
+// (say, LEADS_MODE=email without SMTP) stops the deploy instead of serving 500s on every page.
+import './src/security/env'
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,

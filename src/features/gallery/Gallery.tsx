@@ -58,7 +58,7 @@ export function Gallery({ images, title }: Readonly<{ images: readonly Img[]; ti
       </ul>
       <button type="button" className={`button button--outline button--small ${styles.all}`} onClick={() => open(0)}>
         <Images aria-hidden="true" strokeWidth={1.75} />
-        View all {count} photos
+        {count === 1 ? 'View photo' : `View all ${count} photos`}
       </button>
 
       <dialog

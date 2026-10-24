@@ -115,7 +115,7 @@
     display: grid;
     gap: var(--space-4);
     margin-block-start: var(--space-12);
-    padding: var(--space-8);
+    padding: clamp(var(--space-5), 4vw, var(--space-8));
     border-radius: var(--radius-lg);
     background-color: var(--c-navy);
     color: var(--c-cream);
@@ -134,5 +134,12 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+
+  /* The email button carries a long address: let it wrap on 280px phones, not overflow. */
+  .helpActions :global(.button) {
+    max-inline-size: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

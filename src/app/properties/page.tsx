@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -58,7 +59,17 @@ export async function generateMetadata({ searchParams }: PageProps) {
 }
 
 export default async function PropertiesPage({ searchParams }: PageProps) {
-  const filters = parse(await searchParams)
+  const raw = await searchParams
+  // The no-JavaScript search form submits every field, even empty ones. Redirect once to the
+  // clean URL (?type=agricultural, not ?type=agricultural&locality=&budget=) so it can be shared.
+  const empty = Object.entries(raw).filter(([, value]) => value === '')
+  if (empty.length > 0) {
+    const clean = new URLSearchParams(
+      Object.entries(raw).flatMap(([key, value]) => (typeof value === 'string' && value !== '' ? [[key, value]] : [])),
+    ).toString()
+    redirect(clean ? `${routes.properties}?${clean}` : routes.properties)
+  }
+  const filters = parse(raw)
   const localities = await getLocalities()
   const locality = localities.some((l) => l.slug === filters.locality) ? filters.locality : undefined
   const properties = await getProperties({

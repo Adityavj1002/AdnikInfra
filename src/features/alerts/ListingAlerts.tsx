@@ -12,7 +12,7 @@ const messages: Readonly<Record<AlertsState['status'], string>> = {
   idle: '',
   success: 'Thank you. New listings will reach your inbox first.',
   error: 'Please enter a valid email address, like name@example.com.',
-  unavailable: 'Sign-up is not available right now. Please email us instead.',
+  unavailable: 'We couldn’t sign you up just now. Please try again in a few minutes.',
   'rate-limited': 'Too many attempts. Please try again in a few minutes.',
 }
 

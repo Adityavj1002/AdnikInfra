@@ -13,7 +13,7 @@ import type { PropertyType } from '@/content/types'
 import { EmiCalculator } from '@/features/calculators/EmiCalculator'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { Gallery } from '@/features/gallery/Gallery'
-import { formatArea, formatDate, formatPrice, formatPriceFull, furnishingLabel, possessionLabel, propertyTypeLabel } from '@/lib/format'
+import { formatArea, formatDate, formatPrice, formatPriceFull, furnishingLabel, possessionText, propertyTypeLabel } from '@/lib/format'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, graph, localityNode, propertyNode } from '@/seo/schema'
@@ -66,7 +66,7 @@ export default async function PropertyPage({ params }: PageProps) {
     { label: 'Type', value: propertyTypeLabel[property.type], icon: Layers },
     ...(property.bhk ? [{ label: 'Bedrooms', value: `${property.bhk} BHK`, icon: BedDouble }] : []),
     { label: areaFactLabel[property.type], value: formatArea(property.area), icon: Ruler },
-    { label: 'Possession', value: possessionLabel[property.possession], icon: Key },
+    { label: 'Possession', value: possessionText(property.type, property.possession), icon: Key },
     ...(property.furnishing ? [{ label: 'Furnishing', value: furnishingLabel[property.furnishing], icon: Sofa }] : []),
     ...(property.facing ? [{ label: 'Facing', value: property.facing, icon: Compass }] : []),
     ...(property.floor ? [{ label: 'Floor', value: property.floor }] : []),
@@ -81,7 +81,7 @@ export default async function PropertyPage({ params }: PageProps) {
         <header className={styles.header}>
           <div className={styles.badges}>
             <span className={`badge ${property.possession === 'ready' ? 'badge--success' : 'badge--info'}`}>
-              {possessionLabel[property.possession]}
+              {possessionText(property.type, property.possession)}
             </span>
             <span className="badge">{propertyTypeLabel[property.type]}</span>
           </div>

@@ -5,7 +5,7 @@ import type { Locality, Project, Property } from '@/content/types'
 import {
   formatArea,
   formatPrice,
-  possessionLabel,
+  possessionText,
   projectStatusLabel,
   projectTypeLabel,
   propertyTypeLabel,
@@ -79,7 +79,7 @@ export function PropertyCard({ item: property, locality, headingLevel: Heading =
         <div className={styles.media}>
           {cover && <Image src={cover.src} alt={cover.alt} fill sizes={CARD_SIZES} placeholder="blur" className={styles.image} />}
           <span className={`badge ${property.possession === 'ready' ? 'badge--success' : 'badge--info'} ${styles.status}`}>
-            {possessionLabel[property.possession]}
+            {possessionText(property.type, property.possession)}
           </span>
         </div>
         <div className={styles.body}>

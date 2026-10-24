@@ -64,7 +64,8 @@ test('home search submits a shareable filtered results page', async ({ page }) =
   await search.getByLabel(/(Real estate|Property) type/i).selectOption('apartment')
   await search.getByLabel('Budget').selectOption('1cr')
   await search.getByRole('button', { name: 'Search' }).click()
-  await expect(page).toHaveURL(/\/properties\?type=apartment&locality=&budget=1cr/)
+  // Empty filters are dropped, so the shared URL is clean.
+  await expect(page).toHaveURL(/\/properties\?type=apartment&budget=1cr$/)
   await expect(page.getByText(/(real estate listings?|properties?) found/i)).toBeVisible()
   // Filtered views must not be indexed.
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)

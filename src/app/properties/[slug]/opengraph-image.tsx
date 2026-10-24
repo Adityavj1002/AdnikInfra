@@ -1,5 +1,5 @@
 import { getLocality, getProperty, isValidSlug } from '@/content/repository'
-import { formatArea, formatPrice, possessionLabel } from '@/lib/format'
+import { formatArea, formatPrice, possessionText } from '@/lib/format'
 import { ogContentType, ogSize, renderOgCard } from '@/seo/og-image'
 
 export const alt = 'Property for sale in Jaipur'
@@ -18,7 +18,7 @@ export default async function Image({ params }: Readonly<{ params: Promise<{ slu
     facts: [
       { term: 'Price', detail: formatPrice(property.price) },
       { term: 'Area', detail: formatArea(property.area) },
-      { term: 'Status', detail: possessionLabel[property.possession] },
+      { term: 'Status', detail: possessionText(property.type, property.possession) },
     ],
   })
 }

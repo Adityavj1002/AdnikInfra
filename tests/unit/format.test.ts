@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { estimateCost, estimateMonths } from '@/features/calculators/CostEstimator'
 import { monthlyEmi } from '@/features/calculators/EmiCalculator'
-import { formatArea, formatAreaRange, formatDate, formatPrice, formatPriceFull } from '@/lib/format'
+import { formatArea, formatAreaRange, formatDate, formatPrice, formatPriceFull, possessionText } from '@/lib/format'
 
 describe('Indian price formatting', () => {
   it.each([
@@ -60,5 +60,19 @@ describe('construction estimator', () => {
   it('gives longer schedules for more floors', () => {
     expect(estimateMonths(1)).toEqual([8, 12])
     expect(estimateMonths(3)[1]).toBeGreaterThan(estimateMonths(2)[1])
+  })
+})
+
+describe('possessionText', () => {
+  it('calls ready land "ready for registry", not "ready to move"', () => {
+    expect(possessionText('agricultural', 'ready')).toBe('Ready for registry')
+    expect(possessionText('plot', 'ready')).toBe('Ready for registry')
+    expect(possessionText('villa', 'ready')).toBe('Ready to move')
+    expect(possessionText('apartment', 'under-construction')).toBe('Under construction')
+  })
+
+  it('formats agricultural land in acres with square yards', () => {
+    expect(formatArea({ value: 2.5, unit: 'acre' })).toBe('2.5 acres (12,100 sq yd)')
+    expect(formatArea({ value: 1, unit: 'acre' })).toBe('1 acre (4,840 sq yd)')
   })
 })
