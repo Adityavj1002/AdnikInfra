@@ -16,7 +16,7 @@ import { breadcrumbNode, graph, ids, webPageNode, type Crumb } from '@/seo/schem
 import { buildTitle } from '@/seo/titles'
 
 const description = `About ${site.name}: Jaipur builders and real estate developers creating modern villas, apartments and plots, and building homes on customers’ own plots.`
-const { title } = buildTitle({ name: 'About Vijay Builders' })
+const { title } = buildTitle({ name: `About ${site.name}` })
 const crumbs: readonly Crumb[] = [
   { name: 'Home', path: routes.home },
   { name: 'About', path: routes.about },
@@ -44,7 +44,7 @@ export default async function AboutPage() {
       <Breadcrumbs crumbs={crumbs} />
       <PageHero
         eyebrow="About us"
-        title="About Vijay Builders"
+        title={`About ${site.name}`}
         lead={<p>Jaipur builders and real estate developers. We build modern homes people are proud to live in.</p>}
       />
 

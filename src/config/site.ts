@@ -47,12 +47,12 @@ export type SiteConfig = Readonly<{
 }>
 
 export const site: SiteConfig = {
-  name: 'Vijay Builders',
+  name: 'Adnik Infra',
   descriptor: 'Builders & Real Estate Developers',
   city: 'Jaipur',
   state: 'Rajasthan',
   description:
-    'Vijay Builders: trusted builders in Jaipur for modern villas, apartments and plots — plus home construction on your own plot, from design to handover.',
+    'Adnik Infra: trusted builders in Jaipur for modern villas, apartments and plots — plus home construction on your own plot, from design to handover.',
   language: 'en',
   locale: 'en-IN',
   ogLocale: 'en_IN',

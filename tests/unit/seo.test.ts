@@ -22,13 +22,13 @@ const SEPARATORS = String.fromCharCode(0x2028) + String.fromCharCode(0x2029)
 
 describe('buildTitle', () => {
   it('keeps the locality and city when they fit', () => {
-    expect(buildTitle({ name: 'Vijay Greens', location: 'Ajmer Road' }).title).toBe('Vijay Greens, Ajmer Road, Jaipur | Vijay Builders')
+    expect(buildTitle({ name: 'Vijay Greens', location: 'Ajmer Road' }).title).toBe('Vijay Greens, Ajmer Road, Jaipur | Adnik Infra')
   })
 
   it('steps down the ladder instead of being cut off, keeping the locality where possible', () => {
     const { title, socialTitle } = buildTitle({ name: 'Vijay Skyline Residences', location: 'Vaishali Nagar' })
     expect(title.length).toBeLessThanOrEqual(TITLE_MAX)
-    expect(title).toBe('Vijay Skyline Residences, Vaishali Nagar | Vijay Builders')
+    expect(title).toBe('Vijay Skyline Residences, Vaishali Nagar | Adnik Infra')
     expect(socialTitle).toContain('Jaipur')
   })
 

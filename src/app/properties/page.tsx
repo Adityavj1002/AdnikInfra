@@ -31,7 +31,7 @@ const filterSchema = z.object({
 })
 
 const description =
-  'Real estate for sale in Jaipur: ready-to-move flats, villas, plots and commercial spaces, verified by Vijay Builders. Filter by area, budget and bedrooms.'
+  'Real estate for sale in Jaipur: ready-to-move flats, villas, plots and commercial spaces, verified by Adnik Infra. Filter by area, budget and bedrooms.'
 const { title } = buildTitle({ name: 'Real Estate for Sale in Jaipur' })
 const crumbs: readonly Crumb[] = [
   { name: 'Home', path: routes.home },

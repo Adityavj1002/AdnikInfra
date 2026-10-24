@@ -25,7 +25,7 @@ const filterSchema = z.object({
 })
 
 const description =
-  'New residential projects in Jaipur by Vijay Builders: gated villa communities, apartments, plots and commercial spaces, with prices, plans and possession dates.'
+  'New residential projects in Jaipur by Adnik Infra: gated villa communities, apartments, plots and commercial spaces, with prices, plans and possession dates.'
 const { title } = buildTitle({ name: 'New Residential Projects in Jaipur' })
 const crumbs: readonly Crumb[] = [
   { name: 'Home', path: routes.home },

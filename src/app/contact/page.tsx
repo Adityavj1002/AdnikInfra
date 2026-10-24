@@ -16,8 +16,8 @@ import { buildTitle } from '@/seo/titles'
 import styles from './contact.module.css'
 
 const description =
-  'Contact Vijay Builders in Jaipur: book a site visit, get a construction quote, or ask about buying and selling property. We reply within one working day.'
-const { title } = buildTitle({ name: 'Contact Vijay Builders' })
+  `Contact ${site.name} in Jaipur: book a site visit, get a construction quote, or ask about buying and selling real estate. We reply within one working day.`
+const { title } = buildTitle({ name: `Contact ${site.name}` })
 const crumbs: readonly Crumb[] = [
   { name: 'Home', path: routes.home },
   { name: 'Contact', path: routes.contact },
@@ -62,7 +62,7 @@ export default async function ContactPage({ searchParams }: PageProps) {
       <Breadcrumbs crumbs={crumbs} />
       <PageHero
         eyebrow="Contact"
-        title="Contact Vijay Builders"
+        title={`Contact ${site.name}`}
         lead={<p>Book a site visit, get a construction quote, or ask us anything. {site.contact.responseTime}</p>}
       />
 

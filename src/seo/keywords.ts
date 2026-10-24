@@ -38,7 +38,7 @@ export const staticKeywords = {
     supporting: ['Jaipur localities', 'where to buy a home in Jaipur'],
   },
   [routes.about]: {
-    primary: 'about Vijay Builders',
+    primary: 'about Adnik Infra',
     supporting: ['trusted builders in Jaipur', 'real estate company Jaipur'],
   },
   [routes.blog]: {
@@ -46,7 +46,7 @@ export const staticKeywords = {
     supporting: ['Jaipur real estate guide', 'house construction tips'],
   },
   [routes.contact]: {
-    primary: 'contact Vijay Builders',
+    primary: 'contact Adnik Infra',
     supporting: ['book a site visit', 'get a construction quote'],
   },
 } as const satisfies Record<string, KeywordTarget>

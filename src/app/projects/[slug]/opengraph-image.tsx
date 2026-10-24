@@ -2,7 +2,7 @@ import { getLocality, getProject, isValidSlug } from '@/content/repository'
 import { formatPrice, projectStatusLabel } from '@/lib/format'
 import { ogContentType, ogSize, renderOgCard } from '@/seo/og-image'
 
-export const alt = 'Vijay Builders project'
+export const alt = 'Adnik Infra project'
 export const size = ogSize
 export const contentType = ogContentType
 

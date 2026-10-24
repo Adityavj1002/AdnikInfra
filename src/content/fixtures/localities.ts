@@ -79,7 +79,7 @@ export const localities: readonly Locality[] = [
     geo: { lat: 26.895, lng: 75.69 },
     faqs: [
       {
-        question: 'Can Vijay Builders build a house on my plot on Ajmer Road?',
+        question: 'Can Adnik Infra build a house on my plot on Ajmer Road?',
         answer:
           'Yes. Our construction team builds on customers’ own plots across Jaipur. Share your plot size and we will send an estimate and a suggested layout.',
       },
