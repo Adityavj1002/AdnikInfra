@@ -87,9 +87,13 @@
     font-size: var(--text-2xl);
   }
 
+  /*
+   * Sits on the .container itself, so cap the column, not the box: a capped box would centre
+   * the text. minmax(0, …) lets the column shrink on phones.
+   */
   .intro {
     display: grid;
+    grid-template-columns: minmax(0, 48rem);
     gap: var(--space-4);
-    max-inline-size: 48rem;
   }
 }

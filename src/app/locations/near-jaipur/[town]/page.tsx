@@ -33,7 +33,7 @@ const titleFor = (name: string) => buildTitle({ name: `Property & Construction i
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const town = await load((await params).town)
   if (!town) return {}
-  return buildMetadata({ ...titleFor(town.name), description: town.summary, path: routes.town(town.slug) })
+  return buildMetadata({ ...titleFor(town.slug), description: town.summary, path: routes.town(town.slug) })
 }
 
 /** A Maps search by name: no coordinates to get wrong, and no third-party embed. */
@@ -49,7 +49,7 @@ export default async function TownPage({ params }: PageProps) {
   const corridor = localities.find((locality) => locality.name === town.corridor)
   const properties = corridor ? await getProperties({ locality: corridor.slug }) : []
   const path = routes.town(town.slug)
-  const { title } = titleFor(town.name)
+  const { title } = titleFor(town.slug)
   const crumbs = [
     { name: 'Home', path: routes.home },
     { name: 'Locations', path: routes.locations },
@@ -73,13 +73,13 @@ export default async function TownPage({ params }: PageProps) {
         title={`Property and construction in ${town.name}, near Jaipur`}
         lead={<p>{town.summary}</p>}
       >
-        <Link href={contactHref('site-visit', town.name)} className="button button--gold">
+        <Link href={contactHref('site-visit', town.slug)} className="button button--gold">
           Plan a visit in {town.name}
         </Link>
-        <Link href={contactHref('construction', town.name)} className="button button--outline">
+        <Link href={contactHref('construction', town.slug)} className="button button--outline">
           Build on your plot
         </Link>
-        <a href={mapsSearch(town.name)} target="_blank" rel="noopener noreferrer" className="button button--outline">
+        <a href={mapsSearch(town.slug)} target="_blank" rel="noopener noreferrer" className="button button--outline">
           View on map <ExternalLink aria-hidden="true" strokeWidth={1.75} />
         </a>
       </PageHero>
@@ -163,7 +163,7 @@ export default async function TownPage({ params }: PageProps) {
         id="cta-title"
         title={`Looking in ${town.name}?`}
         body="Tell us what you need: a plot, land or a home built on your own plot. We reply within one working day."
-        primary={{ href: contactHref('site-visit', town.name), label: 'Book a site visit' }}
+        primary={{ href: contactHref('site-visit', town.slug), label: 'Book a site visit' }}
         secondary={{ href: routes.contact, label: 'Contact us' }}
       />
     </>

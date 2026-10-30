@@ -9,7 +9,7 @@ export const contentType = ogContentType
 export default async function Image({ params }: Readonly<{ params: Promise<{ slug: string }> }>) {
   const { slug } = await params
   const property = isValidSlug(slug) ? await getProperty(slug) : undefined
-  if (!property) return renderOgCard({ eyebrow: 'Properties', title: 'Property for sale in Jaipur' })
+  if (!property) return renderOgCard({ eyebrow: 'Real Estate', title: 'Property for sale in Jaipur' })
   const locality = await getLocality(property.localitySlug)
 
   return renderOgCard({

@@ -36,7 +36,7 @@ export function PropertySearch({ localities, values = {}, variant = 'hero' }: Pr
           Location
         </label>
         <select id="search-locality" name="locality" className="select" defaultValue={values.locality ?? ''}>
-          <option value="">All of Jaipur</option>
+          <option value="">Jaipur &amp; nearby</option>
           {localities.map((locality) => (
             <option key={locality.slug} value={locality.slug}>
               {locality.name}

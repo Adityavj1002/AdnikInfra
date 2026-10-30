@@ -1,8 +1,4 @@
 @layer components {
-  .spacer {
-    block-size: calc(var(--tap) + var(--space-6) + var(--safe-bottom));
-  }
-
   .bar {
     position: fixed;
     inset-inline: 0;
@@ -29,7 +25,6 @@
   }
 
   @media (min-width: 48rem) {
-    .spacer,
     .bar {
       display: none;
     }

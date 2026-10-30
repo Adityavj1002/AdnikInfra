@@ -58,8 +58,8 @@ test('construction estimator updates the estimate instantly', async ({ page }) =
   await expect(section).toContainText('₹33,00,000')
 })
 
-test('home search submits a shareable filtered results page', async ({ page }) => {
-  await page.goto('/')
+test('property search submits a shareable filtered results page', async ({ page }) => {
+  await page.goto('/properties')
   const search = page.getByRole('search', { name: /Search (real estate|properties)/i })
   await search.getByLabel(/(Real estate|Property) type/i).selectOption('apartment')
   await search.getByLabel('Budget').selectOption('1cr')

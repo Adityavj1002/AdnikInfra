@@ -1,41 +1,37 @@
 import {
+  Activity,
   ArrowRight,
   ArrowUpRight,
-  BadgeCheck,
-  Building,
-  CalendarClock,
+  Building2,
   ClipboardCheck,
+  Factory,
   FileText,
-  House,
-  IndianRupee,
-  LandPlot,
+  Leaf,
   MapPin,
-  Store,
-  Wheat,
-  Wrench,
+  Mountain,
+  Pickaxe,
+  Zap,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ProjectCard, PropertyCard } from '@/components/ui/Cards'
+import { ProjectCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/config/site'
 import { photos } from '@/content/images'
-import type { PropertyType } from '@/content/types'
-import { getLocalities, getPackages, getPosts, getProjects, getProperties, getStats, getTowns } from '@/content/repository'
+import { getLocalities, getProjects, getStats } from '@/content/repository'
 import { services } from '@/content/services'
-import { PropertySearch } from '@/features/search/PropertySearch'
-import { formatDate, formatPrice, projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { formatPrice, projectStatusLabel, projectTypeLabel } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { graph, webPageNode } from '@/seo/schema'
 import { buildTitle } from '@/seo/titles'
 import styles from './home.module.css'
 
-const description = site.description
-const { title } = buildTitle({ name: 'Builders in Jaipur for Modern Homes & Villas' })
+const description = `${site.name}, ${site.city}: construction advisory, environmental clearance, project management, real estate consultancy and infrastructure development.`
+const { title } = buildTitle({ name: `Infrastructure Consultants in ${site.city}` })
 
 export const metadata = buildMetadata({ title, description, path: routes.home, ownImage: true })
 
@@ -49,17 +45,6 @@ function BuildingIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGSVGEle
       <line x1="9" y1="12" x2="15" y2="12" />
       <line x1="9" y1="16" x2="15" y2="16" />
       <line x1="2" y1="22" x2="22" y2="22" />
-    </svg>
-  )
-}
-
-function WarehouseIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGSVGElement> & { strokeWidth?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M3 10l9-6 9 6v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10z" />
-      <path d="M7 22v-8a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v8" />
-      <line x1="7" y1="16" x2="17" y2="16" />
-      <line x1="7" y1="19" x2="17" y2="19" />
     </svg>
   )
 }
@@ -105,59 +90,116 @@ function EnvironmentalIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGS
 }
 
 const serviceIcons: Readonly<Record<string, typeof BuildingIcon>> = {
-  '01': BuildingIcon,
-  '02': WarehouseIcon,
-  '03': RoadsIcon,
-  '04': ProjectManagementIcon,
-  '05': RealEstateIcon,
-  '06': EnvironmentalIcon,
+  'construction-advisory': BuildingIcon,
+  'environmental-clearance': EnvironmentalIcon,
+  'project-management': ProjectManagementIcon,
+  'real-estate-consultancy': RealEstateIcon,
+  'infrastructure-development': RoadsIcon,
 }
 
-const categories = services.map((service) => ({ ...service, icon: serviceIcons[service.number] ?? BuildingIcon }))
+const categories = services.map((service) => ({ ...service, icon: serviceIcons[service.slug] ?? BuildingIcon }))
 
-const reasons = [
-  { icon: BadgeCheck, title: 'Clear paperwork', body: 'Title, approvals and registration documents shared before you book.' },
-  { icon: IndianRupee, title: 'Transparent pricing', body: 'All-inclusive price sheets, with statutory charges listed separately.' },
-  { icon: ClipboardCheck, title: 'Quality checked', body: 'Stage-wise inspections with photos and reports you can see.' },
-  { icon: CalendarClock, title: 'Progress you can track', body: 'Monthly construction updates for every project and home.' },
-  { icon: FileText, title: 'Written specifications', body: 'Brands and materials named in your agreement, not just promised.' },
-  { icon: Wrench, title: 'After-handover support', body: 'A dedicated team for snags and maintenance after you move in.' },
+/** Where an enquiry with no particular service in mind goes: the proposal request. */
+const proposalHref = contactHref('other')
+
+const sectors = [
+  {
+    icon: Building2,
+    title: 'Infrastructure',
+    body: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, roads and utilities.',
+  },
+  { icon: Factory, title: 'Industrial', body: 'Factories, processing plants, industrial estates and warehousing parks.' },
+  { icon: Pickaxe, title: 'Mining', body: 'Major and minor minerals, quarries and sand: mine planning, lease approvals and closure.' },
 ] as const
 
-/** Quick links into the listings, worded the way people search. */
-const browseTypes: readonly Readonly<{ type: PropertyType; label: string; icon: typeof Building }>[] = [
-  { type: 'apartment', label: 'Flats in Jaipur', icon: Building },
-  { type: 'villa', label: 'Villas & houses', icon: House },
-  { type: 'plot', label: 'Residential plots', icon: LandPlot },
-  { type: 'commercial', label: 'Commercial property', icon: Store },
-  { type: 'agricultural', label: 'Agricultural land near Jaipur', icon: Wheat },
-]
+const clearances = [
+  {
+    icon: FileText,
+    title: 'EIA and Environmental Clearance',
+    body: 'Screening, scoping, EIA/EMP reports and public hearing support.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Pollution Control Board consents',
+    body: 'Consent to Establish and Operate applications and renewals.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: Zap,
+    title: 'ECBC and ENS energy compliance',
+    body: 'Building envelope, HVAC and lighting compliance reports with energy modelling.',
+    sectors: 'Infrastructure',
+  },
+  {
+    icon: Mountain,
+    title: 'Mine closure and reclamation plans',
+    body: 'Progressive and final closure plans, land restoration and post-closure monitoring.',
+    sectors: 'Mining',
+  },
+  {
+    icon: Activity,
+    title: 'Monitoring and audits',
+    body: 'Air, water, noise and soil monitoring, plus statutory environmental audits.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: Leaf,
+    title: 'Green building certification',
+    body: 'GRIHA and related rating support for new buildings and campuses.',
+    sectors: 'Infrastructure',
+  },
+] as const
 
-/** How a home goes up, bottom layer first: drives both the 3D stack and the step list. */
-const buildSteps = [
-  { layer: 'Plan & approvals', title: 'Design and approvals', body: 'Architectural and structural drawings, and the building-plan approval paperwork, handled for you.' },
-  { layer: 'Foundation', title: 'Foundation and structure', body: 'Soil test, footings and the RCC frame, inspected and photographed at every stage.' },
-  { layer: 'Walls & services', title: 'Walls, plumbing and wiring', body: 'Masonry, electrical and plumbing to the drawings, with modular and prefab options to save time.' },
-  { layer: 'Finishes', title: 'Finishes and handover', body: 'Flooring, fittings and paint in the brands named in your agreement, then a snag check and the keys.' },
+/** The three founding disciplines. Founder names and portraits go here once supplied. */
+const disciplines = [
+  {
+    icon: Building2,
+    title: 'Infrastructure',
+    body: 'Leads construction advisory, project management and infrastructure development, from design review to handover.',
+  },
+  {
+    icon: Pickaxe,
+    title: 'Mining',
+    body: 'Leads mine planning, lease approvals and closure plans for major and minor minerals, quarries and sand.',
+  },
+  {
+    icon: Leaf,
+    title: 'Environmental Clearance',
+    body: 'Leads EIA, consents and ECBC and ENS energy compliance, with energy modelling for buildings and campuses.',
+  },
+] as const
+
+/** How we work, bottom layer first: drives both the 3D stack and the step list. */
+const workSteps = [
+  {
+    layer: 'Plan',
+    title: 'Plan',
+    body: 'We review the site, the scope and the approvals your project needs, and agree a realistic programme and budget.',
+  },
+  {
+    layer: 'Comply',
+    title: 'Comply',
+    body: 'Environmental clearance, consents and code compliance are prepared and filed before they can hold up the work.',
+  },
+  {
+    layer: 'Build',
+    title: 'Build',
+    body: 'Advisory and project management support on site, with quality and cost tracked against the plan.',
+  },
+  {
+    layer: 'Grow',
+    title: 'Grow',
+    body: 'Monitoring, periodic compliance reports and renewals keep the project in good standing as it expands.',
+  },
 ] as const
 
 export default async function HomePage() {
-  const [projects, properties, localities, packages, stats, posts, towns] = await Promise.all([
-    getProjects(),
-    getProperties(),
-    getLocalities(),
-    getPackages(),
-    getStats(),
-    getPosts(),
-    getTowns(),
-  ])
+  const [projects, localities, stats] = await Promise.all([getProjects(), getLocalities(), getStats()])
   const localityOf = (slug: string) => localities.find((l) => l.slug === slug)
-  const fromRate = Math.min(...packages.map((p) => p.ratePerSqft))
   const spotlight = projects.find((p) => p.featured) ?? projects[0]
   const moreProjects = projects.filter((p) => p.slug !== spotlight?.slug).slice(0, 3)
   const spotlightLocality = spotlight ? localityOf(spotlight.localitySlug) : undefined
-  const typeCount = (type: PropertyType) => properties.filter((p) => p.type === type).length
-  const { corridors } = site.serviceArea
 
   return (
     <>
@@ -183,23 +225,22 @@ export default async function HomePage() {
 
         <div className={`container ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
-            <p className={`eyebrow ${styles.heroEyebrow}`}>
-              {site.descriptor} · {site.city} &amp; nearby
-            </p>
+            <p className={`eyebrow ${styles.heroEyebrow}`}>Construction · Clearance · Consultancy</p>
             <h1 id="hero-title" className={styles.heroTitle}>
-              <span className={styles.heroAccent}>Modern homes</span> by trusted builders in Jaipur
+              <span className={styles.heroAccent}>Plan. Comply.</span> Build. Grow.
+              <span className={styles.heroSub}>Infrastructure consultants and builders in {site.city}</span>
             </h1>
             <p className={styles.heroLead}>
-              Villas, apartments, plots and agricultural land across Jaipur and nearby towns, designed, built and sold by
-              one team. Or bring your plot, and we build your home on it.
+              {site.name} advises on construction, environmental clearance, project management, real estate and
+              infrastructure development, so your project is planned right, approved on time and built to last.
             </p>
             <div className={styles.heroActions}>
-              <Link href={routes.projects} className="button button--gold">
-                Explore projects
+              <Link href={proposalHref} className="button button--gold">
+                Request a proposal
                 <ArrowRight aria-hidden="true" strokeWidth={1.75} />
               </Link>
-              <Link href={routes.construction} className={`button ${styles.glassButton}`}>
-                Build on your plot
+              <Link href="#projects" className={`button ${styles.glassButton}`}>
+                See our work
               </Link>
             </div>
           </div>
@@ -240,42 +281,17 @@ export default async function HomePage() {
         )}
       </section>
 
-      <div className={`container ${styles.searchWrap}`}>
-        <PropertySearch localities={localities} />
-      </div>
-
-      {/* Browse by type */}
-      <nav className={`container ${styles.types}`} aria-label="Browse property by type">
-        <ul role="list" className={styles.typeList}>
-          {browseTypes.map(({ type, label, icon: Icon }) => {
-            const count = typeCount(type)
-            return (
-              <li key={type}>
-                <Link href={`${routes.properties}?type=${type}`} className={styles.typeTile}>
-                  <Icon aria-hidden="true" className={styles.typeIcon} strokeWidth={1.5} />
-                  <span className={styles.typeLabel}>{label}</span>
-                  <span className={styles.typeCount}>
-                    {count > 0 ? `${count} ${count === 1 ? 'listing' : 'listings'}` : 'Ask us'}
-                  </span>
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
-
       {/* Services */}
-      <section className="section" aria-labelledby="categories-title">
+      <section id="services" className="section" aria-labelledby="categories-title">
         <div className="container">
           <SectionHeading
             id="categories-title"
-            eyebrow="Our Services"
-            title="Comprehensive Construction & Real Estate Solutions"
-            intro={<p>Thoughtful planning, precision engineering and end-to-end execution across Jaipur and nearby towns.</p>}
+            eyebrow="Our services"
+            title="Five services, one team from first plan to final approval"
           />
           <ul role="list" className={styles.categoriesGrid}>
             {categories.map((cat) => (
-              <li key={cat.number} className="reveal">
+              <li key={cat.slug} className="reveal">
                 <Link
                   href={cat.href}
                   className={`${styles.categoryCard} ${cat.highlight ? styles.categoryCardHighlight : ''}`}
@@ -303,17 +319,124 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Sectors */}
+      <section id="sectors" className="section section--raised" aria-labelledby="sectors-title">
+        <div className="container">
+          <SectionHeading id="sectors-title" eyebrow="Sectors we serve" title="Infrastructure, industrial and mining" />
+          <ul role="list" className={styles.categoriesGrid}>
+            {sectors.map(({ icon: Icon, title: sectorTitle, body }, i) => (
+              <li key={sectorTitle} className="reveal">
+                <Link href={proposalHref} className={styles.categoryCard}>
+                  <div className={styles.categoryTop}>
+                    <span className={styles.categoryIcon} aria-hidden="true">
+                      <Icon strokeWidth={1.5} />
+                    </span>
+                    <span className={styles.categoryNumber}>{String(i + 1).padStart(2, '0')}</span>
+                  </div>
+                  <div className={styles.categoryContent}>
+                    <h3 className={styles.categoryTitle}>{sectorTitle}</h3>
+                    <p className={styles.categoryBody}>{body}</p>
+                  </div>
+                  <div className={styles.categoryFooter}>
+                    <span className={styles.categoryCta}>Discuss a project</span>
+                    <span className={styles.categoryArrow} aria-hidden="true">
+                      <ArrowUpRight strokeWidth={2} />
+                    </span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Environmental clearance: the one deep navy band */}
+      <section id="clearance" className={`section ${styles.promise}`} aria-labelledby="clearance-title">
+        <div className="container">
+          <div className={styles.promiseHead}>
+            <p className={`eyebrow ${styles.promiseEyebrow}`}>Environmental Clearance</p>
+            <h2 id="clearance-title" className={styles.promiseTitle}>
+              Clearances and compliance, <span className={styles.promiseAccent}>handled in-house</span>
+            </h2>
+            <p className={styles.promiseIntro}>
+              Most project delays come from approvals. Our environmental team works across all our services, so
+              assessments, consents and energy compliance are planned in with the design and the mine plan, not chased at
+              the end. It also takes on independent clients across infrastructure, industrial and mining projects.
+            </p>
+            <div className={styles.actions}>
+              <Link href={contactHref('other', 'environmental-clearance')} className="button button--gold">
+                Ask about a clearance <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+              </Link>
+            </div>
+          </div>
+          <ol className={styles.promiseList}>
+            {clearances.map(({ icon: Icon, title: clearanceTitle, body, sectors: tags }, i) => (
+              <li key={clearanceTitle} className={`${styles.promiseItem} reveal`}>
+                <span className={styles.promiseNum} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <Icon aria-hidden="true" className={styles.promiseIcon} strokeWidth={1.5} />
+                <h3 className={styles.promiseItemTitle}>{clearanceTitle}</h3>
+                <p className={styles.promiseBody}>{body}</p>
+                <p className={styles.promiseTag}>{tags}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* How we work: the four stages stacked in CSS 3D, layer by layer, beside the steps */}
+      <section className="section" aria-labelledby="process-title">
+        <div className={`container ${styles.build}`}>
+          <div className={styles.iso} aria-hidden="true">
+            <div className={styles.isoScene}>
+              {workSteps.map((step) => (
+                <div key={step.layer} className={styles.isoPlate}>
+                  <span className={styles.isoLabel}>{step.layer}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="stack">
+            <p className="eyebrow">How we work</p>
+            <h2 id="process-title" className={styles.h2}>
+              Plan. Comply. Build. Grow.
+            </h2>
+            <p className={blocks.lead}>
+              One team from the first site review to the last renewal, so approvals are never the reason a project
+              stops.
+            </p>
+            <ol className={styles.steps}>
+              {workSteps.map((step) => (
+                <li key={step.title} className={styles.step}>
+                  <h3 className={styles.stepTitle}>{step.title}</h3>
+                  <p className={styles.stepBody}>{step.body}</p>
+                </li>
+              ))}
+            </ol>
+            <div className={styles.actions}>
+              <Link href={proposalHref} className="button">
+                Request a proposal
+              </Link>
+              <Link href={`${routes.construction}#estimate`} className="button button--outline">
+                Estimate a build cost
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Projects: one spotlight in layered 3D, then the rest as cards */}
-      <section className="section section--raised" aria-labelledby="projects-title">
+      <section id="projects" className="section section--raised" aria-labelledby="projects-title">
         <div className="container">
           <SectionHeading
             id="projects-title"
-            eyebrow="Our projects"
-            title="New residential projects across Jaipur"
-            intro={<p>Gated villa communities, apartments and plotted developments, built and sold by us.</p>}
+            eyebrow="Projects"
+            title="Selected work"
+            intro={<p>Projects our team has planned, built and delivered in and around {site.city}.</p>}
             action={
               <Link href={routes.projects} className="link-more">
-                All projects <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+                View all projects <ArrowRight aria-hidden="true" strokeWidth={1.75} />
               </Link>
             }
           />
@@ -360,7 +483,7 @@ export default async function HomePage() {
                   <Link href={routes.project(spotlight.slug)} className="button">
                     View project <ArrowRight aria-hidden="true" strokeWidth={1.75} />
                   </Link>
-                  <Link href={contactHref('site-visit', spotlight.name)} className="button button--outline">
+                  <Link href={contactHref('site-visit', spotlight.slug)} className="button button--outline">
                     Book a site visit
                   </Link>
                 </div>
@@ -377,176 +500,39 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Promise: the one deep navy band */}
-      <section className={`section ${styles.promise}`} aria-labelledby="promise-title">
-        <div className="container">
-          <div className={styles.promiseHead}>
-            <p className={`eyebrow ${styles.promiseEyebrow}`}>Why families choose us</p>
-            <h2 id="promise-title" className={styles.promiseTitle}>
-              Real estate developers in Jaipur you can <span className={styles.promiseAccent}>visit</span>, not just call
-            </h2>
-            <p className={styles.promiseIntro}>Every project is designed, built and handed over by our own team.</p>
-          </div>
-          <ol className={styles.promiseList}>
-            {reasons.map(({ icon: Icon, title: reasonTitle, body }, i) => (
-              <li key={reasonTitle} className={`${styles.promiseItem} reveal`}>
-                <span className={styles.promiseNum} aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <Icon aria-hidden="true" className={styles.promiseIcon} strokeWidth={1.5} />
-                <h3 className={styles.promiseItemTitle}>{reasonTitle}</h3>
-                <p className={styles.promiseBody}>{body}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* Construction: a home assembled in CSS 3D, layer by layer, beside the steps */}
-      <section className="section" aria-labelledby="build-title">
-        <div className={`container ${styles.build}`}>
-          <div className={styles.iso} aria-hidden="true">
-            <div className={styles.isoScene}>
-              {buildSteps.map((step) => (
-                <div key={step.layer} className={styles.isoPlate}>
-                  <span className={styles.isoLabel}>{step.layer}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="stack">
-            <p className="eyebrow">Home construction</p>
-            <h2 id="build-title" className={styles.h2}>
-              Build your modern home on your own plot
-            </h2>
-            <p className={blocks.lead}>
-              Bring us your plot and an idea. One team, one contract and stage-wise payments, from the first drawing to
-              the day you get the keys.
-            </p>
-            <ol className={styles.steps}>
-              {buildSteps.map((step) => (
-                <li key={step.title} className={styles.step}>
-                  <h3 className={styles.stepTitle}>{step.title}</h3>
-                  <p className={styles.stepBody}>{step.body}</p>
-                </li>
-              ))}
-            </ol>
-            <p className={styles.fromRate}>
-              Packages from <strong className="nums">₹{fromRate.toLocaleString('en-IN')}</strong> per sq ft
-              <span className={blocks.note}> (indicative)</span>
-            </p>
-            <div className={styles.actions}>
-              <Link href={`${routes.construction}#estimate`} className="button">
-                Estimate your cost
-              </Link>
-              <Link href={contactHref('construction')} className="button button--outline">
-                Talk to an engineer
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Real estate for sale */}
-      <section className="section section--raised" aria-labelledby="properties-title">
+      {/* About: one founder per discipline */}
+      <section id="team" className="section" aria-labelledby="team-title">
         <div className="container">
           <SectionHeading
-            id="properties-title"
-            eyebrow="Real Estate"
-            title="Property for sale in Jaipur and nearby"
-            intro={<p>Flats, villas, plots, commercial spaces and agricultural land, each one visited and checked by our team.</p>}
+            id="team-title"
+            eyebrow="About us"
+            title="Three founders, three disciplines"
             action={
-              <Link href={routes.properties} className="link-more">
-                Browse all <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+              <Link href={routes.about} className="link-more">
+                About {site.name} <ArrowRight aria-hidden="true" strokeWidth={1.75} />
               </Link>
             }
           />
-          <div className="grid-cards">
-            {properties.slice(0, 3).map((property) => (
-              <PropertyCard key={property.slug} item={property} locality={localityOf(property.localitySlug)} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Locations: Jaipur localities, then the corridors and towns around the city */}
-      <section className="section section--ivory" aria-labelledby="locations-title">
-        <div className={`container ${styles.places}`}>
-          <div className="stack">
-            <p className="eyebrow">Locations</p>
-            <h2 id="locations-title" className={styles.h2}>
-              Homes in Jaipur and the towns around it
-            </h2>
-            <p className={blocks.lead}>From established Vaishali Nagar to fast-growing Jagatpura, Ajmer Road and beyond.</p>
-            <ul role="list" className={styles.localityList}>
-              {localities.map((locality) => (
-                <li key={locality.slug}>
-                  <Link href={routes.location(locality.slug)} className={styles.localityRow}>
-                    <span className={styles.localityName}>{locality.name}</span>
-                    <span className={styles.localityZone}>{locality.zone}</span>
-                    <ArrowUpRight aria-hidden="true" className={styles.localityArrow} strokeWidth={1.75} />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.nearby}>
-            <div className={styles.nearbyMedia}>
-              <Image src={photos.jaipurAerial.src} alt={photos.jaipurAerial.alt} fill sizes="(min-width: 60rem) 45vw, 100vw" placeholder="blur" />
-            </div>
-            <div className={styles.nearbyCard}>
-              <h3 className={styles.nearbyTitle}>Around Jaipur</h3>
-              <p className={styles.nearbyBody}>
-                We also build and sell along the highway corridors and in nearby towns, from Chaksu and Niwai to Malpura.
-              </p>
-              <p className={styles.nearbyLabel}>Corridors</p>
-              <ul role="list" className={styles.tags}>
-                {corridors.map((name) => (
-                  <li key={name}>{name}</li>
-                ))}
-              </ul>
-              <p className={styles.nearbyLabel}>Towns</p>
-              <ul role="list" className={styles.tags}>
-                {towns.map((town) => (
-                  <li key={town.slug}>
-                    <Link href={routes.town(town.slug)} className={styles.tagLink}>
-                      {town.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link href={routes.nearJaipur} className={`link-more ${styles.nearbyMore}`}>
-                Property near Jaipur <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Guides */}
-      <section className="section" aria-labelledby="guides-title">
-        <div className="container">
-          <SectionHeading
-            id="guides-title"
-            eyebrow="Guides"
-            title="Before you buy or build"
-            action={
-              <Link href={routes.blog} className="link-more">
-                All guides <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            }
-          />
-          <ul role="list" className={`grid-cards ${styles.posts}`}>
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <Link href={routes.post(post.slug)} className={styles.post}>
-                  <span className={styles.postMedia}>
-                    <Image src={post.cover.src} alt="" fill sizes="(min-width: 60rem) 30vw, 100vw" placeholder="blur" />
-                  </span>
-                  <span className={styles.postMeta}>
-                    <time dateTime={post.published}>{formatDate(post.published)}</time> · {post.readingMinutes} min read
-                  </span>
-                  <h3 className={styles.postTitle}>{post.title}</h3>
+          <ul role="list" className={styles.categoriesGrid}>
+            {disciplines.map(({ icon: Icon, title: disciplineTitle, body }, i) => (
+              <li key={disciplineTitle} className="reveal">
+                <Link href={routes.about} className={styles.categoryCard}>
+                  <div className={styles.categoryTop}>
+                    <span className={styles.categoryIcon} aria-hidden="true">
+                      <Icon strokeWidth={1.5} />
+                    </span>
+                    <span className={styles.categoryNumber}>{String(i + 1).padStart(2, '0')}</span>
+                  </div>
+                  <div className={styles.categoryContent}>
+                    <h3 className={styles.categoryTitle}>Head, {disciplineTitle}</h3>
+                    <p className={styles.categoryBody}>{body}</p>
+                  </div>
+                  <div className={styles.categoryFooter}>
+                    <span className={styles.categoryCta}>Meet the team</span>
+                    <span className={styles.categoryArrow} aria-hidden="true">
+                      <ArrowUpRight strokeWidth={2} />
+                    </span>
+                  </div>
                 </Link>
               </li>
             ))}
@@ -556,9 +542,9 @@ export default async function HomePage() {
 
       <CtaBand
         id="cta-title"
-        title="See your future home in person"
-        body="Book a free site visit. Our team will show you the project, the plans and the prices, with no pressure to book."
-        primary={{ href: contactHref('site-visit'), label: 'Book a site visit' }}
+        title="Tell us about your project"
+        body="Send the location, type of project and your timeline. We will reply with the approvals needed and a scope of work."
+        primary={{ href: proposalHref, label: 'Request a proposal' }}
         secondary={{ href: routes.contact, label: 'Contact us' }}
       />
     </>

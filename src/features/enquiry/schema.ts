@@ -1,7 +1,7 @@
 import 'server-only'
 import { z } from 'zod'
 import { isSlug } from '@/lib/slug'
-import { CONTACT_PREFERENCES, ENQUIRY_TOPICS, VISIT_SLOTS, VISIT_WINDOW_DAYS, type FieldErrors } from './constants'
+import { CONTACT_PREFERENCES, ENQUIRY_TOPICS, VISIT_SLOTS, VISIT_WINDOW_DAYS, indiaDay, type FieldErrors } from './constants'
 
 /** Server-side validation: the only check that counts. Client code imports ./constants instead. */
 
@@ -41,13 +41,13 @@ export const emailField = z.email('Please enter a valid email address.').max(254
 
 export const consentField = z.literal('on', { error: 'Please agree so we can contact you.' })
 
-function isFutureVisitDate(value: string): boolean {
+export function isFutureVisitDate(value: string, now: Date = new Date()): boolean {
   if (!ISO_DATE.test(value)) return false
   const date = Date.parse(`${value}T00:00:00Z`)
   // Reject impossible dates (e.g. 31 Feb) that some engines silently roll into the next month.
   if (Number.isNaN(date) || new Date(date).toISOString().slice(0, 10) !== value) return false
-  const today = Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate())
-  return date >= today && date <= today + VISIT_WINDOW_DAYS * 86_400_000
+  // ISO dates compare correctly as strings.
+  return value >= indiaDay(0, now) && value <= indiaDay(VISIT_WINDOW_DAYS, now)
 }
 
 export const enquirySchema = z

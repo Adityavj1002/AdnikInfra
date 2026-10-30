@@ -1,17 +1,17 @@
 import { site } from '@/config/site'
 import { ogContentType, ogSize, renderOgCard } from '@/seo/og-image'
 
-export const alt = `${site.name}: ${site.descriptor} in ${site.city}`
+export const alt = `${site.name}: infrastructure consultants in ${site.city}`
 export const size = ogSize
 export const contentType = ogContentType
 
 export default function Image() {
   return renderOgCard({
-    eyebrow: `${site.city} · Builders & real estate`,
-    title: 'Modern homes by trusted builders in Jaipur',
+    eyebrow: `${site.city} · Infrastructure consultants`,
+    title: 'Plan. Comply. Build. Grow.',
     facts: [
-      { term: 'Projects', detail: 'Villas · Apartments · Plots' },
-      { term: 'Construction', detail: 'Build on your plot' },
+      { term: 'Services', detail: 'Advisory · Clearance · Project management' },
+      { term: 'Sectors', detail: 'Infrastructure · Industrial · Mining' },
     ],
   })
 }

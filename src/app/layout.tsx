@@ -38,7 +38,8 @@ export const viewport: Viewport = {
   // Full-bleed on notched phones; safe-area insets keep content clear.
   viewportFit: 'cover',
   themeColor: '#ffffff',
-  colorScheme: 'light',
+  // "only" also opts out of Chrome's auto-darkening, which would invert the cream and gold palette.
+  colorScheme: 'only light',
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

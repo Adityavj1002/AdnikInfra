@@ -19,6 +19,13 @@
     font-size: var(--text-sm);
   }
 
+  /* Phones on project and property pages: clear the pinned action bar so it never hides the legal links. */
+  @media (max-width: 47.99rem) {
+    :global(html:has([data-action-bar])) .footer {
+      padding-block-end: calc(var(--space-6) + var(--tap) + var(--space-4) + 1px + var(--safe-bottom));
+    }
+  }
+
   .footer a {
     color: inherit;
   }

@@ -58,7 +58,7 @@ export default async function PropertyPage({ params }: PageProps) {
   const path = routes.property(property.slug)
   const crumbs = [
     { name: 'Home', path: routes.home },
-    { name: 'Properties', path: routes.properties },
+    { name: 'Real Estate', path: routes.properties },
     { name: property.title, path },
   ] as const
 

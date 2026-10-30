@@ -55,6 +55,11 @@ test('contact: deep links name the project and ignore junk parameters', async ({
   await page.goto('/contact?topic=site-visit&ref=vijay-aura-villas')
   await expect(page.getByText('Enquiring about Vijay Aura Villas')).toBeVisible()
 
+  // Town pages link the same way.
+  await page.goto('/locations/near-jaipur/chaksu')
+  await page.getByRole('link', { name: 'Plan a visit in Chaksu' }).click()
+  await expect(page.getByText('Enquiring about Chaksu, near Jaipur')).toBeVisible()
+
   await page.goto('/contact?topic=<script>&ref=../../etc/passwd')
   await expect(page.getByText(/Enquiring about/)).toHaveCount(0)
   await expect(page.locator('body')).not.toContainText('<script>')

@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { PageHero } from '@/components/ui/PageHero'
 import blocks from '@/components/ui/blocks.module.css'
 import { site } from '@/config/site'
-import { getProject, getProperty } from '@/content/repository'
+import { resolveEnquiryAbout } from '@/features/enquiry/about'
 import { ENQUIRY_TOPICS } from '@/features/enquiry/constants'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { isSlug } from '@/lib/slug'
@@ -33,21 +33,13 @@ type PageProps = Readonly<{ searchParams: Promise<Record<string, string | string
 
 export const metadata = buildMetadata({ title, description, path: routes.contact })
 
-async function resolveAbout(ref: string | undefined) {
-  if (!ref) return undefined
-  const project = await getProject(ref)
-  if (project) return { slug: project.slug, name: project.name }
-  const property = await getProperty(ref)
-  return property && { slug: property.slug, name: property.title }
-}
-
 export default async function ContactPage({ searchParams }: PageProps) {
   const raw = await searchParams
   const { topic, ref } = paramsSchema.parse({
     topic: typeof raw.topic === 'string' ? raw.topic : undefined,
     ref: typeof raw.ref === 'string' ? raw.ref : undefined,
   })
-  const about = await resolveAbout(ref)
+  const about = await resolveEnquiryAbout(ref)
   const { email, phone, whatsapp, hours } = site.contact
   const address = site.business.address
 

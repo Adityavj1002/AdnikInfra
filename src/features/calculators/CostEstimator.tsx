@@ -25,9 +25,13 @@ export function estimateMonths(floors: number): readonly [number, number] {
   return [6 + floors * 2, 9 + floors * 3]
 }
 
+const clampArea = (sqft: number) => Math.min(10000, Math.max(0, Math.round(sqft) || 0))
+
 export function CostEstimator({ packages }: Readonly<{ packages: readonly ConstructionPackage[] }>) {
   const id = useId()
-  const [area, setArea] = useState(1500)
+  // Kept as typed, so the box can be cleared and retyped without snapping to 0.
+  const [areaText, setAreaText] = useState('1500')
+  const area = clampArea(Number(areaText))
   const [floors, setFloors] = useState(2)
   const [packageSlug, setPackageSlug] = useState<ConstructionPackage['slug']>('premium')
 
@@ -51,8 +55,8 @@ export function CostEstimator({ packages }: Readonly<{ packages: readonly Constr
             min={300}
             max={10000}
             step={50}
-            value={area}
-            onChange={(e) => setArea(Math.min(10000, Math.max(0, Math.round(Number(e.target.value) || 0))))}
+            value={areaText}
+            onChange={(e) => setAreaText(e.target.value === '' ? '' : String(clampArea(Number(e.target.value))))}
           />
           <p className="field__hint">Usually 50–75% of your plot area.</p>
         </div>

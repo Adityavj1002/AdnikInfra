@@ -122,8 +122,9 @@
     padding-inline-start: 1.1em;
   }
 
+  /* Block, not inline-block: an inline-block sits the bullet on its last line when it wraps. */
   .summaryList a {
-    display: inline-block;
+    display: block;
     min-block-size: 1.75rem;
     color: var(--text-error);
     font-weight: 600;

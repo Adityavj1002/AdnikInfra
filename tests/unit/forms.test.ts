@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { compactPhone, enquirySchema } from '@/features/enquiry/schema'
+import { indiaDay } from '@/features/enquiry/constants'
+import { compactPhone, enquirySchema, isFutureVisitDate } from '@/features/enquiry/schema'
 import { isSlug } from '@/lib/slug'
 import { normalizeLine, normalizeMultiline, pickFields } from '@/security/normalize'
 
@@ -13,11 +14,7 @@ const valid = {
   consent: 'on',
 }
 
-function isoInDays(days: number): string {
-  const date = new Date()
-  date.setUTCDate(date.getUTCDate() + days)
-  return date.toISOString().slice(0, 10)
-}
+const isoInDays = (days: number) => indiaDay(days)
 
 describe('enquirySchema', () => {
   it('accepts a minimal phone-first enquiry', () => {
@@ -80,6 +77,16 @@ describe('enquirySchema', () => {
     const soon = isoInDays(5)
     expect(enquirySchema.safeParse({ ...visit, visitDate: `${soon.slice(0, 8)}32` }).success).toBe(false)
     expect(enquirySchema.safeParse({ ...visit, visitSlot: 'midnight' }).success).toBe(false)
+  })
+
+  it('counts visit days in India, not UTC', () => {
+    // 00:30 IST on 26 October is still 25 October in UTC.
+    const afterMidnight = new Date('2026-10-25T19:00:00Z')
+    expect(indiaDay(0, afterMidnight)).toBe('2026-10-26')
+    expect(isFutureVisitDate('2026-10-25', afterMidnight)).toBe(false)
+    expect(isFutureVisitDate('2026-10-26', afterMidnight)).toBe(true)
+    expect(isFutureVisitDate(indiaDay(60, afterMidnight), afterMidnight)).toBe(true)
+    expect(isFutureVisitDate(indiaDay(61, afterMidnight), afterMidnight)).toBe(false)
   })
 
   it('requires consent', () => {

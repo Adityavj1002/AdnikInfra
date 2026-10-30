@@ -219,9 +219,11 @@
       gap: var(--space-12);
     }
 
+    /* Same top space as the first .block beside it, so the card doesn't touch the gallery. */
     .sticky {
       position: sticky;
       inset-block-start: calc(var(--header-height) + var(--space-6));
+      margin-block-start: var(--space-10);
     }
   }
 

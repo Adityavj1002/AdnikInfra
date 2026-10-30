@@ -36,6 +36,18 @@ export const visitSlotLabels: Readonly<Record<VisitSlot, string>> = {
 /** Site visits can be requested up to this many days ahead. */
 export const VISIT_WINDOW_DAYS = 60
 
+const indiaDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' })
+
+/**
+ * Calendar date (YYYY-MM-DD) in India, `offsetDays` from today. Visits are booked in IST
+ * whatever the server's or browser's clock says, so "today" flips at midnight in Jaipur.
+ */
+export function indiaDay(offsetDays = 0, now: Date = new Date()): string {
+  const date = new Date(`${indiaDate.format(now)}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + offsetDays)
+  return date.toISOString().slice(0, 10)
+}
+
 export type FieldErrors = Partial<Record<string, string>>
 
 export type FormState =

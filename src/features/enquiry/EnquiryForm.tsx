@@ -11,6 +11,7 @@ import {
   ENQUIRY_TOPICS,
   VISIT_SLOTS,
   VISIT_WINDOW_DAYS,
+  indiaDay,
   initialFormState,
   preferenceLabels,
   topicLabels,
@@ -52,12 +53,6 @@ type Props = Readonly<{
   /** Compact: a short site-visit card for project and property pages. */
   variant?: 'full' | 'compact'
 }>
-
-function isoDay(offsetDays: number): string {
-  const date = new Date()
-  date.setUTCDate(date.getUTCDate() + offsetDays)
-  return date.toISOString().slice(0, 10)
-}
 
 /**
  * One form for every enquiry. Works without JavaScript (the server action handles a plain
@@ -144,7 +139,7 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
       <div className={`${styles.row} ${styles.visit}`}>
         <Field name="visitDate" label={labels.visitDate} optional error={errors.visitDate}>
           {(control) => (
-            <input {...control} className="input" type="date" min={isoDay(0)} max={isoDay(VISIT_WINDOW_DAYS)} defaultValue={values.visitDate} />
+            <input {...control} className="input" type="date" min={indiaDay(0)} max={indiaDay(VISIT_WINDOW_DAYS)} defaultValue={values.visitDate} />
           )}
         </Field>
         <Field name="visitSlot" label={labels.visitSlot} optional error={errors.visitSlot}>

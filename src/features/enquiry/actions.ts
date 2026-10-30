@@ -3,6 +3,7 @@
 import { headers } from 'next/headers'
 import { normalizeLine, normalizeMultiline, pickFields } from '@/security/normalize'
 import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { resolveEnquiryAbout } from './about'
 import type { FormState } from './constants'
 import { deliverLead, newReference } from './lead-sink'
 import { ENQUIRY_FIELDS, enquirySchema, toFieldErrors } from './schema'
@@ -54,11 +55,13 @@ export async function submitEnquiry(_previous: FormState, form: FormData): Promi
   }
 
   const { data } = parsed
+  // The team reads "Chaksu, near Jaipur", not the slug; unknown slugs pass through as typed.
+  const about = await resolveEnquiryAbout(data.ref)
   const delivered = await deliverLead(
     {
       kind: data.topic === 'site-visit' ? 'site-visit' : 'enquiry',
       topic: data.topic,
-      ref: data.ref,
+      ref: about?.name ?? data.ref,
       name: data.name,
       phone: data.phone,
       email: data.email,
