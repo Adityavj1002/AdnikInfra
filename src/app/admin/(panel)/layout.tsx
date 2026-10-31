@@ -24,9 +24,10 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
       <div className={styles.bar}>
         <nav aria-label="Admin">
           <ul role="list" className={styles.nav}>
+            {/* Every prefetch of a panel page would run the session check and its queries. */}
             {links.map((link) => (
               <li key={link.href}>
-                <Link href={link.href}>{link.label}</Link>
+                <Link prefetch={false} href={link.href}>{link.label}</Link>
               </li>
             ))}
           </ul>

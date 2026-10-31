@@ -39,6 +39,18 @@ test.describe('security in the browser', () => {
     })
   }
 
+  test('pages refuse methods they have no use for', async ({ request }) => {
+    for (const method of ['put', 'delete', 'patch'] as const) {
+      expect((await request[method]('/')).status(), method).toBe(405)
+    }
+  })
+
+  test('/sectors leads to the sectors section', async ({ request }) => {
+    const response = await request.get('/sectors', { maxRedirects: 0 })
+    expect(response.status()).toBe(307)
+    expect(response.headers().location).toBe('/#sectors')
+  })
+
   test('external links cannot reach back into the page', async ({ page }) => {
     await page.goto('/')
     const unsafe = await page.locator('a[target="_blank"]:not([rel*="noopener"])').count()

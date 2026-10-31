@@ -2,7 +2,7 @@
 
 import { Send } from 'lucide-react'
 import Link from 'next/link'
-import { useActionState, useState, type FocusEvent, type FormEvent } from 'react'
+import { startTransition, useActionState, useState, type FocusEvent, type FormEvent } from 'react'
 import { site } from '@/config/site'
 import { routes } from '@/lib/routes'
 import { submitEnquiry } from './actions'
@@ -109,11 +109,14 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     const found = validateEnquiry(readForm(event.currentTarget))
     setLive(Object.fromEntries(CHECKED_FIELDS.map((field) => [field, found[field]])))
+    // Dispatched by hand: React resets a form after a plain action, which clears selects and radios.
+    event.preventDefault()
     if (Object.keys(found).length > 0) {
-      event.preventDefault()
       setSummary(found)
     } else {
       setSummary(null)
+      const data = new FormData(event.currentTarget)
+      startTransition(() => action(data))
     }
   }
 
@@ -274,7 +277,7 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
             name="message"
             label={labels.message}
             optional={!messageRequired}
-            hint="Budget, preferred area, plot size, or anything else that helps us help you."
+            hint={topicNow === 'proposal' ? 'Location, type of project and your timeline.' : 'Budget, preferred area, plot size, or anything else that helps us help you.'}
             error={errors.message}
           >
             {(control) => (

@@ -18,6 +18,8 @@ import { LISTING_FIELDS, listingSchema, listingSlug } from './schema'
 
 const ticketLimit = createRateLimiter({ limit: 60, windowMs: 10 * 60_000 })
 const submitLimit = createRateLimiter({ limit: 5, windowMs: 60 * 60_000 })
+// Spoofed client keys must not let anyone flood one inbox with confirmation emails.
+const perAddress = createRateLimiter({ limit: 5, windowMs: 60 * 60_000 })
 const confirmLimit = createRateLimiter({ limit: 20, windowMs: 10 * 60_000 })
 const globalLimit = createRateLimiter({ limit: 300, windowMs: 10 * 60_000 })
 
@@ -77,6 +79,7 @@ export async function submitListing(_previous: ListingFormState, form: FormData)
   }
 
   const { data } = parsed
+  if (!perAddress(data.sellerEmail).allowed) return { status: 'rate-limited' }
   const reference = newReference('MKT')
   const token = randomToken()
   try {
@@ -135,7 +138,10 @@ export async function confirmListing(_previous: ConfirmState, form: FormData): P
     const result = await store.confirmListing(hashToken(token), new Date())
     if (result === 'expired') return { status: 'expired' }
     if (!result) return { status: 'invalid' }
-    await notifyConfirmed(store, result)
+    // The listing is already confirmed: a mail problem must not tell the seller it failed.
+    await notifyConfirmed(store, result).catch((error: unknown) => {
+      console.error(`[marketplace] notify failed ${JSON.stringify({ reference: result.reference, error: String(error).slice(0, 120) })}`)
+    })
     return { status: 'confirmed', reference: result.reference }
   } catch (error) {
     console.error(`[marketplace] confirm failed ${JSON.stringify({ error: String(error).slice(0, 120) })}`)

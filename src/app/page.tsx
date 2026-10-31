@@ -99,7 +99,7 @@ const serviceIcons: Readonly<Record<string, typeof BuildingIcon>> = {
 const categories = services.map((service) => ({ ...service, icon: serviceIcons[service.slug] ?? BuildingIcon }))
 
 /** Where an enquiry with no particular service in mind goes: the proposal request. */
-const proposalHref = contactHref('other')
+const proposalHref = contactHref('proposal')
 
 const sectors = [
   {

@@ -219,7 +219,7 @@ export default function EnvironmentalClearancePage() {
         id="enquiry"
         title="Not sure which approvals you need?"
         body="Share your project type and location and we will list the clearances that apply."
-        primary={{ href: contactHref('other', 'environmental-clearance'), label: 'Ask our consultants' }}
+        primary={{ href: contactHref('proposal', 'environmental-clearance'), label: 'Ask our consultants' }}
       />
     </>
   )

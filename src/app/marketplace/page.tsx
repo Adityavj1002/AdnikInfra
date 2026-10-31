@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -27,10 +28,12 @@ const BUDGETS = [
 const filterSchema = z.object({
   kind: z.enum(LISTING_KINDS).optional().catch(undefined),
   purpose: z.enum(LISTING_PURPOSES).optional().catch(undefined),
-  city: z.string().max(80).regex(/^[\p{L}\p{M}\d\s.'-]+$/u).optional().catch(undefined),
+  city: z.string().trim().max(80).regex(/^[\p{L}\p{M}\d\s.'-]+$/u).optional().catch(undefined),
   budget: z.coerce.number().refine((value) => BUDGETS.some((b) => b.value === value)).optional().catch(undefined),
   page: z.coerce.number().int().min(1).max(1000).optional().catch(undefined),
 })
+
+const FILTER_KEYS = ['kind', 'purpose', 'city', 'budget', 'page'] as const
 
 const description =
   'Property marketplace: plots, homes, shops and land listed by owners and agents. Our team checks and approves every listing before it goes live.'
@@ -48,7 +51,8 @@ export async function generateMetadata({ searchParams }: Readonly<{ searchParams
 }
 
 export default async function MarketplacePage({ searchParams }: Readonly<{ searchParams: Search }>) {
-  const filters = filterSchema.parse(await searchParams)
+  const raw = await searchParams
+  const filters = filterSchema.parse(raw)
   const page = filters.page ?? 1
   let listings: readonly Listing[] = []
   let total = 0
@@ -79,6 +83,10 @@ export default async function MarketplacePage({ searchParams }: Readonly<{ searc
     const query = params.toString()
     return query ? `${routes.marketplace}?${query}` : routes.marketplace
   }
+
+  // The filter form submits every field: drop the empty and invalid ones for a clean, shareable URL.
+  const kept: Readonly<Record<string, unknown>> = filters
+  if (FILTER_KEYS.some((key) => raw[key] !== undefined && kept[key] === undefined)) redirect(pageHref(page))
 
   return (
     <>

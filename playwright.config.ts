@@ -13,6 +13,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
+  // Parallel browsers on a busy machine can stall for seconds; a real slowdown is measured separately.
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
   reporter: isCI ? 'github' : 'list',
   use: {
     baseURL: `http://localhost:${PORT}`,

@@ -87,6 +87,15 @@ const envSchema = z
         if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'Required when MARKETPLACE_MODE is supabase.' })
       }
     }
+    if (env.MARKETPLACE_MODE === 'supabase' && env.NODE_ENV === 'production') {
+      // Every emailed link is built from SITE_URL: localhost would send sellers nowhere.
+      if (!env.SITE_URL.startsWith('https://')) {
+        ctx.addIssue({ code: 'custom', path: ['SITE_URL'], message: 'The live marketplace needs an https SITE_URL: emails link to it.' })
+      }
+      if (env.LEADS_MODE !== 'email') {
+        ctx.addIssue({ code: 'custom', path: ['LEADS_MODE'], message: 'The live marketplace needs SMTP: sellers confirm by email.' })
+      }
+    }
     if (env.MARKETPLACE_MODE === 'memory' && env.SITE_INDEXABLE) {
       ctx.addIssue({ code: 'custom', path: ['MARKETPLACE_MODE'], message: 'memory is for development and tests, not a live site.' })
     }

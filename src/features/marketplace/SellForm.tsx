@@ -3,7 +3,7 @@
 import { Send, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useActionState, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react'
+import { startTransition, useActionState, useRef, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react'
 import { Honeypot, ErrorSummary, Field } from '@/features/enquiry/FormParts'
 import formStyles from '@/features/enquiry/Form.module.css'
 import { compactPhone, isEmail, isPhone, isPersonName } from '@/features/enquiry/validation'
@@ -156,7 +156,9 @@ export function SellForm({ photoBase }: Readonly<{ photoBase: string }>) {
     const room = PHOTOS_MAX - photos.length - uploading
     if (files.length > room) setUploadError(`You can add up to ${PHOTOS_MAX} photos.`)
     for (const file of files.slice(0, Math.max(0, room))) {
-      if (!(PHOTO_TYPES as readonly string[]).includes(file.type)) {
+      // Some browsers report no type for HEIC photos from iPhones.
+      const heic = file.type === '' && /\.hei[cf]$/i.test(file.name)
+      if (!heic && !(PHOTO_TYPES as readonly string[]).includes(file.type)) {
         setUploadError(`${file.name}: please use a JPG, PNG, WebP or HEIC photo.`)
         continue
       }
@@ -190,11 +192,14 @@ export function SellForm({ photoBase }: Readonly<{ photoBase: string }>) {
     const found = validate(readForm(event.currentTarget))
     if (photos.length === 0) found.photos = 'Please add at least one photo of the property.'
     setLive(Object.fromEntries([...CHECKED, 'photos'].map((field) => [field, found[field]])))
+    // Dispatched by hand: React resets a form after a plain action, which clears the selects.
+    event.preventDefault()
     if (Object.keys(found).length > 0 || uploading > 0) {
-      event.preventDefault()
       setSummary(found)
     } else {
       setSummary(null)
+      const data = new FormData(event.currentTarget)
+      startTransition(() => action(data))
     }
   }
 
@@ -401,7 +406,7 @@ export function SellForm({ photoBase }: Readonly<{ photoBase: string }>) {
           </p>
         )}
         <label className="choice" htmlFor="field-consent">
-          <input id="field-consent" name="consent" type="checkbox" required {...(errors.consent ? { 'aria-invalid': true, 'aria-describedby': 'field-consent-error' } : {})} />
+          <input id="field-consent" name="consent" type="checkbox" required defaultChecked={values.consent === 'on'} {...(errors.consent ? { 'aria-invalid': true, 'aria-describedby': 'field-consent-error' } : {})} />
           <span>I have the right to list this property, the details are true, and the team may contact me about it.</span>
         </label>
         <p className="field__hint">

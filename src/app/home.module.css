@@ -446,6 +446,21 @@
     }
   }
 
+  /* Five cards: three above two, with no hole in the second row. */
+  @media (min-width: 64rem) {
+    .categoriesGrid:has(> :nth-child(5):last-child) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .categoriesGrid:has(> :nth-child(5):last-child) > * {
+      grid-column: span 2;
+    }
+
+    .categoriesGrid:has(> :nth-child(5):last-child) > :nth-last-child(-n + 2) {
+      grid-column: span 3;
+    }
+  }
+
   .categoryCard {
     position: relative;
     display: flex;

@@ -22,6 +22,27 @@ test.describe('mobile menu', () => {
   })
 })
 
+test.describe('mobile menu on the home page', () => {
+  test.use({ viewport: { width: 390, height: 844 } })
+
+  test('closes when a link jumps to a section of the same page', async ({ page }) => {
+    await page.goto('/')
+    await page.getByRole('button', { name: 'Open menu' }).click()
+    await page.locator('#site-menu').getByRole('link', { name: /Services/ }).click()
+    await expect(page.locator('#site-menu')).toBeHidden()
+    await expect(page).toHaveURL(/#services$/)
+  })
+})
+
+test('request a proposal opens the form on the right topic, with the message required', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: 'Request a proposal' }).first().click()
+  await expect(page.getByRole('radio', { name: 'Requesting a proposal' })).toBeChecked()
+  const message = page.locator('label[for="field-message"]')
+  await expect(message).not.toContainText('(optional)')
+  await expect(page.getByText('Location, type of project and your timeline.')).toBeVisible()
+})
+
 test('project gallery opens a lightbox that arrows and Escape control', async ({ page }) => {
   await page.goto('/projects/vijay-aura-villas')
   await page.getByRole('button', { name: /View all 6 photos/ }).click()

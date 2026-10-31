@@ -27,7 +27,7 @@ export default async function AdminOverviewPage() {
       <ul role="list" className={styles.stats}>
         {stats.map((stat) => (
           <li key={stat.label}>
-            <Link href={stat.href} className={styles.stat}>
+            <Link prefetch={false} href={stat.href} className={styles.stat}>
               <span className={styles.statValue}>{stat.value}</span>
               <span className={styles.statLabel}>{stat.label}</span>
             </Link>
@@ -48,7 +48,7 @@ export default async function AdminOverviewPage() {
                     {listingKindLabels[listing.kind]} · {listingPlace(listing)} · {listingPrice(listing)} · {listing.reference}
                   </p>
                 </div>
-                <Link href={routes.adminListing(listing.id)} className="button button--small">Review</Link>
+                <Link prefetch={false} href={routes.adminListing(listing.id)} className="button button--small">Review</Link>
               </li>
             ))}
           </ul>

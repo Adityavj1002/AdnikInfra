@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: '64kb' },
     proxyClientMaxBodySize: '128kb',
   },
+  async redirects() {
+    // Sectors live on the home page; each has its own page below /sectors/.
+    return [{ source: '/sectors', destination: '/#sectors', permanent: false }]
+  },
   async headers() {
     return [{ source: '/:path*', headers: [...staticSecurityHeaders] }]
   },

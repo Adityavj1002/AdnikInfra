@@ -20,7 +20,7 @@ export default async function AdminListingsPage({ searchParams }: Readonly<{ sea
       <h1 className={styles.title}>Listings</h1>
       <nav aria-label="Filter by status" className={styles.tabs}>
         {LISTING_STATUSES.map((value) => (
-          <Link key={value} href={`${routes.adminListings}?status=${value}`} className={styles.tab} {...(value === status ? { 'aria-current': 'page' as const } : {})}>
+          <Link prefetch={false} key={value} href={`${routes.adminListings}?status=${value}`} className={styles.tab} {...(value === status ? { 'aria-current': 'page' as const } : {})}>
             {listingStatusLabels[value]}
           </Link>
         ))}
@@ -37,15 +37,15 @@ export default async function AdminListingsPage({ searchParams }: Readonly<{ sea
                   {listingKindLabels[listing.kind]} · {listingPlace(listing)} · {listingPrice(listing)} · {listing.reference}
                 </p>
               </div>
-              <Link href={routes.adminListing(listing.id)} className="button button--outline button--small">Open</Link>
+              <Link prefetch={false} href={routes.adminListing(listing.id)} className="button button--outline button--small">Open</Link>
             </li>
           ))}
         </ul>
       )}
       {total > PAGE_SIZE && (
         <nav aria-label="Pages" className={styles.tabs}>
-          {page > 1 && <Link href={href(page - 1)} className={styles.tab}>Previous</Link>}
-          {page * PAGE_SIZE < total && <Link href={href(page + 1)} className={styles.tab}>Next</Link>}
+          {page > 1 && <Link prefetch={false} href={href(page - 1)} className={styles.tab}>Previous</Link>}
+          {page * PAGE_SIZE < total && <Link prefetch={false} href={href(page + 1)} className={styles.tab}>Next</Link>}
         </nav>
       )}
     </>

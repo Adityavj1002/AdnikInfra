@@ -51,6 +51,40 @@ export function createRateLimiter({
   }
 }
 
+export type FailureCounter = Readonly<{
+  blocked: (key: string) => boolean
+  fail: (key: string) => void
+  clear: (key: string) => void
+}>
+
+/**
+ * Counts failures only, for sign-ins: someone who keeps getting their password right is never
+ * locked out, and a success wipes the count.
+ */
+export function createFailureCounter({ limit, windowMs, maxKeys = 10_000, now = Date.now }: RateLimiterOptions): FailureCounter {
+  const buckets = new Map<string, Bucket>()
+  const live = (key: string) => {
+    const bucket = buckets.get(key)
+    return bucket && bucket.resetAt > now() ? bucket : undefined
+  }
+  return {
+    blocked: (key) => (live(key)?.count ?? 0) >= limit,
+    fail: (key) => {
+      const bucket = live(key) ?? { count: 0, resetAt: now() + windowMs }
+      bucket.count += 1
+      buckets.delete(key)
+      buckets.set(key, bucket)
+      if (buckets.size > maxKeys) {
+        const oldest = buckets.keys().next().value
+        if (oldest !== undefined) buckets.delete(oldest)
+      }
+    },
+    clear: (key) => {
+      buckets.delete(key)
+    },
+  }
+}
+
 /**
  * Best-effort client key for abuse limits. Forwarding headers are client-controlled
  * unless set by a trusted edge, so this must never be used for authorization.

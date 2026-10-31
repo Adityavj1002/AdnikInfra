@@ -8,7 +8,7 @@ import { routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { buildTitle } from '@/seo/titles'
 
-const UPDATED = '24 October 2026'
+const UPDATED = '31 October 2026'
 const description = `How ${site.name} collects, uses and protects the details you share through our enquiry, site-visit and listing-alert forms.`
 
 export const metadata = buildMetadata({ ...buildTitle({ name: 'Privacy policy' }), description, path: routes.privacy })
@@ -82,7 +82,12 @@ export default function PrivacyPage() {
                   about, and your message.
                 </li>
                 <li>
-                  <strong>Listing alerts:</strong> your email address.
+                  <strong>Marketplace listings:</strong> your name, mobile number, email address and whether you are the
+                  owner, an agent or a builder, plus the property details and photos you add. The details and photos are
+                  published once approved. Your phone and email are not shown publicly.
+                </li>
+                <li>
+                  <strong>Newsletter:</strong> your email address, and when you subscribed and confirmed.
                 </li>
                 <li>
                   <strong>Technical data:</strong> like every website, our servers briefly see your IP address and browser
@@ -95,7 +100,9 @@ export default function PrivacyPage() {
               </h2>
               <p>
                 To reply to your enquiry, arrange site visits, send you the information or listings you asked for, and keep
-                a record of our conversation. We process your details because you give us your consent when you submit a
+                a record of our conversation. We use marketplace details to verify and review your listing and to tell you
+                the outcome, and newsletter addresses to send new listings and offers to people who confirmed they want
+                them. We process your details because you give us your consent when you submit a
                 form. You can withdraw it at any time.
               </p>
 
@@ -104,7 +111,8 @@ export default function PrivacyPage() {
               </h2>
               <p>
                 Our sales and construction team. Your enquiry reaches us by email, so our email provider and our website host
-                process it on our behalf, under contract, and for no other purpose. We share details with government
+                process it on our behalf, under contract, and for no other purpose. Marketplace records are stored with our
+                database provider (Supabase) and listing photos with our image host (Cloudinary), on the same terms. We share details with government
                 authorities only when the law requires it. We never sell or rent your details, and we never add you to a
                 marketing list you didn’t ask to join.
               </p>
@@ -114,16 +122,18 @@ export default function PrivacyPage() {
               </h2>
               <p>
                 For as long as we need it to deal with your enquiry and any follow-up, and then we delete it, unless the law
-                requires us to keep it longer (for example, the records of a property sale). Listing-alert emails are kept
-                until you reply “stop”.
+                requires us to keep it longer (for example, the records of a property sale). Listings are kept while they are
+                live and for our records afterwards; ask us and we will remove yours. Newsletter addresses are kept until you
+                use the unsubscribe link in any of our emails.
               </p>
 
               <h2 id="cookies" className={legal.section}>
                 Cookies and tracking
               </h2>
               <p>
-                This website sets no advertising or analytics cookies and runs no third-party trackers. Maps open on Google’s
-                own site only when you choose to follow a map link.
+                This website sets no advertising or analytics cookies and runs no third-party trackers. The only cookie is a
+                secure sign-in cookie for our own admin team; visitors never receive it. Maps open on Google’s own site only
+                when you choose to follow a map link.
               </p>
 
               <h2 id="security" className={legal.section}>

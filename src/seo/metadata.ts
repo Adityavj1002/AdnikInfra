@@ -18,6 +18,8 @@ export type PageSeo = Readonly<{
    * a page-level openGraph object replaces the parent's, so the image must be restated.
    */
   ownImage?: boolean
+  /** A share image for this page alone, as an absolute URL (a listing's first photo). */
+  image?: string
 }>
 
 const defaultImage = { url: '/opengraph-image', width: 1200, height: 630, alt: `${site.name}: ${site.descriptor}` }
@@ -35,7 +37,7 @@ export function buildMetadata(seo: PageSeo): Metadata {
       locale: site.ogLocale,
       title: socialTitle,
       description: seo.description,
-      ...(seo.ownImage ? {} : { images: [defaultImage] }),
+      ...(seo.image ? { images: [{ url: seo.image }] } : seo.ownImage ? {} : { images: [defaultImage] }),
       ...(seo.type === 'article'
         ? { publishedTime: seo.publishedTime, modifiedTime: seo.modifiedTime }
         : {}),
@@ -44,7 +46,7 @@ export function buildMetadata(seo: PageSeo): Metadata {
       card: 'summary_large_image',
       title: socialTitle,
       description: seo.description,
-      ...(seo.ownImage ? {} : { images: [defaultImage.url] }),
+      ...(seo.image ? { images: [seo.image] } : seo.ownImage ? {} : { images: [defaultImage.url] }),
     },
     // Only ever narrows: a page can opt out of the index, never opt a staging site in.
     ...(seo.noindex ? { robots: { index: false, follow: true } } : {}),

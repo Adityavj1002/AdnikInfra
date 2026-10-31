@@ -35,6 +35,12 @@ export function SiteNav() {
     if (element?.matches(':popover-open')) element.hidePopover()
   }, [pathname])
 
+  // A link to a section of this page doesn't change the pathname, so the effect above can't fire.
+  const closeMenu = () => {
+    const element = menu.current
+    if (element?.matches(':popover-open')) element.hidePopover()
+  }
+
   const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
   const current = (href: string) => (isCurrent(href) ? { 'aria-current': 'page' as const } : {})
 
@@ -61,7 +67,7 @@ export function SiteNav() {
             Contact
           </Link>
         )}
-        <Link href={contactHref('other')} className={`button button--small ${styles.visit}`}>
+        <Link href={contactHref('proposal')} className={`button button--small ${styles.visit}`}>
           <Send aria-hidden="true" strokeWidth={1.75} />
           Request a proposal
         </Link>
@@ -77,7 +83,7 @@ export function SiteNav() {
             <X aria-hidden="true" strokeWidth={2} />
           </button>
         </div>
-        <ul role="list" className={styles.sheetList}>
+        <ul role="list" className={styles.sheetList} onClick={closeMenu}>
           {items.map((item) => (
             <li key={item.href}>
               <Link href={item.href} className={styles.sheetLink} {...current(item.href)}>
@@ -100,7 +106,7 @@ export function SiteNav() {
           </li>
         </ul>
         <div className={styles.sheetFoot}>
-          <Link href={contactHref('other')} className="button button--gold button--block">
+          <Link href={contactHref('proposal')} className="button button--gold button--block">
             <Send aria-hidden="true" strokeWidth={1.75} />
             Request a proposal
           </Link>

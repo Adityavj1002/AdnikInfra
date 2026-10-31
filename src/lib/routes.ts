@@ -39,7 +39,7 @@ export const routes = {
   adminAccount: '/admin/account',
 } as const
 
-export type EnquiryTopic = 'buy' | 'site-visit' | 'construction' | 'sell' | 'other'
+export type EnquiryTopic = 'proposal' | 'buy' | 'site-visit' | 'construction' | 'sell' | 'other'
 
 /** Deep link into the contact form with the topic (and optionally the item) pre-selected. */
 export function contactHref(topic: EnquiryTopic, ref?: string): string {

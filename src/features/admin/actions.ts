@@ -15,12 +15,13 @@ import { listUnsubscribeHeaders, unsubscribeUrl } from '@/features/marketplace/s
 import { routes } from '@/lib/routes'
 import { normalizeLine, normalizeMultiline } from '@/security/normalize'
 import { hashPassword, PASSWORD_MAX, PASSWORD_MIN, verifyAgainstDummy, verifyPassword } from '@/security/password'
-import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { clientKey, createFailureCounter, createRateLimiter } from '@/security/rate-limit'
 import type { AdminFormState } from './constants'
 import { endSession, requireAdmin, startSession } from './session'
 
 const loginPerClient = createRateLimiter({ limit: 10, windowMs: 15 * 60_000 })
-const loginPerEmail = createRateLimiter({ limit: 5, windowMs: 15 * 60_000 })
+const loginFailures = createFailureCounter({ limit: 5, windowMs: 15 * 60_000 })
+const passwordChanges = createRateLimiter({ limit: 5, windowMs: 15 * 60_000 })
 
 const failure = (message: string): AdminFormState => ({ status: 'error', message })
 const LOGIN_FAILED = 'That email and password do not match.'
@@ -35,14 +36,18 @@ export async function login(_previous: AdminFormState, form: FormData): Promise<
   const email = normalizeLine(form.get('email')).toLowerCase().slice(0, 254)
   const password = String(form.get('password') ?? '').slice(0, PASSWORD_MAX)
   const client = clientKey(await headers())
-  // Both limits count every attempt, so neither one address nor one network can keep guessing.
-  if (!loginPerClient(client).allowed || !loginPerEmail(email).allowed) {
+  // One network can't keep guessing, and neither can anyone guessing at one address.
+  if (!loginPerClient(client).allowed || loginFailures.blocked(email)) {
     return failure('Too many attempts. Please wait 15 minutes and try again.')
   }
   try {
     const admin = await (await getStore()).getAdminByEmail(email)
     const valid = admin ? await verifyPassword(password, admin.passwordHash) : await verifyAgainstDummy(password)
-    if (!admin || !valid) return failure(LOGIN_FAILED)
+    if (!admin || !valid) {
+      loginFailures.fail(email)
+      return failure(LOGIN_FAILED)
+    }
+    loginFailures.clear(email)
     await startSession(admin.id)
   } catch (error) {
     console.error(`[admin] login failed ${JSON.stringify({ error: String(error).slice(0, 120) })}`)
@@ -70,6 +75,8 @@ export async function reviewListing(_previous: AdminFormState, form: FormData): 
     const before = await store.getListing(id)
     if (!before) return failure('That listing no longer exists.')
     if (before.status === 'unconfirmed') return failure('The seller has not confirmed their email yet.')
+    // Another admin, or another tab, may have decided since this page was opened.
+    if (before.status !== normalizeLine(form.get('expected'))) return failure('This listing has changed since you opened it. Please reload the page.')
     const listing = await store.reviewListing(id, admin.id, decision as ReviewDecision, reason || undefined)
     if (!listing) return failure('This listing has already changed. Please reload the page.')
     notified = await notifyDecision(listing, decision, reason || undefined)
@@ -107,18 +114,24 @@ export async function sendCampaign(_previous: AdminFormState, form: FormData): P
     after(async () => {
       let sentCount = 0
       let failedCount = 0
-      for (const email of emails) {
-        const sent = await sendEmail({
-          to: { address: email },
-          message: campaignEmail(parsed.data, listings, unsubscribeUrl(email)),
-          headers: listUnsubscribeHeaders(email),
-          tag: `campaign ${campaign.id}`,
+      try {
+        for (const email of emails) {
+          const sent = await sendEmail({
+            to: { address: email },
+            message: campaignEmail(parsed.data, listings, unsubscribeUrl(email)),
+            headers: listUnsubscribeHeaders(email),
+            tag: `campaign ${campaign.id}`,
+          })
+          if (sent) sentCount += 1
+          else failedCount += 1
+          await new Promise((resolve) => setTimeout(resolve, SEND_GAP_MS))
+        }
+      } finally {
+        // Whatever happened, the campaign must not sit at "sending" forever.
+        await store.finishCampaign(campaign.id, { sentCount, failedCount }).catch((error: unknown) => {
+          console.error(`[admin] campaign finish failed ${JSON.stringify({ error: String(error).slice(0, 120) })}`)
         })
-        if (sent) sentCount += 1
-        else failedCount += 1
-        await new Promise((resolve) => setTimeout(resolve, SEND_GAP_MS))
       }
-      await store.finishCampaign(campaign.id, { sentCount, failedCount })
     })
     revalidatePath(routes.adminCampaigns)
     return { status: 'ok', message: `Sending to ${emails.length} ${emails.length === 1 ? 'subscriber' : 'subscribers'}.` }
@@ -197,6 +210,7 @@ export async function resetAdminPassword(_previous: AdminFormState, form: FormDa
 
 export async function changeOwnPassword(_previous: AdminFormState, form: FormData): Promise<AdminFormState> {
   const admin = await requireAdmin()
+  if (!passwordChanges(admin.id).allowed) return failure('Too many attempts. Please wait 15 minutes and try again.')
   const current = String(form.get('current') ?? '')
   const next = String(form.get('next') ?? '')
   const weak = passwordError(next)

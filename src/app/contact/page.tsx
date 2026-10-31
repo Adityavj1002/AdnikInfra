@@ -55,7 +55,7 @@ export default async function ContactPage({ searchParams }: PageProps) {
       <PageHero
         eyebrow="Contact"
         title={`Contact ${site.name}`}
-        lead={<p>Book a site visit, get a construction quote, or ask us anything. {site.contact.responseTime}</p>}
+        lead={<p>Request a proposal, book a site visit, or ask us anything. {site.contact.responseTime}</p>}
       />
 
       <section className="section section--tight" aria-label="Contact options">

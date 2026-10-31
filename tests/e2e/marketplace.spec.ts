@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test'
 import { uniqueClientIp } from './fixtures'
 
@@ -32,11 +33,11 @@ const linkIn = (mail: Mail, path: string) => {
   return `${url.pathname}${url.search}`
 }
 
-async function submitListing(page: Page, title: string, email: string) {
+async function submitListing(page: Page, title: string, email: string, description = 'East facing villa on a thirty foot road, with clear papers and a covered parking.') {
   await page.goto('/marketplace/sell')
   await page.getByLabel('Property type').selectOption('villa')
   await page.getByLabel('Listing title').fill(title)
-  await page.getByLabel('Description').fill('East facing villa on a thirty foot road, with clear papers and a covered parking.')
+  await page.getByLabel('Description').fill(description)
   await page.getByLabel('Price (₹)').fill('45,00,000')
   await page.getByLabel('Area', { exact: true }).fill('200')
   await page.getByLabel('Bedrooms').selectOption('3')
@@ -58,7 +59,8 @@ async function signIn(page: Page) {
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill(ADMIN.email)
   await page.getByLabel('Password').fill(ADMIN.password)
   await page.getByRole('button', { name: 'Sign in' }).click()
-  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible()
+  // Generous: pages sharing one headless browser render slowly while the whole suite runs in parallel.
+  await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible({ timeout: 30_000 })
 }
 
 test('a listing stays hidden until an admin approves it, and everyone is told', async ({ page, request }) => {
@@ -79,7 +81,7 @@ test('a listing stays hidden until an admin approves it, and everyone is told', 
 
   // The seller and the admins both hear about it.
   await mailTo(request, email, /We have your listing/)
-  const review = await mailTo(request, ADMIN.email, /New listing to review/)
+  const review = await mailTo(request, ADMIN.email, /New listing to review: Corner villa/)
   expect(review.text).toContain(title)
 
   // Still hidden while it waits.
@@ -214,4 +216,114 @@ test.describe('marketplace on a small phone', () => {
       await fits(page)
     }
   })
+})
+
+test('a server rejection keeps every choice in the sell form', async ({ page }) => {
+  await page.goto('/marketplace/sell')
+  await page.getByLabel('Property type').selectOption('apartment')
+  await page.getByLabel('Sale or rent').selectOption('rent')
+  // Passes the browser check, fails the server's: no markup in titles.
+  await page.getByLabel('Listing title').fill('Title with <b>markup</b> in it')
+  await page.getByLabel('Description').fill('A long enough description of the property for the form to accept it.')
+  await page.getByLabel('Price (₹)').fill('25000')
+  await page.getByLabel('Area', { exact: true }).fill('1200')
+  await page.getByLabel('Area unit').selectOption('sqft')
+  await page.getByLabel('Bedrooms').selectOption('2')
+  await page.getByLabel('City or town').fill('Jaipur')
+  await page.getByLabel('Locality or area').fill('Malviya Nagar')
+  await page.getByLabel('Choose photos').setInputFiles([photo('a.png')])
+  await expect(page.getByText('1 added')).toBeVisible()
+  await page.getByLabel('Your name').fill('Asha Mehta')
+  await page.getByLabel('Mobile number').fill('98290 12345')
+  await page.getByRole('textbox', { name: 'Email', exact: true }).fill(`keep-${Date.now()}@example.com`)
+  await page.getByRole('checkbox').check()
+  await page.getByRole('button', { name: 'Submit for review' }).click()
+
+  await expect(page.locator('#field-title-error')).toContainText('remove')
+  await expect(page.getByLabel('Property type')).toHaveValue('apartment')
+  await expect(page.getByLabel('Sale or rent')).toHaveValue('rent')
+  await expect(page.getByLabel('Area unit')).toHaveValue('sqft')
+  await expect(page.getByLabel('Bedrooms')).toHaveValue('2')
+  await expect(page.getByRole('checkbox')).toBeChecked()
+  await expect(page.getByText('1 added')).toBeVisible()
+})
+
+test('marketplace filters give a clean URL and ignore junk', async ({ page }) => {
+  await page.goto('/marketplace')
+  await page.getByLabel('Type').selectOption('plot')
+  await page.getByRole('button', { name: 'Search' }).click()
+  await expect(page).toHaveURL(/\/marketplace\?kind=plot$/)
+  await page.goto('/marketplace?kind=<script>&budget=abc&page=-1')
+  await expect(page).toHaveURL(/\/marketplace$/)
+})
+
+test('a decision from a stale tab is refused', async ({ page, context, request }) => {
+  const title = `Stale tab villa near lake ${Date.now()}`
+  const email = `stale-${Date.now()}@example.com`
+  await submitListing(page, title, email)
+  await page.goto(linkIn(await mailTo(request, email, /Confirm your listing/), '/marketplace/confirm'))
+  await page.getByRole('button', { name: 'Confirm my listing' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'with our team' })).toBeVisible()
+  const review = await mailTo(request, ADMIN.email, /New listing to review: Stale tab/)
+  await signIn(page)
+  await page.goto(linkIn(review, '/admin/listings/'))
+  const other = await context.newPage()
+  await other.goto(page.url())
+  await other.getByRole('button', { name: 'Approve and publish' }).click()
+  await expect(other.getByRole('status').filter({ hasText: 'Approved' })).toBeVisible()
+
+  await page.getByLabel(/Reason/).fill('Second admin, looking at an old page.')
+  await page.getByRole('button', { name: 'Reject' }).click()
+  await expect(page.getByRole('alert').filter({ hasText: 'changed since you opened it' })).toBeVisible()
+  await other.close()
+})
+
+test('hostile listing text stays inert on the public page and in the admin panel', async ({ page, request }) => {
+  const title = `Hostile text flat near market ${Date.now()}`
+  const email = `hostile-${Date.now()}@example.com`
+  const payload = '</script><script>window.__pwn=1</script><img src=x onerror="window.__pwn=1"> and enough words to pass.'
+  await submitListing(page, title, email, payload)
+  await page.goto(linkIn(await mailTo(request, email, /Confirm your listing/), '/marketplace/confirm'))
+  await page.getByRole('button', { name: 'Confirm my listing' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'with our team' })).toBeVisible()
+  await signIn(page)
+  await page.goto(linkIn(await mailTo(request, ADMIN.email, /New listing to review: Hostile text/), '/admin/listings/'))
+  await expect(page.getByText(payload)).toBeVisible()
+  expect(await page.evaluate(() => (window as unknown as { __pwn?: number }).__pwn)).toBeUndefined()
+  await page.getByRole('button', { name: 'Approve and publish' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Approved' })).toBeVisible()
+  await page.goto(linkIn(await mailTo(request, email, /Your listing is live/), '/marketplace/'))
+  await expect(page.getByText(payload)).toBeVisible()
+  expect(await page.evaluate(() => (window as unknown as { __pwn?: number }).__pwn)).toBeUndefined()
+})
+
+test.describe('accessibility beyond the public pages', () => {
+  const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
+  const violations = async (page: Page) => {
+    const results = await new AxeBuilder({ page }).withTags(tags).analyze()
+    return results.violations.map((v) => `${v.id}: ${v.nodes[0]?.target.join(' ')}`)
+  }
+
+  for (const width of [1440, 390]) {
+    test(`admin screens and confirmation pages @${width}px`, async ({ page }) => {
+      // Eleven full-page scans in one signed-in session.
+      test.setTimeout(180_000)
+      await page.setViewportSize({ width, height: 900 })
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      for (const path of ['/admin/login', '/marketplace/confirm', '/subscribe/confirm', '/unsubscribe']) {
+        await page.goto(path)
+        expect(await violations(page), path).toEqual([])
+      }
+      await page.goto('/marketplace/sell')
+      await page.getByRole('button', { name: 'Submit for review' }).click()
+      await expect(page.getByRole('alert').filter({ hasText: 'Please check' })).toBeVisible()
+      expect(await violations(page), 'sell form with errors').toEqual([])
+
+      await signIn(page)
+      for (const path of ['/admin', '/admin/listings', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
+        await page.goto(path)
+        expect(await violations(page), path).toEqual([])
+      }
+    })
+  }
 })

@@ -15,6 +15,8 @@ import type { AlertsState, SubscriptionActionState } from './constants'
 
 const perClient = createRateLimiter({ limit: 3, windowMs: 10 * 60_000 })
 const globalLimit = createRateLimiter({ limit: 200, windowMs: 10 * 60_000 })
+// Spoofed client keys must not let anyone flood one inbox with confirmation emails.
+const perAddress = createRateLimiter({ limit: 2, windowMs: 60 * 60_000 })
 const confirmLimit = createRateLimiter({ limit: 20, windowMs: 10 * 60_000 })
 const emailSchema = z.email().max(254)
 const FIELDS = ['email', 'website'] as const
@@ -35,6 +37,7 @@ export async function subscribeAlerts(_previous: AlertsState, form: FormData): P
   const email = normalizeLine(raw.email).toLowerCase()
   if (!emailSchema.safeParse(email).success) return { status: 'error', email: email.slice(0, 254) }
   if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!perAddress(email).allowed) return { status: 'success' }
 
   try {
     const store = await getStore()

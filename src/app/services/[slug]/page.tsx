@@ -90,7 +90,7 @@ export default async function ServicePage(props: Params) {
         id="service-cta"
         title="Tell us about your project"
         body="Send the location, type of project and your timeline. We will reply with the approvals needed and a scope of work."
-        primary={{ href: contactHref('other', page.slug), label: 'Request a proposal' }}
+        primary={{ href: contactHref('proposal', page.slug), label: 'Request a proposal' }}
       />
     </>
   )

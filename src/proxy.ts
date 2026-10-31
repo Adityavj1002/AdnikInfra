@@ -2,11 +2,18 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { buildCsp, createNonce, cspHeaderName, reportingEndpoints } from '@/security/csp'
 import { env } from '@/security/env'
 
+const ALLOWED_METHODS = new Set(['GET', 'HEAD', 'POST', 'OPTIONS'])
+
 /**
  * Issues a fresh nonce per document request and attaches the CSP to both the
  * request (Next.js reads the nonce from it while rendering) and the response.
  */
 export function proxy(request: NextRequest) {
+  // Pages answer GET and HEAD, server actions POST. Anything else has no business here.
+  if (!ALLOWED_METHODS.has(request.method)) {
+    return new NextResponse(null, { status: 405, headers: { Allow: [...ALLOWED_METHODS].join(', ') } })
+  }
+
   const nonce = createNonce()
   const policy = buildCsp({
     nonce,

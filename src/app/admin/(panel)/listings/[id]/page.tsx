@@ -73,13 +73,14 @@ export default async function AdminListingPage({
             <h2 id="review-title" className={styles.sectionTitle}>Decision</h2>
             {!reviewable && <p>The seller has not confirmed their email yet, so this cannot be reviewed.</p>}
             {listing.status === 'approved' && (
-              <p><Link href={routes.marketplaceListing(listing.slug)}>See the live listing</Link></p>
+              <p><Link prefetch={false} href={routes.marketplaceListing(listing.slug)}>See the live listing</Link></p>
             )}
             {listing.rejectReason && <p className={styles.rowMeta}>Last reason given: {listing.rejectReason}</p>}
             {reviewable && listing.status !== 'approved' && (
               <ActionForm action={reviewListing} submitLabel="Approve and publish" pendingLabel="Publishing…">
                 <input type="hidden" name="id" value={listing.id} />
                 <input type="hidden" name="decision" value="approved" />
+                <input type="hidden" name="expected" value={listing.status} />
               </ActionForm>
             )}
             {reviewable && listing.status !== 'rejected' && (
@@ -91,6 +92,7 @@ export default async function AdminListingPage({
               >
                 <input type="hidden" name="id" value={listing.id} />
                 <input type="hidden" name="decision" value={listing.status === 'approved' ? 'unpublished' : 'rejected'} />
+                <input type="hidden" name="expected" value={listing.status} />
                 <div className="field">
                   <label className="field__label" htmlFor="reject-reason">Reason (emailed to the seller)</label>
                   <textarea id="reject-reason" name="reason" className="textarea" rows={3} maxLength={1000} required />

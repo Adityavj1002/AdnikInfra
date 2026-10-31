@@ -4,10 +4,11 @@
  * avoids Zod's eval feature-probe tripping the Content Security Policy.
  */
 
-export const ENQUIRY_TOPICS = ['buy', 'site-visit', 'construction', 'sell', 'other'] as const
+export const ENQUIRY_TOPICS = ['proposal', 'buy', 'site-visit', 'construction', 'sell', 'other'] as const
 export type EnquiryTopic = (typeof ENQUIRY_TOPICS)[number]
 
 export const topicLabels: Readonly<Record<EnquiryTopic, string>> = {
+  proposal: 'Requesting a proposal',
   buy: 'Buying a home or plot',
   'site-visit': 'Booking a site visit',
   construction: 'Building on my plot',

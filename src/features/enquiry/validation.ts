@@ -68,9 +68,9 @@ export function isEmail(value: string): boolean {
   )
 }
 
-/** "Something else" and "Selling my property" can't be answered without a few words. */
+/** A proposal, "Something else" and "Selling my property" can't be answered without a few words. */
 export function needsMessage(topic: string | undefined): boolean {
-  return topic === 'other' || topic === 'sell'
+  return topic === 'proposal' || topic === 'other' || topic === 'sell'
 }
 
 /** Fields the browser checks; topic, dates and slots come from fixed controls. */

@@ -20,6 +20,7 @@ export function ListingPhotos({ photos, base, title }: Readonly<{ photos: readon
           fill
           sizes="(min-width: 60rem) 60vw, 100vw"
           loading="eager"
+          fetchPriority="high"
           className={styles.photoImage}
         />
       </div>

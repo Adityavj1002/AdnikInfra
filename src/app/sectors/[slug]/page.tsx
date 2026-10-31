@@ -69,7 +69,7 @@ export default async function SectorPage(props: Params) {
         id="sector-cta"
         title="Tell us about your project"
         body="Send the location, type of project and your timeline. We will reply with the approvals needed and a scope of work."
-        primary={{ href: contactHref('other'), label: 'Request a proposal' }}
+        primary={{ href: contactHref('proposal'), label: 'Request a proposal' }}
       />
     </>
   )

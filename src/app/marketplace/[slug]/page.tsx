@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: Params) {
     title: titleFor(listing.title, listing.locality),
     description: description.slice(0, 160),
     path: routes.marketplaceListing(listing.slug),
+    ...(listing.images[0] ? { image: photoUrl(listing.images[0].id, 1200, env.SITE_URL) } : {}),
   })
 }
 

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { createFailureCounter } from '@/security/rate-limit'
+import { parseEnv } from '@/security/env'
 import { renderEmail } from '@/features/email/layout'
 import { campaignEmail, listingForReviewEmail, listingRejectedEmail } from '@/features/marketplace/emails'
 import { cloudinarySignature } from '@/features/marketplace/media'
@@ -236,5 +238,68 @@ describe('emails', () => {
   it('never link to anything but http(s)', () => {
     const { html } = renderEmail({ subject: 's', preheader: 'p', title: 't', reason: 'r', blocks: [{ type: 'button', label: 'Go', url: 'javascript:alert(1)' }] })
     expect(html).not.toContain('javascript:')
+  })
+})
+
+describe('live marketplace configuration', () => {
+  const live = {
+    NODE_ENV: 'production',
+    MARKETPLACE_MODE: 'supabase',
+    SITE_URL: 'https://adnikinfra.com',
+    SUPABASE_URL: 'https://x.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: 'x'.repeat(40),
+    CLOUDINARY_CLOUD_NAME: 'adnik',
+    CLOUDINARY_API_KEY: '123456789',
+    CLOUDINARY_API_SECRET: 'x'.repeat(20),
+    SIGNING_SECRET: 'x'.repeat(40),
+    LEADS_MODE: 'email',
+    SMTP_HOST: 'smtp.gmail.com',
+    SMTP_USER: 'support@adnikinfra.com',
+    SMTP_PASS: 'app-password',
+  }
+
+  it('accepts a complete setup', () => {
+    expect(() => parseEnv(live)).not.toThrow()
+  })
+
+  it.each([
+    ['a localhost SITE_URL', { SITE_URL: 'http://localhost:3000' }, 'SITE_URL'],
+    ['no email delivery', { LEADS_MODE: 'off' }, 'LEADS_MODE'],
+    ['a missing Cloudinary secret', { CLOUDINARY_API_SECRET: '' }, 'CLOUDINARY_API_SECRET'],
+    ['a short signing secret', { SIGNING_SECRET: 'short' }, 'SIGNING_SECRET'],
+  ])('refuses to start with %s', (_label, change, field) => {
+    expect(() => parseEnv({ ...live, ...change })).toThrow(field)
+  })
+})
+
+describe('sign-in failure counter', () => {
+  const setup = () => {
+    let time = 0
+    return { counter: createFailureCounter({ limit: 3, windowMs: 1000, now: () => time }), advance: (ms: number) => (time += ms) }
+  }
+
+  it('blocks only after repeated failures, and only that address', () => {
+    const { counter } = setup()
+    counter.fail('a')
+    counter.fail('a')
+    expect(counter.blocked('a')).toBe(false)
+    counter.fail('a')
+    expect(counter.blocked('a')).toBe(true)
+    expect(counter.blocked('b')).toBe(false)
+  })
+
+  it('never counts checks as failures, so correct sign-ins cannot lock anyone out', () => {
+    const { counter } = setup()
+    for (let i = 0; i < 20; i += 1) expect(counter.blocked('a')).toBe(false)
+  })
+
+  it('forgets after a success or once the window passes', () => {
+    const { counter, advance } = setup()
+    for (let i = 0; i < 3; i += 1) counter.fail('a')
+    counter.clear('a')
+    expect(counter.blocked('a')).toBe(false)
+    for (let i = 0; i < 3; i += 1) counter.fail('a')
+    advance(1001)
+    expect(counter.blocked('a')).toBe(false)
   })
 })

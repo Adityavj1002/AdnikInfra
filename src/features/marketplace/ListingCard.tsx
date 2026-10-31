@@ -11,7 +11,8 @@ export function ListingCard({ listing, base }: Readonly<{ listing: PublicListing
   const cover = listing.images[0]
   return (
     <article className={cards.card}>
-      <Link href={routes.marketplaceListing(listing.slug)} className={cards.link}>
+      {/* Each listing page reads the database: one visit must not fetch a whole grid of them. */}
+      <Link prefetch={false} href={routes.marketplaceListing(listing.slug)} className={cards.link}>
         <div className={cards.media}>
           {cover && (
             <MarketImage

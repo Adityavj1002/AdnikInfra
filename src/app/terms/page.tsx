@@ -8,7 +8,7 @@ import { routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { buildTitle } from '@/seo/titles'
 
-const UPDATED = '24 October 2026'
+const UPDATED = '31 October 2026'
 const description = `The terms for using the ${site.name} website: listings, prices, enquiries, payments and your rights, in plain language.`
 
 export const metadata = buildMetadata({ ...buildTitle({ name: 'Terms of use' }), description, path: routes.terms })
@@ -16,6 +16,7 @@ export const metadata = buildMetadata({ ...buildTitle({ name: 'Terms of use' }),
 const sections = [
   { id: 'about', title: 'About these terms' },
   { id: 'information', title: 'Listings, prices and plans' },
+  { id: 'marketplace', title: 'The marketplace' },
   { id: 'enquiries', title: 'Enquiries and site visits' },
   { id: 'payments', title: 'Bookings and payments' },
   { id: 'use', title: 'Using this website' },
@@ -83,6 +84,21 @@ export default function TermsPage() {
                 charges unless we say otherwise. Nothing on this site is an offer or a contract: the terms that bind you and
                 us are the ones in your signed application, allotment letter or agreement for sale. See our{' '}
                 <Link href={routes.disclaimer}>disclaimer</Link> for more.
+              </p>
+
+              <h2 id="marketplace" className={legal.section}>
+                The marketplace
+              </h2>
+              <p>
+                Marketplace listings come from their owners, agents and builders, not from us. If you list a property, you
+                confirm that you have the right to do so, that the details are true and that you may share the photos, and you
+                let us display them on this website and in our emails. We review every listing and may decline or remove any of
+                them.
+              </p>
+              <p>
+                Our review is not a guarantee of title, approvals, measurements or price. If you are buying or renting, check
+                these yourself, with professional advice, before paying anything. Unless we say otherwise in writing, any deal
+                is between you and the seller.
               </p>
 
               <h2 id="enquiries" className={legal.section}>

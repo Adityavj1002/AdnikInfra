@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarCheck } from 'lucide-react'
+import { ArrowRight, CalendarCheck, Send } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { site } from '@/config/site'
@@ -15,6 +15,8 @@ export function CtaBand({
   primary,
   secondary,
 }: Readonly<{ id: string; title: string; body: string; primary: Action; secondary?: Action }>) {
+  // A calendar suits booking a visit; proposals and questions are messages.
+  const PrimaryIcon = primary.href.includes('topic=site-visit') ? CalendarCheck : Send
   return (
     <section className={styles.band} aria-labelledby={id}>
       <Image src={photos.houseGable.src} alt="" fill sizes="100vw" placeholder="blur" className={styles.bg} />
@@ -26,7 +28,7 @@ export function CtaBand({
         <p className={styles.body}>{body}</p>
         <div className={styles.actions}>
           <Link href={primary.href} className="button button--gold">
-            <CalendarCheck aria-hidden="true" strokeWidth={1.75} />
+            <PrimaryIcon aria-hidden="true" strokeWidth={1.75} />
             {primary.label}
           </Link>
           {secondary && (
