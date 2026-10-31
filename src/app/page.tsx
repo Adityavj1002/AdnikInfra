@@ -17,7 +17,6 @@ import Link from 'next/link'
 import { ProjectCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import blocks from '@/components/ui/blocks.module.css'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { site } from '@/config/site'
 import { photos } from '@/content/images'
@@ -104,12 +103,13 @@ const proposalHref = contactHref('other')
 
 const sectors = [
   {
+    slug: 'infrastructure',
     icon: Building2,
     title: 'Infrastructure',
     body: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, roads and utilities.',
   },
-  { icon: Factory, title: 'Industrial', body: 'Factories, processing plants, industrial estates and warehousing parks.' },
-  { icon: Pickaxe, title: 'Mining', body: 'Major and minor minerals, quarries and sand: mine planning, lease approvals and closure.' },
+  { slug: 'industrial', icon: Factory, title: 'Industrial', body: 'Factories, processing plants, industrial estates and warehousing parks.' },
+  { slug: 'mining', icon: Pickaxe, title: 'Mining', body: 'Major and minor minerals, quarries and sand: mine planning, lease approvals and closure.' },
 ] as const
 
 const clearances = [
@@ -151,23 +151,11 @@ const clearances = [
   },
 ] as const
 
-/** The three founding disciplines. Founder names and portraits go here once supplied. */
+/** The three founding disciplines. Founder names, portraits and bios go here once supplied. */
 const disciplines = [
-  {
-    icon: Building2,
-    title: 'Infrastructure',
-    body: 'Leads construction advisory, project management and infrastructure development, from design review to handover.',
-  },
-  {
-    icon: Pickaxe,
-    title: 'Mining',
-    body: 'Leads mine planning, lease approvals and closure plans for major and minor minerals, quarries and sand.',
-  },
-  {
-    icon: Leaf,
-    title: 'Environmental Clearance',
-    body: 'Leads EIA, consents and ECBC and ENS energy compliance, with energy modelling for buildings and campuses.',
-  },
+  { icon: Building2, title: 'Head, Infrastructure' },
+  { icon: Pickaxe, title: 'Head, Mining' },
+  { icon: Leaf, title: 'Head, Environmental Clearance' },
 ] as const
 
 /** How we work, bottom layer first: drives both the 3D stack and the step list. */
@@ -225,10 +213,9 @@ export default async function HomePage() {
 
         <div className={`container ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
-            <p className={`eyebrow ${styles.heroEyebrow}`}>Construction · Clearance · Consultancy</p>
+            <p className={`eyebrow ${styles.heroEyebrow}`}>Infrastructure consultants</p>
             <h1 id="hero-title" className={styles.heroTitle}>
               <span className={styles.heroAccent}>Plan. Comply.</span> Build. Grow.
-              <span className={styles.heroSub}>Infrastructure consultants and builders in {site.city}</span>
             </h1>
             <p className={styles.heroLead}>
               {site.name} advises on construction, environmental clearance, project management, real estate and
@@ -307,7 +294,7 @@ export default async function HomePage() {
                     <p className={styles.categoryBody}>{cat.body}</p>
                   </div>
                   <div className={styles.categoryFooter}>
-                    <span className={styles.categoryCta}>Explore Service</span>
+                    <span className={styles.categoryCta}>{cat.cta ?? 'Explore Service'}</span>
                     <span className={styles.categoryArrow} aria-hidden="true">
                       <ArrowUpRight strokeWidth={2} />
                     </span>
@@ -324,9 +311,9 @@ export default async function HomePage() {
         <div className="container">
           <SectionHeading id="sectors-title" eyebrow="Sectors we serve" title="Infrastructure, industrial and mining" />
           <ul role="list" className={styles.categoriesGrid}>
-            {sectors.map(({ icon: Icon, title: sectorTitle, body }, i) => (
+            {sectors.map(({ slug, icon: Icon, title: sectorTitle, body }, i) => (
               <li key={sectorTitle} className="reveal">
-                <Link href={proposalHref} className={styles.categoryCard}>
+                <Link href={routes.sector(slug)} className={styles.categoryCard}>
                   <div className={styles.categoryTop}>
                     <span className={styles.categoryIcon} aria-hidden="true">
                       <Icon strokeWidth={1.5} />
@@ -338,7 +325,7 @@ export default async function HomePage() {
                     <p className={styles.categoryBody}>{body}</p>
                   </div>
                   <div className={styles.categoryFooter}>
-                    <span className={styles.categoryCta}>Discuss a project</span>
+                    <span className={styles.categoryCta}>See what we do</span>
                     <span className={styles.categoryArrow} aria-hidden="true">
                       <ArrowUpRight strokeWidth={2} />
                     </span>
@@ -364,8 +351,8 @@ export default async function HomePage() {
               the end. It also takes on independent clients across infrastructure, industrial and mining projects.
             </p>
             <div className={styles.actions}>
-              <Link href={contactHref('other', 'environmental-clearance')} className="button button--gold">
-                Ask about a clearance <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+              <Link href={routes.environmentalClearance} className="button button--gold">
+                See all clearance services <ArrowRight aria-hidden="true" strokeWidth={1.75} />
               </Link>
             </div>
           </div>
@@ -402,10 +389,6 @@ export default async function HomePage() {
             <h2 id="process-title" className={styles.h2}>
               Plan. Comply. Build. Grow.
             </h2>
-            <p className={blocks.lead}>
-              One team from the first site review to the last renewal, so approvals are never the reason a project
-              stops.
-            </p>
             <ol className={styles.steps}>
               {workSteps.map((step) => (
                 <li key={step.title} className={styles.step}>
@@ -414,14 +397,6 @@ export default async function HomePage() {
                 </li>
               ))}
             </ol>
-            <div className={styles.actions}>
-              <Link href={proposalHref} className="button">
-                Request a proposal
-              </Link>
-              <Link href={`${routes.construction}#estimate`} className="button button--outline">
-                Estimate a build cost
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -433,7 +408,6 @@ export default async function HomePage() {
             id="projects-title"
             eyebrow="Projects"
             title="Selected work"
-            intro={<p>Projects our team has planned, built and delivered in and around {site.city}.</p>}
             action={
               <Link href={routes.projects} className="link-more">
                 View all projects <ArrowRight aria-hidden="true" strokeWidth={1.75} />
@@ -507,14 +481,9 @@ export default async function HomePage() {
             id="team-title"
             eyebrow="About us"
             title="Three founders, three disciplines"
-            action={
-              <Link href={routes.about} className="link-more">
-                About {site.name} <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            }
           />
           <ul role="list" className={styles.categoriesGrid}>
-            {disciplines.map(({ icon: Icon, title: disciplineTitle, body }, i) => (
+            {disciplines.map(({ icon: Icon, title: disciplineTitle }, i) => (
               <li key={disciplineTitle} className="reveal">
                 <Link href={routes.about} className={styles.categoryCard}>
                   <div className={styles.categoryTop}>
@@ -524,8 +493,7 @@ export default async function HomePage() {
                     <span className={styles.categoryNumber}>{String(i + 1).padStart(2, '0')}</span>
                   </div>
                   <div className={styles.categoryContent}>
-                    <h3 className={styles.categoryTitle}>Head, {disciplineTitle}</h3>
-                    <p className={styles.categoryBody}>{body}</p>
+                    <h3 className={styles.categoryTitle}>{disciplineTitle}</h3>
                   </div>
                   <div className={styles.categoryFooter}>
                     <span className={styles.categoryCta}>Meet the team</span>
@@ -545,7 +513,6 @@ export default async function HomePage() {
         title="Tell us about your project"
         body="Send the location, type of project and your timeline. We will reply with the approvals needed and a scope of work."
         primary={{ href: proposalHref, label: 'Request a proposal' }}
-        secondary={{ href: routes.contact, label: 'Contact us' }}
       />
     </>
   )

@@ -27,6 +27,13 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !isCI,
     timeout: 60_000,
-    env: { LEADS_MODE: 'log', NEXT_TELEMETRY_DISABLED: '1' },
+    env: {
+      LEADS_MODE: 'log',
+      NEXT_TELEMETRY_DISABLED: '1',
+      // The full marketplace flow runs against the in-process store, with mail in a test outbox.
+      MARKETPLACE_MODE: 'memory',
+      MARKETPLACE_DEV_ADMIN_EMAIL: 'admin@example.com',
+      MARKETPLACE_DEV_ADMIN_PASSWORD: 'e2e-admin-password',
+    },
   },
 })

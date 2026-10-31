@@ -13,8 +13,11 @@ export type KeywordTarget = Readonly<{ primary: string; supporting: readonly str
 
 export const staticKeywords = {
   [routes.home]: {
-    primary: 'builders in Jaipur',
+    // The H1 is the brand line, word for word from the client's brief.
+    primary: 'Plan. Comply. Build. Grow.',
     supporting: [
+      'builders in Jaipur',
+      'infrastructure consultants in Jaipur',
       'real estate developers in Jaipur',
       'construction company in Jaipur',
       'modern homes in Jaipur',
@@ -64,6 +67,22 @@ export const staticKeywords = {
   [routes.faq]: {
     primary: 'frequently asked questions about property in Jaipur',
     supporting: ['stamp duty in Jaipur', 'RERA Rajasthan', 'home loan Jaipur', 'land-use conversion Rajasthan'],
+  },
+  [routes.services]: {
+    primary: 'infrastructure consulting services',
+    supporting: ['construction advisory', 'project management consultants', 'real estate consultancy Jaipur'],
+  },
+  [routes.marketplace]: {
+    primary: 'property marketplace',
+    supporting: ['plots for sale by owner', 'owner listed property', 'buildings for sale'],
+  },
+  [routes.marketplaceSell]: {
+    primary: 'list your property',
+    supporting: ['sell my plot', 'post property free', 'rent out my property'],
+  },
+  [routes.environmentalClearance]: {
+    primary: 'environmental clearance and compliance',
+    supporting: ['EIA and EMP reports', 'ECBC and ENS compliance', 'Consent to Establish and Operate', 'mine closure plans'],
   },
   [routes.contact]: {
     primary: 'contact Adnik Infra',

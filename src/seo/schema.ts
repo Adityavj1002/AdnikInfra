@@ -16,6 +16,7 @@ import type {
 } from 'schema-dts'
 import { site } from '@/config/site'
 import type { ConstructionPackage, Faq, Film, Locality, Post, Project, Property, Town } from '@/content/types'
+import type { PublicListing } from '@/features/marketplace/types'
 import { areaUnitLabel } from '@/lib/format'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
@@ -303,6 +304,52 @@ export function propertyNode(property: Property): RealEstateListing {
       },
     },
   } as RealEstateListing
+}
+
+/** An owner's listing on the marketplace: seller contact details are never included. */
+export function marketplaceListingNode(listing: PublicListing, images: readonly string[]): RealEstateListing {
+  const url = absoluteUrl(routes.marketplaceListing(listing.slug))
+  return {
+    '@type': 'RealEstateListing',
+    '@id': `${url}#listing`,
+    url,
+    name: listing.title,
+    description: listing.description.slice(0, 300),
+    datePosted: listing.reviewedAt ?? listing.createdAt,
+    dateModified: listing.updatedAt,
+    inLanguage: site.locale,
+    isPartOf: ref(ids.website),
+    breadcrumb: ref(`${url}#breadcrumb`),
+    image: [...images],
+    offers: {
+      '@type': 'Offer',
+      price: listing.priceInr,
+      priceCurrency: 'INR',
+      availability: 'https://schema.org/InStock',
+    },
+    contentLocation: {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: listing.locality,
+        addressRegion: listing.state,
+        addressCountry: 'IN',
+      },
+    },
+  } as RealEstateListing
+}
+
+/** One consultancy service or sector page. */
+export function consultancyServiceNode(input: Readonly<{ path: string; name: string; description: string; serviceType: string }>): Service {
+  return {
+    '@type': 'Service',
+    '@id': nodeId(input.path, 'service'),
+    name: input.name,
+    description: input.description,
+    serviceType: input.serviceType,
+    provider: ref(ids.organization),
+    url: absoluteUrl(input.path),
+  }
 }
 
 export function constructionServiceNode(packages: readonly ConstructionPackage[]): Service {

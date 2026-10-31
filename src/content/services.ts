@@ -1,10 +1,19 @@
-import { contactHref, routes } from '@/lib/routes'
+import { routes } from '@/lib/routes'
 
 /**
  * The five service lines: the home page cards and the footer's Services column. The slug goes
- * on contact links, so an enquiry from a service card arrives saying which service it's about.
+ * on contact links from each service's page, so an enquiry says which service it's about.
  */
-export type Service = Readonly<{ slug: string; number: string; title: string; body: string; href: string; highlight?: boolean }>
+export type Service = Readonly<{
+  slug: string
+  number: string
+  title: string
+  body: string
+  href: string
+  /** Card link label, when the service has its own page. */
+  cta?: string
+  highlight?: boolean
+}>
 
 export const services: readonly Service[] = [
   {
@@ -12,14 +21,15 @@ export const services: readonly Service[] = [
     number: '01',
     title: 'Construction Advisory',
     body: 'Technical advice on design review, specifications, costing and contractor selection.',
-    href: routes.construction,
+    href: routes.service('construction-advisory'),
   },
   {
     slug: 'environmental-clearance',
     number: '02',
     title: 'Environmental Clearance',
     body: 'EIA, EC and consents, plus ECBC and ENS compliance, for infrastructure, industrial and mining projects.',
-    href: contactHref('other', 'environmental-clearance'),
+    href: routes.environmentalClearance,
+    cta: 'See the full service',
     highlight: true,
   },
   {
@@ -27,20 +37,20 @@ export const services: readonly Service[] = [
     number: '03',
     title: 'Project Management',
     body: 'Scheduling, site coordination, quality and cost control from mobilisation to handover.',
-    href: contactHref('construction', 'project-management'),
+    href: routes.service('project-management'),
   },
   {
     slug: 'real-estate-consultancy',
     number: '04',
     title: 'Real Estate Consultancy',
     body: 'Land due diligence, feasibility and approvals support for developers and landowners.',
-    href: routes.properties,
+    href: routes.service('real-estate-consultancy'),
   },
   {
     slug: 'infrastructure-development',
     number: '05',
     title: 'Infrastructure Development',
     body: 'Planning and delivery of buildings, roads, utilities and campuses.',
-    href: contactHref('construction', 'infrastructure-development'),
+    href: routes.service('infrastructure-development'),
   },
 ]

@@ -85,8 +85,8 @@ describe('deliverLead over SMTP', () => {
     await expect(deliverLead(lead, 'ADN-7F3K2Q')).resolves.toBe(true)
     expect(sendMail).toHaveBeenCalledOnce()
     const message = sendMail.mock.calls[0]![0]
-    expect(message.to).toBe('support@adnikinfra.com')
-    expect(message.from).toEqual({ name: 'Adnik Infra Website', address: 'support@adnikinfra.com' })
+    expect(message.to).toEqual([{ name: 'Adnik Infra team', address: 'support@adnikinfra.com' }])
+    expect(message.from).toEqual({ name: 'Adnik Infra', address: 'support@adnikinfra.com' })
     expect(message.replyTo).toEqual({ name: 'Asha Mehta', address: 'asha@example.com' })
   })
 

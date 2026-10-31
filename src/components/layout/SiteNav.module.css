@@ -19,6 +19,7 @@
   .inlineLink {
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
     min-block-size: var(--tap);
     padding-inline: var(--space-3);
     color: var(--hdr-muted, var(--text-muted));
@@ -94,7 +95,8 @@
     }
   }
 
-  @media (min-width: 72rem) {
+  /* Six links plus the logo and the button need the full width: below this, the menu sheet. */
+  @media (min-width: 80rem) {
     .inline {
       display: flex;
     }

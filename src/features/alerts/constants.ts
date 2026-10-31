@@ -1,4 +1,4 @@
-/** Client-safe state for the listing-alerts form (no Zod here, see enquiry/constants.ts). */
+/** Client-safe state for the subscribe form (no Zod here, see enquiry/constants.ts). */
 export type AlertsState =
   | Readonly<{ status: 'idle' }>
   | Readonly<{ status: 'success' }>
@@ -7,3 +7,9 @@ export type AlertsState =
   | Readonly<{ status: 'rate-limited' }>
 
 export const initialAlertsState: AlertsState = { status: 'idle' }
+
+export type SubscriptionActionState =
+  | Readonly<{ status: 'idle' }>
+  | Readonly<{ status: 'done' }>
+  | Readonly<{ status: 'invalid' }>
+  | Readonly<{ status: 'unavailable' }>

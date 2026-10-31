@@ -55,8 +55,8 @@ export type SiteConfig = Readonly<{
 
 export const site: SiteConfig = {
   name: 'Adnik Infra',
-  descriptor: 'Builders & Real Estate Developers',
-  tagline: 'Builders & Developers',
+  descriptor: 'Infrastructure Consultants & Builders',
+  tagline: 'Infrastructure Consultants',
   city: 'Jaipur',
   state: 'Rajasthan',
   serviceArea: {
@@ -64,7 +64,7 @@ export const site: SiteConfig = {
     towns: ['Chaksu', 'Niwai', 'Tonk', 'Bilwa', 'Phagi', 'Malpura', 'Shivdaspura', 'Bagru', 'Chomu', 'Bassi', 'Kanota', 'Kukas', 'Achrol'],
   },
   description:
-    'Adnik Infra: builders and real estate developers in Jaipur and nearby towns. Modern villas, plots, agricultural land and home construction on your plot.',
+    'Adnik Infra, Jaipur: construction advisory, environmental clearance, project management, real estate consultancy and a property marketplace.',
   language: 'en',
   locale: 'en-IN',
   ogLocale: 'en_IN',

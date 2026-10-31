@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, CalendarCheck, Menu, Phone, X } from 'lucide-react'
+import { ArrowRight, Menu, Phone, Send, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
@@ -10,10 +10,11 @@ import { Logo } from './Logo'
 import styles from './SiteNav.module.css'
 
 const items = [
-  { href: routes.projects, label: 'Projects', note: 'Villas, apartments and plots' },
-  { href: routes.properties, label: 'Real Estate', note: 'Ready and resale homes' },
-  { href: routes.construction, label: 'Construction', note: 'Build on your own plot' },
-  { href: routes.locations, label: 'Locations', note: 'Jaipur and nearby towns' },
+  { href: `${routes.home}#services`, label: 'Services', note: 'Five services, one team' },
+  { href: `${routes.home}#sectors`, label: 'Sectors', note: 'Infrastructure, industrial and mining' },
+  { href: routes.environmentalClearance, label: 'Environmental Clearance', note: 'Clearances and compliance' },
+  { href: routes.projects, label: 'Projects', note: 'Selected work' },
+  { href: routes.marketplace, label: 'Marketplace', note: 'Buy, or list your property' },
   { href: routes.about, label: 'About', note: 'Who we are' },
 ] as const
 
@@ -60,9 +61,9 @@ export function SiteNav() {
             Contact
           </Link>
         )}
-        <Link href={contactHref('site-visit')} className={`button button--small ${styles.visit}`}>
-          <CalendarCheck aria-hidden="true" strokeWidth={1.75} />
-          Book a site visit
+        <Link href={contactHref('other')} className={`button button--small ${styles.visit}`}>
+          <Send aria-hidden="true" strokeWidth={1.75} />
+          Request a proposal
         </Link>
         <button type="button" className={styles.menuButton} popoverTarget={MENU_ID} aria-label="Open menu">
           <Menu aria-hidden="true" strokeWidth={2} />
@@ -99,9 +100,9 @@ export function SiteNav() {
           </li>
         </ul>
         <div className={styles.sheetFoot}>
-          <Link href={contactHref('site-visit')} className="button button--gold button--block">
-            <CalendarCheck aria-hidden="true" strokeWidth={1.75} />
-            Book a site visit
+          <Link href={contactHref('other')} className="button button--gold button--block">
+            <Send aria-hidden="true" strokeWidth={1.75} />
+            Request a proposal
           </Link>
           {phone && (
             <a href={`tel:${phone}`} className="button button--outline button--block">

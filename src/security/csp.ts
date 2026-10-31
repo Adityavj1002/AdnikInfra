@@ -13,6 +13,10 @@ export type CspOptions = Readonly<{
   isDev: boolean
   siteUrl: string
   mediaOrigin?: string
+  /** Listing photos are served from here. */
+  imageOrigin?: string
+  /** Listing photos upload straight from the browser to here. */
+  uploadOrigin?: string
 }>
 
 type Directives = Readonly<Record<string, readonly string[]>>
@@ -25,7 +29,7 @@ export function createNonce(): string {
   return btoa(String.fromCharCode(...bytes))
 }
 
-export function buildCspDirectives({ nonce, isDev, siteUrl, mediaOrigin }: CspOptions): Directives {
+export function buildCspDirectives({ nonce, isDev, siteUrl, mediaOrigin, imageOrigin, uploadOrigin }: CspOptions): Directives {
   if (!NONCE_PATTERN.test(nonce)) {
     throw new Error('CSP nonce must be 16 base64-encoded bytes.')
   }
@@ -41,10 +45,10 @@ export function buildCspDirectives({ nonce, isDev, siteUrl, mediaOrigin }: CspOp
     'style-src': ["'self'", ...(isDev ? ["'unsafe-inline'"] : [nonceSource])],
     // Server-rendered style attributes (CSS custom properties). They cannot execute script.
     'style-src-attr': ["'unsafe-inline'"],
-    'img-src': ["'self'", 'data:', 'blob:', ...media],
+    'img-src': ["'self'", 'data:', 'blob:', ...media, ...(imageOrigin ? [imageOrigin] : [])],
     'media-src': ["'self'", ...media],
     'font-src': ["'self'"],
-    'connect-src': ["'self'", ...(isDev ? ['ws:'] : [])],
+    'connect-src': ["'self'", ...(uploadOrigin ? [uploadOrigin] : []), ...(isDev ? ['ws:'] : [])],
     'worker-src': ["'self'", 'blob:'],
     'manifest-src': ["'self'"],
     'frame-src': ["'none'"],

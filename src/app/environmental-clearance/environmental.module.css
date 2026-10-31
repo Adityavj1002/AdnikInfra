@@ -1,0 +1,21 @@
+@layer components {
+  /* One sector per block; the anchor target clears the sticky header. */
+  .track {
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-4));
+  }
+
+  .trackHead {
+    display: grid;
+    gap: var(--space-2);
+    max-inline-size: 48rem;
+  }
+
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+}

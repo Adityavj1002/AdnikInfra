@@ -11,24 +11,28 @@ import styles from './SiteFooter.module.css'
 
 type FooterLink = Readonly<{ href: string; label: string }>
 
-const quickLinks: readonly FooterLink[] = [
-  { href: routes.home, label: 'Home' },
+const sectorLinks: readonly FooterLink[] = [
+  { href: routes.sector('infrastructure'), label: 'Infrastructure' },
+  { href: routes.sector('industrial'), label: 'Industrial' },
+  { href: routes.sector('mining'), label: 'Mining' },
+]
+
+// Careers joins this list once the careers page exists.
+const companyLinks: readonly FooterLink[] = [
   { href: routes.projects, label: 'Projects' },
-  { href: routes.properties, label: 'Real estate' },
-  { href: routes.construction, label: 'Home construction' },
   { href: routes.about, label: 'About us' },
-  { href: routes.blog, label: 'Guides & blog' },
-  { href: routes.faq, label: 'FAQs' },
   { href: routes.contact, label: 'Contact' },
 ]
 
-const areaLinks: readonly FooterLink[] = [
-  { href: routes.locations, label: 'Jaipur' },
-  { href: routes.town('chaksu'), label: 'Chaksu' },
-  { href: routes.town('niwai'), label: 'Niwai' },
-  { href: routes.location('tonk-road'), label: 'Tonk Road' },
-  { href: routes.town('bilwa'), label: 'Bilwa' },
-  { href: routes.nearJaipur, label: 'All areas near Jaipur' },
+// Real estate, locations and guides left the main menu but must stay linked for visitors and crawlers.
+const exploreLinks: readonly FooterLink[] = [
+  { href: routes.marketplace, label: 'Marketplace' },
+  { href: routes.marketplaceSell, label: 'List your property' },
+  { href: routes.properties, label: 'Real estate' },
+  { href: routes.construction, label: 'Home construction' },
+  { href: routes.locations, label: 'Locations' },
+  { href: routes.blog, label: 'Guides & blog' },
+  { href: routes.faq, label: 'FAQs' },
 ]
 
 const legalLinks: readonly FooterLink[] = [
@@ -45,9 +49,10 @@ export function SiteFooter() {
   const profiles = site.business.profiles
 
   const columns = [
-    { title: 'Quick links', links: quickLinks },
     { title: 'Services', links: services.map((service) => ({ href: service.href, label: service.title })) },
-    { title: 'Jaipur & nearby', links: areaLinks },
+    { title: 'Sectors', links: sectorLinks },
+    { title: 'Company', links: companyLinks },
+    { title: 'Explore', links: exploreLinks },
   ] as const
 
   return (
@@ -67,9 +72,8 @@ export function SiteFooter() {
         <div className={styles.brand}>
           <Logo size="lg" />
           <p className={styles.about}>
-            Adnik Infra is a real estate and construction company serving Jaipur, Chaksu, Niwai, Tonk Road, Bilwa and
-            nearby towns. We build modern villas and independent homes, sell plots, flats and agricultural land, and
-            deliver construction projects with clear paperwork and written, all-inclusive pricing.
+            Adnik Infra advises on construction, environmental clearance, project management, real estate and
+            infrastructure development, so your project is planned right, approved on time and built to last.
           </p>
           <ul role="list" className={styles.contact}>
             {phone && (
@@ -138,7 +142,7 @@ export function SiteFooter() {
 
       <div className={`container ${styles.bottom}`}>
         <p className={styles.copyright}>
-          © {new Date().getFullYear()} {site.name}. Powered by{' '}
+          © {new Date().getFullYear()} {site.name}. All rights reserved. Powered by{' '}
           {/* Agency credit. New tab, and no noreferrer so Naigrowth still sees the referral. */}
           <a className={styles.credit} href="https://naigrowth.com" target="_blank" rel="noopener">
             <Image src="/brand/naigrowth-logo.png" alt="" width={22} height={22} className={styles.creditLogo} />

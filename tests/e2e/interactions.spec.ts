@@ -16,8 +16,8 @@ test.describe('mobile menu', () => {
   test('closes after navigating', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Open menu' }).click()
-    await page.locator('#site-menu').getByRole('link', { name: /Real estate|Buy property/i }).click()
-    await expect(page).toHaveURL(/\/properties$/)
+    await page.locator('#site-menu').getByRole('link', { name: /Environmental Clearance/ }).click()
+    await expect(page).toHaveURL(/\/environmental-clearance$/)
     await expect(page.locator('#site-menu')).toBeHidden()
   })
 })

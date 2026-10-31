@@ -13,6 +13,9 @@ export function proxy(request: NextRequest) {
     isDev: env.NODE_ENV === 'development',
     siteUrl: env.SITE_URL,
     mediaOrigin: env.MEDIA_ORIGIN,
+    ...(env.CLOUDINARY_CLOUD_NAME
+      ? { imageOrigin: 'https://res.cloudinary.com', uploadOrigin: 'https://api.cloudinary.com' }
+      : {}),
   })
   const headerName = cspHeaderName(env.CSP_MODE)
 

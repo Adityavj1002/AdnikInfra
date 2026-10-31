@@ -119,6 +119,49 @@ success.
 
 ---
 
+## 3a. Marketplace, admin panel and subscribers
+
+Until these keys are set the marketplace pages say "not available" and the subscribe form says
+so honestly; the rest of the site is unaffected. Email needs the SMTP settings from §3.
+
+1. **Supabase:** create a project, open SQL editor, run `supabase/migrations/0001_marketplace.sql`
+   once. Copy the project URL and the **service-role** key (server-only) from Settings → API.
+2. **Cloudinary:** copy the cloud name, API key and API secret from Settings → API Keys.
+3. **Signing secret:** `openssl rand -base64 48`.
+4. Add to the host's environment variables, then redeploy:
+
+```bash
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=…
+CLOUDINARY_CLOUD_NAME=…
+CLOUDINARY_API_KEY=…
+CLOUDINARY_API_SECRET=…
+SIGNING_SECRET=…
+```
+
+5. **First admin** (run once from your computer; further admins are added at `/admin/team`):
+
+```bash
+SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… ADMIN_PASSWORD='12+ characters' \
+  node scripts/create-admin.mjs "Your Name" you@adnikinfra.com
+```
+
+6. Sign in at `/admin/login`. Submit a test listing at `/marketplace/sell` and walk it through:
+   confirm the email → admin email arrives → approve → it appears at `/marketplace`.
+
+**How a listing moves:** seller submits (hidden) → seller confirms by email → admins are emailed →
+an admin approves (live, seller emailed) or rejects with a reason (hidden, seller emailed).
+
+**Limits to know:** campaigns send over SMTP, so Gmail allows about 500 emails a day and Workspace
+about 2,000; a longer list needs a bulk mail service. On Vercel, a long campaign can outlive the
+function's time limit: a VPS has no such limit. Rate limits are per server process (see §5).
+
+Local trial without any accounts: `MARKETPLACE_MODE=memory LEADS_MODE=log
+MARKETPLACE_DEV_ADMIN_PASSWORD=local-admin-password npm run dev`. Data is lost on restart, and
+emails appear at `/api/dev/outbox`. Sign in as `admin@example.com`.
+
+---
+
 ## 4. VPS: Node + Nginx
 
 ### 4.1 Build and run
@@ -285,9 +328,9 @@ Cloudflare in front.
 ## 6. Verify (before and after each deploy)
 
 ```bash
-npm run check                  # types, lint, 187 unit tests
+npm run check                  # types, lint, unit tests
 npm run build
-npm run test:e2e               # 134 browser tests: axe accessibility, security, SEO, 11 screen sizes
+npm run test:e2e               # browser tests: axe accessibility, security, SEO, marketplace flow, 11 screen sizes
 BASE_URL=https://adnikinfra.com node scripts/check-headers.mjs   # live headers, CSP nonce, report endpoint
 
 curl -sI https://adnikinfra.com | grep -iE "strict-transport|content-security|x-frame|referrer"

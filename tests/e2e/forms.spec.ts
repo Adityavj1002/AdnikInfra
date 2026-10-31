@@ -88,3 +88,49 @@ test('forms work without JavaScript (progressive enhancement)', async ({ browser
   await expect(page.getByRole('status')).toContainText(/ADN-[A-Z2-9]{6}/)
   await context.close()
 })
+
+test('contact: a field is checked as soon as the visitor leaves it, and cleared once fixed', async ({ page }) => {
+  await page.goto('/contact')
+  await phoneField(page).fill('12345')
+  await nameField(page).focus()
+  const phoneError = page.locator('#field-phone-error')
+  await expect(phoneError).toContainText('valid mobile number')
+  await expect(phoneField(page)).toHaveAttribute('aria-invalid', 'true')
+  await phoneField(page).fill('98290 12345')
+  await expect(phoneError).toHaveCount(0)
+
+  const email = page.getByRole('textbox', { name: /Email/ })
+  await email.fill('asha@example')
+  await nameField(page).focus()
+  await expect(page.locator('#field-email-error')).toContainText('valid email')
+})
+
+test('contact: the mobile field only takes phone characters', async ({ page }) => {
+  await page.goto('/contact')
+  await phoneField(page).pressSequentially('98abc290 12x345')
+  await expect(phoneField(page)).toHaveValue('98290 12345')
+})
+
+test('contact: "Something else" makes the message required, and says so', async ({ page }) => {
+  await page.goto('/contact')
+  const messageLabel = page.locator('label[for="field-message"]')
+  await expect(messageLabel).toContainText('(optional)')
+  await page.getByRole('radio', { name: 'Something else' }).check()
+  await expect(messageLabel).not.toContainText('(optional)')
+  await nameField(page).fill('Asha Mehta')
+  await phoneField(page).fill('98290 12345')
+  await page.getByRole('checkbox').check()
+  await page.getByRole('button', { name: 'Send enquiry' }).click()
+  await expect(page.getByRole('alert').filter({ hasText: 'Please check' })).toContainText('at least 10 characters')
+})
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('contact: the server still validates and explains', async ({ page }) => {
+    await page.goto('/contact')
+    await phoneField(page).fill('+91 12345 67890')
+    await page.getByRole('button', { name: 'Send enquiry' }).click()
+    await expect(page.getByRole('alert').filter({ hasText: 'Please check' })).toContainText('valid mobile number')
+  })
+})

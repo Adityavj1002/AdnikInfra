@@ -11,7 +11,7 @@ import { env } from '@/security/env'
 export default async function robots(): Promise<MetadataRoute.Robots> {
   await connection()
   return {
-    rules: [{ userAgent: '*', allow: '/', disallow: ['/api/'] }],
+    rules: [{ userAgent: '*', allow: '/', disallow: ['/api/', '/admin'] }],
     sitemap: absoluteUrl('/sitemap.xml'),
     host: env.SITE_URL,
   }

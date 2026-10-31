@@ -157,6 +157,7 @@ export function ConsentField({
           id="field-consent"
           name="consent"
           type="checkbox"
+          required
           defaultChecked={checked}
           {...(error ? { 'aria-invalid': true, 'aria-describedby': 'field-consent-error' } : {})}
         />

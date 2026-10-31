@@ -2,7 +2,7 @@
 
 import { Send } from 'lucide-react'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useState, type FocusEvent, type FormEvent } from 'react'
 import { site } from '@/config/site'
 import { routes } from '@/lib/routes'
 import { submitEnquiry } from './actions'
@@ -17,8 +17,10 @@ import {
   topicLabels,
   visitSlotLabels,
   type EnquiryTopic,
+  type FieldErrors,
 } from './constants'
 import { ConsentField, ErrorSummary, Field, Honeypot, StatusPanel } from './FormParts'
+import { CHECKED_FIELDS, needsMessage, validateEnquiry } from './validation'
 import styles from './Form.module.css'
 
 const labels = {
@@ -54,6 +56,16 @@ type Props = Readonly<{
   variant?: 'full' | 'compact'
 }>
 
+type CheckedField = (typeof CHECKED_FIELDS)[number]
+const isChecked = (name: string): name is CheckedField => (CHECKED_FIELDS as readonly string[]).includes(name)
+
+/** The form's current values, as the browser would submit them. */
+function readForm(form: HTMLFormElement): Partial<Record<string, string>> {
+  const values: Partial<Record<string, string>> = {}
+  for (const [key, value] of new FormData(form)) if (typeof value === 'string') values[key] = value
+  return values
+}
+
 /**
  * One form for every enquiry. Works without JavaScript (the server action handles a plain
  * POST); with JavaScript, errors and confirmation appear without a page load.
@@ -61,22 +73,84 @@ type Props = Readonly<{
 export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: Props) {
   const [state, action, pending] = useActionState(submitEnquiry, initialFormState)
   const compact = variant === 'compact'
+  const serverErrors: FieldErrors = state.status === 'error' ? state.errors : {}
+  const values = state.status === 'error' ? state.values : {}
+  const initialTopic = values.topic ?? (compact ? 'site-visit' : defaultTopic)
+
+  // Browser checks layer over the server's answer: an entry here (even undefined) replaces it.
+  const [live, setLive] = useState<FieldErrors>({})
+  const [summary, setSummary] = useState<FieldErrors | null>(null)
+  const [topicNow, setTopicNow] = useState<string>(initialTopic)
+  const [seenState, setSeenState] = useState(state)
+  if (seenState !== state) {
+    // A fresh server answer starts the checks over.
+    setSeenState(state)
+    setLive({})
+    setSummary(null)
+    setTopicNow(initialTopic)
+  }
 
   if (state.status === 'success') {
     return <StatusPanel state={state} nextSteps={state.topic === 'site-visit' ? nextSteps.visit : nextSteps.default} />
   }
 
-  const errors = state.status === 'error' ? state.errors : {}
-  const values = state.status === 'error' ? state.values : {}
-  const topic = values.topic ?? (compact ? 'site-visit' : defaultTopic)
+  const errors: FieldErrors = { ...serverErrors, ...live }
+  const summaryErrors = summary ?? (state.status === 'error' ? serverErrors : null)
+  const topic = initialTopic
   const preference = values.preference ?? 'call'
+  const messageRequired = needsMessage(topicNow)
+
+  const recheck = (form: HTMLFormElement, fields: readonly CheckedField[]) => {
+    const found = validateEnquiry(readForm(form))
+    setLive((previous) => ({ ...previous, ...Object.fromEntries(fields.map((field) => [field, found[field]])) }))
+  }
+
+  /** Stop a submission the server would only send back, and say what to fix. */
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const found = validateEnquiry(readForm(event.currentTarget))
+    setLive(Object.fromEntries(CHECKED_FIELDS.map((field) => [field, found[field]])))
+    if (Object.keys(found).length > 0) {
+      event.preventDefault()
+      setSummary(found)
+    } else {
+      setSummary(null)
+    }
+  }
+
+  /** Check a field once the visitor leaves it, but don't flag one they only tabbed past. */
+  const handleBlur = (event: FocusEvent<HTMLFormElement>) => {
+    const field = event.target
+    if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return
+    const { name, value } = field
+    if (!isChecked(name) || name === 'consent') return
+    if (value.trim() === '' && !errors[name]) return
+    recheck(event.currentTarget, [name])
+  }
+
+  /** Clear an error as soon as it's fixed; topic and contact choice change what's required. */
+  const handleChange = (event: FormEvent<HTMLFormElement>) => {
+    const target = event.target
+    if (target instanceof HTMLInputElement) {
+      if (target.name === 'phone') target.value = target.value.replace(/[^\d+\s()-]/g, '')
+      if (target.name === 'topic') setTopicNow(target.value)
+    }
+    const flagged = CHECKED_FIELDS.filter((field) => errors[field])
+    if (flagged.length > 0) recheck(event.currentTarget, flagged)
+  }
 
   return (
-    <form action={action} className={`${styles.form} ${compact ? styles.compact : ''}`} noValidate>
+    <form
+      action={action}
+      onSubmit={handleSubmit}
+      onBlur={handleBlur}
+      onChange={handleChange}
+      className={`${styles.form} ${compact ? styles.compact : ''}`}
+      noValidate
+    >
       {(state.status === 'unavailable' || state.status === 'rate-limited') && (
         <StatusPanel state={state} nextSteps={nextSteps.default} />
       )}
-      {state.status === 'error' && <ErrorSummary errors={errors} labels={labels} />}
+      {summaryErrors && Object.keys(summaryErrors).length > 0 && <ErrorSummary errors={summaryErrors} labels={labels} />}
 
       {about && (
         <p className={styles.context}>
@@ -115,7 +189,16 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
       <div className={styles.row}>
         <Field name="name" label={labels.name} error={errors.name}>
           {(control) => (
-            <input {...control} className="input" type="text" autoComplete="name" enterKeyHint="next" maxLength={100} defaultValue={values.name} />
+            <input
+              {...control}
+              className="input"
+              type="text"
+              autoComplete="name"
+              enterKeyHint="next"
+              maxLength={100}
+              required
+              defaultValue={values.name}
+            />
           )}
         </Field>
         <Field name="phone" label={labels.phone} error={errors.phone}>
@@ -128,6 +211,7 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
               autoComplete="tel"
               enterKeyHint="next"
               maxLength={20}
+              required
               placeholder="98290 12345"
               defaultValue={values.phone}
             />
@@ -189,11 +273,13 @@ export function EnquiryForm({ defaultTopic = 'buy', about, variant = 'full' }: P
           <Field
             name="message"
             label={labels.message}
-            optional
+            optional={!messageRequired}
             hint="Budget, preferred area, plot size, or anything else that helps us help you."
             error={errors.message}
           >
-            {(control) => <textarea {...control} className="textarea" rows={5} maxLength={2000} defaultValue={values.message} />}
+            {(control) => (
+              <textarea {...control} className="textarea" rows={5} maxLength={2000} required={messageRequired} defaultValue={values.message} />
+            )}
           </Field>
         </>
       )}
