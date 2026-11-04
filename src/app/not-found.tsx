@@ -8,7 +8,7 @@ export const metadata = { title: 'Page not found', robots: { index: false, follo
 
 const suggestions = [
   { href: routes.projects, label: 'Our projects' },
-  { href: routes.properties, label: 'Real estate for sale' },
+  { href: routes.marketplace, label: 'Property for sale' },
   { href: routes.construction, label: 'Build on your plot' },
   { href: routes.contact, label: 'Contact us' },
 ] as const

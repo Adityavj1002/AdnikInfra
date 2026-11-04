@@ -29,7 +29,6 @@ const companyLinks: readonly FooterLink[] = [
 const exploreLinks: readonly FooterLink[] = [
   { href: routes.marketplace, label: 'Marketplace' },
   { href: routes.marketplaceSell, label: 'List your property' },
-  { href: routes.properties, label: 'Real estate' },
   { href: routes.construction, label: 'Home construction' },
   { href: routes.locations, label: 'Locations' },
   { href: routes.blog, label: 'Guides & blog' },

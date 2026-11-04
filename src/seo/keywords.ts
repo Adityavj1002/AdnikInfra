@@ -43,16 +43,6 @@ export const staticKeywords = {
       'apartments near SKIT College Jaipur',
     ],
   },
-  [routes.properties]: {
-    primary: 'property for sale in Jaipur',
-    supporting: [
-      'real estate in Jaipur',
-      'flats for sale in Jaipur',
-      'plots for sale in Jaipur',
-      'agricultural land for sale in Jaipur',
-      'resale property Jaipur',
-    ],
-  },
   [routes.construction]: {
     primary: 'home construction company in Jaipur',
     supporting: [
@@ -94,7 +84,14 @@ export const staticKeywords = {
   },
   [routes.marketplace]: {
     primary: 'property marketplace',
-    supporting: ['plots for sale by owner', 'owner listed property', 'buildings for sale'],
+    supporting: [
+      'property for sale in Jaipur',
+      'plots for sale in Jaipur',
+      'flats for sale in Jaipur',
+      'plots for sale by owner',
+      'owner listed property',
+      'buildings for sale',
+    ],
   },
   [routes.marketplaceSell]: {
     primary: 'list your property',

@@ -35,7 +35,7 @@ export const ids = {
   organization: nodeId(routes.home, 'organization'),
   city: nodeId(routes.locations, 'jaipur'),
   builder: nodeId(routes.construction, 'builder'),
-  sales: nodeId(routes.properties, 'sales'),
+  sales: nodeId(routes.marketplace, 'sales'),
   locality: (slug: string) => nodeId(routes.location(slug), 'place'),
   town: (slug: string) => nodeId(routes.town(slug), 'place'),
 }
@@ -125,7 +125,7 @@ export function siteNodes(): readonly Thing[] {
     '@type': 'RealEstateAgent',
     '@id': ids.sales,
     name: `${site.name} Real Estate`,
-    url: absoluteUrl(routes.properties),
+    url: absoluteUrl(routes.marketplace),
     parentOrganization: parent,
     areaServed,
     ...(site.business.reraAgent ? { identifier: site.business.reraAgent } : {}),

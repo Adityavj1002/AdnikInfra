@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { connection } from 'next/server'
 import { sectorPages, servicePages } from '@/content/consultancy'
-import { getLocalities, getPosts, getProjects, getProperties, getTowns } from '@/content/repository'
+import { getLocalities, getPosts, getProjects, getTowns } from '@/content/repository'
 import { approvedListings } from '@/features/marketplace/public'
 import { marketplaceEnabled } from '@/features/marketplace/runtime'
 import { routes } from '@/lib/routes'
@@ -13,9 +13,8 @@ const latest = (dates: readonly string[]): string => [...dates].sort().at(-1) ??
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connection()
-  const [projects, properties, localities, posts, towns] = await Promise.all([
+  const [projects, localities, posts, towns] = await Promise.all([
     getProjects(),
-    getProperties(),
     getLocalities(),
     getPosts(),
     getTowns(),
@@ -29,10 +28,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
 
   const projectsUpdated = latest(projects.map((p) => p.updatedAt))
-  const propertiesUpdated = latest(properties.map((p) => p.updatedAt))
   const localitiesUpdated = latest(localities.map((l) => l.updatedAt))
   const postsUpdated = latest(posts.map((p) => p.updatedAt))
-  const siteUpdated = latest([projectsUpdated, propertiesUpdated, localitiesUpdated, postsUpdated])
+  const siteUpdated = latest([projectsUpdated, localitiesUpdated, postsUpdated])
   // A marketplace outage must not take the whole sitemap down with it.
   const listings = marketplaceEnabled
     ? await approvedListings({}, 5000, 0)
@@ -45,8 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(routes.home, siteUpdated, 1),
     entry(routes.projects, projectsUpdated, 0.9),
     ...projects.map((p) => entry(routes.project(p.slug), p.updatedAt, 0.9, p.gallery.map((img) => img.src.src))),
-    entry(routes.properties, propertiesUpdated, 0.9),
-    ...properties.map((p) => entry(routes.property(p.slug), p.updatedAt, 0.8, p.gallery.map((img) => img.src.src))),
     entry(routes.construction, siteUpdated, 0.9),
     entry(routes.services, siteUpdated, 0.9),
     ...servicePages.map((page) => entry(routes.service(page.slug), siteUpdated, 0.8)),

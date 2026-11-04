@@ -1,17 +1,16 @@
-import { ArrowRight, CircleCheck, ExternalLink } from 'lucide-react'
+import { CircleCheck, ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { PropertyCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
 import { site } from '@/config/site'
-import { getLocalities, getProperties, getTown, getTowns, isValidSlug } from '@/content/repository'
+import { getTown, getTowns, isValidSlug } from '@/content/repository'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, faqNode, graph, ids, townNodes, webPageNode } from '@/seo/schema'
@@ -44,10 +43,7 @@ export default async function TownPage({ params }: PageProps) {
   const town = await load((await params).town)
   if (!town) notFound()
 
-  const [towns, localities] = await Promise.all([getTowns(), getLocalities()])
-  // Listings on the same highway corridor, when that corridor is one of our Jaipur localities.
-  const corridor = localities.find((locality) => locality.name === town.corridor)
-  const properties = corridor ? await getProperties({ locality: corridor.slug }) : []
+  const towns = await getTowns()
   const path = routes.town(town.slug)
   const { title } = titleFor(town.slug)
   const crumbs = [
@@ -106,27 +102,6 @@ export default async function TownPage({ params }: PageProps) {
         </div>
       </section>
 
-      {properties.length > 0 && corridor && (
-        <section className="section section--raised" aria-labelledby="properties-title">
-          <div className="container">
-            <SectionHeading
-              id="properties-title"
-              eyebrow="For sale nearby"
-              title={`Property on ${town.corridor}`}
-              action={
-                <Link href={`${routes.properties}?locality=${corridor.slug}`} className="link-more">
-                  All {town.corridor} listings <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-                </Link>
-              }
-            />
-            <div className="grid-cards">
-              {properties.slice(0, 3).map((property) => (
-                <PropertyCard key={property.slug} item={property} locality={corridor} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <section className="section" aria-labelledby="faq-title">
         <div className="container">

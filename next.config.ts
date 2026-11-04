@@ -25,7 +25,12 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     // Sectors live on the home page; each has its own page below /sectors/.
-    return [{ source: '/sectors', destination: '/#sectors', permanent: false }]
+    return [
+      { source: '/sectors', destination: '/#sectors', permanent: false },
+      // The old sample property listings are gone; real ones live on the marketplace.
+      { source: '/properties', destination: '/marketplace', permanent: true },
+      { source: '/properties/:slug*', destination: '/marketplace', permanent: true },
+    ]
   },
   async headers() {
     return [{ source: '/:path*', headers: [...staticSecurityHeaders] }]

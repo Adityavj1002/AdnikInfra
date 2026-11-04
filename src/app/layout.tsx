@@ -30,6 +30,15 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false, email: false, address: false },
   // Previews and staging must never be indexed; production opts in via SITE_INDEXABLE.
   robots: env.SITE_INDEXABLE ? undefined : { index: false, follow: false },
+  // Proves ownership to Google Search Console and Bing Webmaster Tools, so the sitemap can be submitted.
+  ...(env.GOOGLE_SITE_VERIFICATION || env.BING_SITE_VERIFICATION
+    ? {
+        verification: {
+          ...(env.GOOGLE_SITE_VERIFICATION ? { google: env.GOOGLE_SITE_VERIFICATION } : {}),
+          ...(env.BING_SITE_VERIFICATION ? { other: { 'msvalidate.01': env.BING_SITE_VERIFICATION } } : {}),
+        },
+      }
+    : {}),
 }
 
 export const viewport: Viewport = {

@@ -56,6 +56,9 @@ const envSchema = z
     // instance counts on its own, which is fine for a single server.
     UPSTASH_REDIS_REST_URL: z.preprocess(blankToUndefined, z.url({ protocol: /^https$/ }).optional()),
     UPSTASH_REDIS_REST_TOKEN: z.preprocess(blankToUndefined, z.string().min(20).max(500).optional()),
+    // Search Console and Bing Webmaster ownership codes (the content of their verification meta tag).
+    GOOGLE_SITE_VERIFICATION: z.preprocess(blankToUndefined, z.string().regex(/^[\w-]{10,100}$/).optional()),
+    BING_SITE_VERIFICATION: z.preprocess(blankToUndefined, z.string().regex(/^[\w-]{10,100}$/).optional()),
     // Set to "1" by Vercel on its builds and servers.
     VERCEL: z.preprocess(blankToUndefined, z.string().max(8).optional()),
     // Memory mode only: the admin account seeded at start-up.

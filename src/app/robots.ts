@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { connection } from 'next/server'
 import { absoluteUrl } from '@/seo/schema'
-import { env } from '@/security/env'
 
 /**
  * Crawling stays open even on non-indexable deployments: blocking crawlers would stop
@@ -13,6 +12,5 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules: [{ userAgent: '*', allow: '/', disallow: ['/api/', '/admin'] }],
     sitemap: absoluteUrl('/sitemap.xml'),
-    host: env.SITE_URL,
   }
 }

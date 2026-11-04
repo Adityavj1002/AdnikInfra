@@ -1,16 +1,16 @@
-import { ArrowRight, CircleCheck, ExternalLink } from 'lucide-react'
+import { CircleCheck, ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
-import { ProjectCard, PropertyCard } from '@/components/ui/Cards'
+import { ProjectCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
-import { getLocalities, getLocality, getProjects, getProperties, isValidSlug } from '@/content/repository'
+import { getLocalities, getLocality, getProjects, isValidSlug } from '@/content/repository'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, faqNode, graph, ids, localityNode, webPageNode } from '@/seo/schema'
@@ -35,11 +35,7 @@ export default async function LocalityPage({ params }: PageProps) {
   const locality = await load((await params).slug)
   if (!locality) notFound()
 
-  const [projects, properties, others] = await Promise.all([
-    getProjects({ locality: locality.slug }),
-    getProperties({ locality: locality.slug }),
-    getLocalities(),
-  ])
+  const [projects, others] = await Promise.all([getProjects({ locality: locality.slug }), getLocalities()])
   const path = routes.location(locality.slug)
   const { title } = titleFor(locality.name)
   const crumbs = [
@@ -106,32 +102,22 @@ export default async function LocalityPage({ params }: PageProps) {
         </section>
       )}
 
-      <section className="section" aria-labelledby="properties-title">
+      <section className="section" aria-labelledby="listings-title">
         <div className="container">
           <SectionHeading
-            id="properties-title"
-            eyebrow="For sale"
-            title={`Villas and flats in ${locality.name}`}
-            action={
-              <Link href={`${routes.properties}?locality=${locality.slug}`} className="link-more">
-                Search {locality.name} <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            }
+            id="listings-title"
+            eyebrow="Marketplace"
+            title={`Buying or selling in ${locality.name}?`}
+            intro={<p>Owners list plots, homes and buildings on our marketplace; every listing is checked by our team before it goes live.</p>}
           />
-          {properties.length > 0 ? (
-            <div className="grid-cards">
-              {properties.map((property) => (
-                <PropertyCard key={property.slug} item={property} locality={locality} />
-              ))}
-            </div>
-          ) : (
-            <div className={blocks.empty}>
-              <p>No listings in {locality.name} today. New homes are added every week.</p>
-              <Link href={contactHref('buy')} className="button">
-                Get notified first
-              </Link>
-            </div>
-          )}
+          <div className={blocks.empty}>
+            <Link href={routes.marketplace} className="button">
+              See property listings
+            </Link>
+            <Link href={routes.marketplaceSell} className="button button--outline">
+              List your property
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -82,23 +82,12 @@ test('construction estimator updates the estimate instantly', async ({ page }) =
   await expect(section).toContainText('₹33,00,000')
 })
 
-test('property search submits a shareable filtered results page', async ({ page }) => {
-  await page.goto('/properties')
-  const search = page.getByRole('search', { name: /Search (real estate|properties)/i })
-  await search.getByLabel(/(Real estate|Property) type/i).selectOption('apartment')
-  await search.getByLabel('Budget').selectOption('1cr')
-  await search.getByRole('button', { name: 'Search' }).click()
-  // Empty filters are dropped, so the shared URL is clean.
-  await expect(page).toHaveURL(/\/properties\?type=apartment&budget=1cr$/)
-  await expect(page.getByText(/(real estate listings?|properties?) found/i)).toBeVisible()
-  // Filtered views must not be indexed.
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
-})
-
-test('unknown filter values are ignored, never reflected', async ({ page }) => {
-  await page.goto('/properties?type=<script>&budget=999&sort=drop-table')
-  await expect(page.locator('body')).not.toContainText('<script>')
-  await expect(page.getByText(/(real estate listings?|properties?) found/i)).toBeVisible()
+test('old property links lead to the marketplace', async ({ request }) => {
+  for (const path of ['/properties', '/properties/3-bhk-apartment-malviya-nagar']) {
+    const response = await request.get(path, { maxRedirects: 0 })
+    expect(response.status(), path).toBe(308)
+    expect(response.headers().location, path).toBe('/marketplace')
+  }
 })
 
 test('project status tabs filter the list', async ({ page }) => {

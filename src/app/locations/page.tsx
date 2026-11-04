@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { PageHero } from '@/components/ui/PageHero'
 import { photos } from '@/content/images'
-import { getLocalities, getProjects, getProperties } from '@/content/repository'
+import { getLocalities, getProjects } from '@/content/repository'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, graph, localityNode, webPageNode, type Crumb } from '@/seo/schema'
@@ -23,7 +23,7 @@ const crumbs: readonly Crumb[] = [
 export const metadata = buildMetadata({ title, description, path: routes.locations })
 
 export default async function LocationsPage() {
-  const [localities, projects, properties] = await Promise.all([getLocalities(), getProjects(), getProperties()])
+  const [localities, projects] = await Promise.all([getLocalities(), getProjects()])
 
   return (
     <>
@@ -45,7 +45,6 @@ export default async function LocationsPage() {
         <ul role="list" className={`container grid-cards ${styles.list}`}>
           {localities.map((locality) => {
             const projectCount = projects.filter((p) => p.localitySlug === locality.slug).length
-            const propertyCount = properties.filter((p) => p.localitySlug === locality.slug).length
             return (
               <li key={locality.slug}>
                 <Link href={routes.location(locality.slug)} className={styles.card}>
@@ -55,8 +54,7 @@ export default async function LocationsPage() {
                   <h2 className={styles.name}>{locality.name}</h2>
                   <p className={styles.summary}>{locality.summary}</p>
                   <span className={styles.meta}>
-                    {projectCount} {projectCount === 1 ? 'project' : 'projects'} · {propertyCount}{' '}
-                    {propertyCount === 1 ? 'real estate listing' : 'real estate listings'}
+                    {projectCount > 0 ? `${projectCount} ${projectCount === 1 ? 'project' : 'projects'}` : 'Area guide'}
                   </span>
                   <span className="link-more">
                     Explore {locality.name} <ArrowRight aria-hidden="true" strokeWidth={1.75} />

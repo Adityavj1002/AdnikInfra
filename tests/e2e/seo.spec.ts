@@ -75,7 +75,7 @@ test.describe('on-page SEO', () => {
   })
 
   test('share images render as PNG', async ({ request }) => {
-    for (const path of ['/opengraph-image', '/projects/liv-prime-jagatpura/opengraph-image', '/properties/3-bhk-apartment-malviya-nagar/opengraph-image']) {
+    for (const path of ['/opengraph-image', '/projects/liv-prime-jagatpura/opengraph-image']) {
       const response = await request.get(path)
       expect(response.status(), path).toBe(200)
       expect(response.headers()['content-type']).toBe('image/png')
