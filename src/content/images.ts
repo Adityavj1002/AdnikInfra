@@ -34,6 +34,9 @@ import livingRoom from '@/assets/images/living-room.jpg'
 import officeTower from '@/assets/images/office-tower.jpg'
 import rowVillas from '@/assets/images/row-villas.jpg'
 import villaEntrance from '@/assets/images/villa-entrance.jpg'
+import villaFront from '@/assets/images/villas-skit/villa-front.jpg'
+import villaPlans from '@/assets/images/villas-skit/floor-plans.jpg'
+import villaSite from '@/assets/images/villas-skit/site-november-2026.jpg'
 import villaPool from '@/assets/images/villa-pool.jpg'
 import type { Img } from './types'
 
@@ -86,4 +89,11 @@ export const livPrime = {
   banquetHall: { src: livBanquetHall, alt: 'Banquet hall at Liv Prime with a chandelier and dining tables' },
   plan2bhk: { src: livPlan2bhk, alt: '3D plan of a 2 BHK apartment at Liv Prime: two bedrooms, two bathrooms, kitchen, living and dining' },
   plan3bhk: { src: livPlan3bhk, alt: '3D plan of a 3 BHK apartment at Liv Prime: three bedrooms, kitchen, living and dining' },
+} as const satisfies Record<string, Img>
+
+/** 18 × 35 villas near SKIT College: the design render, the floor plans and the site in November 2026. */
+export const villasSkit = {
+  front: { src: villaFront, alt: 'Front of the 18 × 35 villa: ground plus two floors in brick, white and charcoal, with a covered car parking and a terrace pergola' },
+  site: { src: villaSite, alt: 'The villas under construction in November 2026: concrete structure up to the second floor, plaster under way' },
+  plans: { src: villaPlans, alt: 'Floor plans of the 18 × 35 villa: ground, first and second floors, with four bedrooms and four toilets' },
 } as const satisfies Record<string, Img>

@@ -5,6 +5,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { PageHero } from '@/components/ui/PageHero'
 import blocks from '@/components/ui/blocks.module.css'
 import { site } from '@/config/site'
+import { formatPhone } from '@/lib/format'
 import { resolveEnquiryAbout } from '@/features/enquiry/about'
 import { ENQUIRY_TOPICS } from '@/features/enquiry/constants'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
@@ -72,7 +73,7 @@ export default async function ContactPage({ searchParams }: PageProps) {
                   <Phone aria-hidden="true" strokeWidth={1.75} />
                   <span>
                     <span className={styles.channelLabel}>Call</span>
-                    <a href={`tel:${phone}`}>{phone}</a>
+                    <a href={`tel:${phone}`}>{formatPhone(phone)}</a>
                   </span>
                 </li>
               )}

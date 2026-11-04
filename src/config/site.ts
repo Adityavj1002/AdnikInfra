@@ -70,6 +70,8 @@ export const site: SiteConfig = {
   ogLocale: 'en_IN',
   contact: {
     email: 'support@adnikinfra.com',
+    phone: '+917737209850',
+    whatsapp: '+917737209850',
     hours: 'Mon–Sat, 10 am – 7 pm',
     responseTime: 'We reply within one working day.',
   },

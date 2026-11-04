@@ -2,6 +2,7 @@ import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { site } from '@/config/site'
+import { formatPhone } from '@/lib/format'
 import { services } from '@/content/services'
 import { ListingAlerts } from '@/features/alerts/ListingAlerts'
 import { routes } from '@/lib/routes'
@@ -79,7 +80,7 @@ export function SiteFooter() {
             {phone && (
               <li>
                 <Phone aria-hidden="true" className="icon" strokeWidth={1.75} />
-                <a href={`tel:${phone}`}>{phone}</a>
+                <a href={`tel:${phone}`}>{formatPhone(phone)}</a>
               </li>
             )}
             {whatsapp && (

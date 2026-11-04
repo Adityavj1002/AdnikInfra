@@ -1,4 +1,4 @@
-import { livPrime } from '../images'
+import { livPrime, villasSkit } from '../images'
 import type { Project, UnitArea } from '../types'
 
 // Liv Prime, the company's own project, from its brochure (photos, location and details only).
@@ -6,6 +6,7 @@ import type { Project, UnitArea } from '../types'
 // purpose: the brochure's registration was issued under the company's old name.
 
 const sqft = (value: number) => ({ value, unit: 'sqft' as const })
+const sqyd = (value: number) => ({ value, unit: 'sqyd' as const })
 
 // Unit areas from the approved plan (sq ft). Unit 103 / 503 means the same plan on floors 1 to 5.
 const livPrimeUnits: readonly UnitArea[] = [
@@ -147,5 +148,69 @@ export const projects: readonly Project[] = [
     updates: [],
     featured: true,
     updatedAt: '2026-11-04',
+  },
+  {
+    slug: 'villas-near-skit-college-jagatpura',
+    name: 'Villas near SKIT College',
+    type: 'villa',
+    status: 'ongoing',
+    localitySlug: 'jagatpura',
+    tagline: '4 BHK villas on 18 × 35 plots, JDA approved',
+    summary:
+      '4 BHK villas on 18 × 35 plots near SKIT College, Jagatpura: JDA approved, in a gated colony, with covered car parking. Now under construction.',
+    description: [
+      'Independent 4 BHK villas on 18 × 35 ft plots in a gated, JDA-approved colony near SKIT College in Jagatpura, Jaipur. Each villa rises ground plus two floors, with a terrace above.',
+      'The ground floor has a covered car parking, a front lawn, a lobby with a puja space and a master bedroom. The first floor holds the kitchen, an 18-foot lounge and dining room, a second master bedroom and a balcony. The second floor has two more bedrooms and a balcony. Every bedroom has its own toilet.',
+      'Construction is under way: the structure is up to the second floor. Call or WhatsApp to visit the site.',
+    ],
+    address: 'Near SKIT College, Jagatpura, Jaipur, Rajasthan',
+    configurations: [{ label: '4 BHK villa', area: sqyd(70) }],
+    plans: [villasSkit.plans],
+    film: {
+      title: 'Villas near SKIT College: the design and the site today',
+      description:
+        'How the 18 × 35 villas near SKIT College, Jagatpura, will look, the construction in November 2026, and the floor plans for all three levels.',
+      poster: '/media/villas-skit-film-poster.jpg',
+      sources: [{ src: '/media/villas-skit-film.mp4', type: 'video/mp4' }],
+      duration: 'PT21S',
+      uploadDate: '2026-11-05',
+      transcript: [
+        'An artist’s impression of the villa: ground plus two floors in brick, white and charcoal, with a covered car parking. 4 BHK villas on 18 × 35 plots near SKIT College, Jagatpura. JDA approved, gated colony, car parking.',
+        'On site in November 2026: construction under way, with ground plus two floors taking shape.',
+        'Floor plans: ground floor with car parking, lawn and a bedroom with toilet; first floor with kitchen, lounge and a bedroom with toilet; second floor with two bedrooms, two toilets and a balcony.',
+        'Book a site visit. Call or WhatsApp 77372 09850.',
+      ],
+    },
+    possession: 'On request',
+    rera: null,
+    facts: [
+      { label: 'Plot size', value: '18 × 35 ft (70 sq yd)' },
+      { label: 'Floors', value: 'Ground + 2, with terrace' },
+      { label: 'Bedrooms', value: '4, each with a toilet' },
+      { label: 'Approval', value: 'JDA approved' },
+      { label: 'Colony', value: 'Gated' },
+      { label: 'Parking', value: 'Covered car parking' },
+    ],
+    amenities: ['gated', 'parking'],
+    specifications: [
+      {
+        group: 'Ground floor',
+        items: ['Covered car parking', 'Front lawn (10 ft)', 'Lobby, 5′6″ wide, with a puja space', 'Master bedroom 12′0″ × 10′3″ with toilet', 'Store under the stair'],
+      },
+      {
+        group: 'First floor',
+        items: ['Lounge and dining 9′6″ × 18′0″', 'Kitchen 7′10½″ × 10′0″', 'Master bedroom 12′0″ × 10′3″ with toilet', 'Balcony, 4′0″ wide'],
+      },
+      {
+        group: 'Second floor',
+        items: ['Master bedroom 12′0″ × 10′3″ with toilet', 'Bedroom 12′0″ × 10′0″ with toilet', 'Balcony, 6′6″ wide', 'Passage, 4′0″ wide'],
+      },
+    ],
+    nearby: [],
+    geo: { lat: 26.8197, lng: 75.858 },
+    gallery: [villasSkit.front, villasSkit.site],
+    updates: [{ date: '2026-11-04', text: 'The structure is up to the second floor; plaster work is under way.' }],
+    featured: false,
+    updatedAt: '2026-11-05',
   },
 ]

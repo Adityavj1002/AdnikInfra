@@ -87,3 +87,9 @@ export const furnishingLabel = {
   'semi-furnished': 'Semi-furnished',
   furnished: 'Furnished',
 } as const
+
+/** "+917737209850" → "+91 77372 09850": an Indian mobile number the way people read it aloud. */
+export function formatPhone(e164: string): string {
+  const digits = e164.replace(/\D/g, '')
+  return digits.length === 12 && digits.startsWith('91') ? `+91 ${digits.slice(2, 7)} ${digits.slice(7)}` : e164
+}

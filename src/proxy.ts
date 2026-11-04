@@ -30,7 +30,8 @@ export function proxy(request: NextRequest) {
     nonce,
     isDev: env.NODE_ENV === 'development',
     siteUrl: env.SITE_URL,
-    mediaOrigin: env.MEDIA_ORIGIN,
+    // Project films stream from Cloudinary when it is configured.
+    mediaOrigin: env.MEDIA_ORIGIN ?? (env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_IMAGE_CLOUD ? 'https://res.cloudinary.com' : undefined),
     // Images come from Cloudinary whenever this build's image loader points there (the cloud name
     // is inlined at build time); uploads only when this server holds the Cloudinary keys.
     ...(env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_IMAGE_CLOUD ? { imageOrigin: 'https://res.cloudinary.com' } : {}),

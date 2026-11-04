@@ -1,4 +1,4 @@
-import { Building2, CalendarCheck, ExternalLink, FileText, Key, MapPin, Ruler, ShieldCheck } from 'lucide-react'
+import { Building2, CalendarCheck, ExternalLink, FileText, Key, MapPin, Phone, Ruler, ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,12 +12,14 @@ import { KeyFacts } from '@/components/ui/KeyFacts'
 import blocks from '@/components/ui/blocks.module.css'
 import { getLocality, getProject, getProjects, isValidSlug } from '@/content/repository'
 import { EmiCalculator } from '@/features/calculators/EmiCalculator'
+import { LazyVideo } from '@/features/cinematic/LazyVideo'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { Gallery } from '@/features/gallery/Gallery'
-import { formatAreaRange, formatDate, projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { site } from '@/config/site'
+import { formatAreaRange, formatDate, formatPhone, projectStatusLabel, projectTypeLabel } from '@/lib/format'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
-import { breadcrumbNode, graph, localityNode, projectNode } from '@/seo/schema'
+import { breadcrumbNode, graph, localityNode, projectNode, videoNode } from '@/seo/schema'
 import { buildTitle } from '@/seo/titles'
 import styles from '@/components/ui/detail.module.css'
 
@@ -45,6 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 const sections = [
   { id: 'overview', label: 'Overview' },
+  { id: 'film', label: 'Video' },
   { id: 'plans', label: 'Plans' },
   { id: 'amenities', label: 'Amenities' },
   { id: 'specifications', label: 'Specifications' },
@@ -66,12 +69,22 @@ export default async function ProjectPage({ params }: PageProps) {
     { name: 'Projects', path: routes.projects },
     { name: project.name, path },
   ] as const
-  const shown = sections.filter((section) => section.id !== 'updates' || project.updates.length > 0)
+  const shown = sections.filter(
+    (section) => (section.id !== 'updates' || project.updates.length > 0) && (section.id !== 'film' || project.film),
+  )
+  const { phone } = site.contact
   const units = project.units ?? []
 
   return (
     <>
-      <JsonLd graph={graph(projectNode(project, locality), breadcrumbNode(path, crumbs), localityNode(locality))} />
+      <JsonLd
+        graph={graph(
+          projectNode(project, locality),
+          breadcrumbNode(path, crumbs),
+          localityNode(locality),
+          ...(project.film ? [videoNode(project.film, path)] : []),
+        )}
+      />
       <Breadcrumbs crumbs={crumbs} />
 
       <div className="container">
@@ -102,6 +115,12 @@ export default async function ProjectPage({ params }: PageProps) {
                 <CalendarCheck aria-hidden="true" strokeWidth={1.75} />
                 Book a site visit
               </Link>
+              {phone && (
+                <a href={`tel:${phone}`} className="button button--outline">
+                  <Phone aria-hidden="true" strokeWidth={1.75} />
+                  Call {formatPhone(phone)}
+                </a>
+              )}
               <Link href={contactHref('buy', project.slug)} className="button button--outline">
                 <FileText aria-hidden="true" strokeWidth={1.75} />
                 Get details
@@ -143,6 +162,15 @@ export default async function ProjectPage({ params }: PageProps) {
                 </p>
               ))}
             </section>
+
+            {project.film && (
+              <section id="film" className={blocks.block} aria-labelledby="film-title">
+                <h2 id="film-title" className={blocks.blockTitle}>
+                  Video: the design and the site today
+                </h2>
+                <LazyVideo film={project.film} portrait className={blocks.film} />
+              </section>
+            )}
 
             <section id="plans" className={blocks.block} aria-labelledby="plans-title">
               <h2 id="plans-title" className={blocks.blockTitle}>
@@ -255,6 +283,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 </p>
               )}
               <p className={blocks.lead}>{locality.summary}</p>
+              {project.nearby.length > 0 && (
               <ul role="list" className={blocks.nearby}>
                 {project.nearby.map((place) => (
                   <li key={place.place}>
@@ -263,6 +292,7 @@ export default async function ProjectPage({ params }: PageProps) {
                   </li>
                 ))}
               </ul>
+              )}
               <p className={styles.mapLinks}>
                 <a href={mapsHref(project.geo, project.address)} target="_blank" rel="noopener noreferrer" className="link-more">
                   Open in Google Maps <ExternalLink aria-hidden="true" strokeWidth={1.75} />

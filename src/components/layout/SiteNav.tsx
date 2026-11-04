@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { site } from '@/config/site'
+import { formatPhone } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { Logo } from './Logo'
 import styles from './SiteNav.module.css'
@@ -58,7 +59,8 @@ export function SiteNav() {
 
       <div className={styles.actions}>
         {phone ? (
-          <a href={`tel:${phone}`} className={`button button--outline button--small ${styles.call}`}>
+          // On phones only the icon shows, so the link carries its name itself.
+          <a href={`tel:${phone}`} className={`button button--outline button--small ${styles.call}`} aria-label={`Call us on ${formatPhone(phone)}`}>
             <Phone aria-hidden="true" strokeWidth={1.75} />
             <span className={styles.callText}>Call us</span>
           </a>
@@ -113,7 +115,7 @@ export function SiteNav() {
           {phone && (
             <a href={`tel:${phone}`} className="button button--outline button--block">
               <Phone aria-hidden="true" strokeWidth={1.75} />
-              Call {phone}
+              Call {formatPhone(phone)}
             </a>
           )}
         </div>

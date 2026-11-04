@@ -334,8 +334,8 @@ test('an admin edits the project, with clear errors, and the website follows', a
 
   await signIn(page)
   await page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Projects' }).click()
-  await expect(page.getByText('Featured on the home page')).toBeVisible()
-  await page.getByRole('link', { name: 'Edit project' }).click()
+  // (Whether it is featured belongs to the next test, which may be changing it right now.)
+  await page.getByRole('listitem').filter({ hasText: 'Liv Prime' }).getByRole('link', { name: 'Edit project' }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Edit Liv Prime' })).toBeVisible()
 
   // A malformed line is named, and nothing typed is lost.
@@ -381,7 +381,7 @@ test('an admin can take the featured project off the home page and put it back',
   await expect(page.locator('#projects').getByRole('heading', { name: 'Liv Prime' })).toBeVisible()
 
   await page.goto('/admin/projects')
-  await page.getByRole('button', { name: 'Feature on home page' }).click()
+  await page.getByRole('listitem').filter({ hasText: 'Liv Prime' }).getByRole('button', { name: 'Feature on home page' }).click()
   await expect(page.getByRole('status').filter({ hasText: 'Liv Prime is now featured' })).toBeVisible()
   await page.goto('/')
   await expect(page.getByText(/^Featured ·/).first()).toBeVisible()

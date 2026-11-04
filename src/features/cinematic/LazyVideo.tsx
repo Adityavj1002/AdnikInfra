@@ -16,7 +16,7 @@ function prefersLite(): boolean {
  * offscreen, and Save-Data / reduced-motion visitors get the poster until they press play.
  * Captions and a full transcript are always in the HTML for people and crawlers alike.
  */
-export function LazyVideo({ film, className }: Readonly<{ film: Film; className?: string }>) {
+export function LazyVideo({ film, portrait, className }: Readonly<{ film: Film; portrait?: boolean; className?: string }>) {
   const video = useRef<HTMLVideoElement>(null)
   const [near, setNear] = useState(false)
   const [playing, setPlaying] = useState(false)
@@ -59,7 +59,7 @@ export function LazyVideo({ film, className }: Readonly<{ film: Film; className?
 
   return (
     <figure className={`${styles.figure} ${className ?? ''}`}>
-      <div className={styles.frame}>
+      <div className={`${styles.frame} ${portrait ? styles.portrait : ''}`}>
         <video
           ref={video}
           className={styles.video}
@@ -81,14 +81,14 @@ export function LazyVideo({ film, className }: Readonly<{ film: Film; className?
             />
           )}
         </video>
-        <button type="button" className={styles.toggle} onClick={toggle} aria-pressed={!playing}>
-          {playing ? 'Pause film' : 'Play film'}
+        <button type="button" className={styles.toggle} onClick={toggle}>
+          {playing ? 'Pause video' : 'Play video'}
         </button>
       </div>
       <figcaption className={styles.caption}>
         <span>{film.title}</span>
         <details className={styles.transcript}>
-          <summary>Read the film transcript</summary>
+          <summary>What the video shows</summary>
           {film.transcript.map((line, index) => (
             <p key={index}>{line}</p>
           ))}

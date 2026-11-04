@@ -101,6 +101,8 @@ export type Project = Readonly<{
   units?: readonly UnitArea[]
   /** Isometric views of sample units, shown beside the unit table. */
   plans?: readonly Img[]
+  /** A short film of the project (design and site progress), shown on its page. */
+  film?: Film
   possession: string
   /** Rajasthan RERA registration number. null until issued; never invented. */
   rera: string | null

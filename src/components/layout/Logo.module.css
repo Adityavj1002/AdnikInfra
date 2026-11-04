@@ -47,10 +47,17 @@
     white-space: nowrap;
   }
 
-  /* On the narrowest phones the tagline would crowd the menu button. */
-  @media (max-width: 22.5rem) {
+  /* On phones the tagline would crowd the call and menu buttons. */
+  @media (max-width: 25rem) {
     .logo:not(.lg) .tag {
       display: none;
+    }
+  }
+
+  /* Folded phones (about 280px): a smaller lockup, so the menu button still fits. */
+  @media (max-width: 21rem) {
+    .logo:not(.lg) {
+      font-size: 0.8rem;
     }
   }
 }

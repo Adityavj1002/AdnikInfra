@@ -22,6 +22,7 @@ export const cloudImages: Readonly<Record<string, string>> = {
   'exterior-front': 'adnik/projects/liv-prime/exterior-front',
   'exterior-street': 'adnik/projects/liv-prime/exterior-street',
   'floor-plan': 'adnik/site/floor-plan',
+  'floor-plans': 'adnik/projects/villas-skit/floor-plans',
   'games-room': 'adnik/projects/liv-prime/games-room',
   'gym': 'adnik/projects/liv-prime/gym',
   'handover-keys': 'adnik/site/handover-keys',
@@ -43,6 +44,8 @@ export const cloudImages: Readonly<Record<string, string>> = {
   'plan-3bhk-3d': 'adnik/projects/liv-prime/plan-3bhk-3d',
   'private-theatre': 'adnik/projects/liv-prime/private-theatre',
   'row-villas': 'adnik/site/row-villas',
+  'site-november-2026': 'adnik/projects/villas-skit/site-november-2026',
   'villa-entrance': 'adnik/site/villa-entrance',
+  'villa-front': 'adnik/projects/villas-skit/villa-front',
   'villa-pool': 'adnik/site/villa-pool',
 }

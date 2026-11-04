@@ -128,3 +128,18 @@ test('projects show plans and sizes, never a price', async ({ page }) => {
     expect(text, path).not.toMatch(/Starting from|₹|Price on request/)
   }
 })
+
+test('the villas page shows the plan, the film and a call button', async ({ page }) => {
+  await page.goto('/projects/villas-near-skit-college-jagatpura')
+  await expect(page.getByRole('heading', { level: 1, name: 'Villas near SKIT College, Jagatpura' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Call +91 77372 09850' })).toHaveAttribute('href', 'tel:+917737209850')
+  await expect(page.getByText('JDA approved').first()).toBeVisible()
+  await expect(page.getByRole('img', { name: /Floor plans of the 18 × 35 villa/ })).toBeVisible()
+
+  // The film loads only near the viewport, then plays muted.
+  const film = page.locator('#film video')
+  await expect(film.locator('source')).toHaveCount(0)
+  await page.locator('#film').scrollIntoViewIfNeeded()
+  await expect(film.locator('source')).toHaveAttribute('src', /villas-skit-film\.mp4$/)
+  await expect(page.locator('#film')).toContainText('What the video shows')
+})

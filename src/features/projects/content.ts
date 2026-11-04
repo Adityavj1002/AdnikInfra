@@ -2,8 +2,8 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 import { z } from 'zod'
-import { livPrime } from '@/content/images'
-import type { AmenityKey, Img, Project, UnitArea } from '@/content/types'
+import { livPrime, villasSkit } from '@/content/images'
+import type { AmenityKey, Film, Img, Project, UnitArea } from '@/content/types'
 import { photoBase, isPhotoId, useCloudinary } from '@/features/marketplace/media'
 import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
 import { CACHE_SECONDS, cacheTags } from '@/lib/cache-tags'
@@ -43,14 +43,19 @@ export const AMENITY_KEYS = [
 ] as const satisfies readonly AmenityKey[]
 
 /** Photos bundled with the site, by key; anything else is an uploaded photo id. */
-const library: Readonly<Record<string, Img>> = livPrime
+const library: Readonly<Record<string, Img>> = {
+  ...livPrime,
+  villaFront: villasSkit.front,
+  villaSite: villasSkit.site,
+  villaPlans: villasSkit.plans,
+}
 
 /**
  * The same brochure files on Cloudinary (uploaded once under these ids). With Cloudinary
  * configured they are served from there; the bundled copies stay as the fallback and supply
  * the size and blur placeholder.
  */
-const cloudIds: Readonly<Record<keyof typeof livPrime, string>> = {
+const cloudIds: Readonly<Record<string, string>> = {
   exteriorFront: 'adnik/projects/liv-prime/exterior-front',
   exteriorStreet: 'adnik/projects/liv-prime/exterior-street',
   aerial: 'adnik/projects/liv-prime/aerial',
@@ -63,11 +68,27 @@ const cloudIds: Readonly<Record<keyof typeof livPrime, string>> = {
   banquetHall: 'adnik/projects/liv-prime/banquet-hall',
   plan2bhk: 'adnik/projects/liv-prime/plan-2bhk-3d',
   plan3bhk: 'adnik/projects/liv-prime/plan-3bhk-3d',
+  villaFront: 'adnik/projects/villas-skit/villa-front',
+  villaSite: 'adnik/projects/villas-skit/site-november-2026',
+  villaPlans: 'adnik/projects/villas-skit/floor-plans',
 }
 
 function hostedAs(key: string, img: Img): Img {
-  const id = useCloudinary ? cloudIds[key as keyof typeof livPrime] : undefined
+  const id = useCloudinary ? cloudIds[key] : undefined
   return id ? { alt: img.alt, src: { ...img.src, src: `${photoBase()}/${id}` } } : img
+}
+
+/** A film from public/media, streamed from Cloudinary when it is configured (same file, uploaded once). */
+export function hostedFilm(film: Film): Film {
+  if (!useCloudinary) return film
+  const cloud = photoBase().replace('/image/upload', '')
+  const name = (path: string) => path.slice('/media/'.length).replace(/\.[^.]+$/, '')
+  const local = (path: string) => path.startsWith('/media/')
+  return {
+    ...film,
+    poster: local(film.poster) ? `${cloud}/image/upload/f_auto,q_auto,w_720/adnik/media/${name(film.poster)}` : film.poster,
+    sources: film.sources.map((source) => (local(source.src) ? { ...source, src: `${cloud}/video/upload/q_auto/adnik/media/${name(source.src)}.mp4` } : source)),
+  }
 }
 
 /** A bundled photo, served from Cloudinary when it is configured. Other images pass through. */

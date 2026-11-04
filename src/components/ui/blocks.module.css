@@ -198,6 +198,10 @@
     font-weight: 650;
   }
 
+  .film {
+    max-inline-size: 40rem;
+  }
+
   .subTitle {
     margin-block: var(--space-8) var(--space-4);
     font-size: var(--text-xl);
@@ -229,8 +233,11 @@
     object-fit: contain;
   }
 
-  /* Detail pages: content + sticky enquiry card */
+  /* Detail pages: content + sticky enquiry card. The "On this page" bar above is sticky too,
+     so anything that sticks or scrolls into view below it clears both bars. */
   .detail {
+    --anchor-nav: calc(var(--tap) + var(--space-2) * 2 + 1px);
+    --stuck-top: calc(var(--header-height) + var(--anchor-nav));
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-10);
@@ -246,8 +253,15 @@
     /* Same top space as the first .block beside it, so the card doesn't touch the gallery. */
     .sticky {
       position: sticky;
-      inset-block-start: calc(var(--header-height) + var(--space-6));
+      inset-block-start: calc(var(--stuck-top) + var(--space-4));
       margin-block-start: var(--space-10);
+    }
+
+    /* On short screens the form scrolls inside the card, so its button is always reachable. */
+    .sticky > .panel {
+      max-block-size: calc(100dvh - var(--stuck-top) - var(--space-8));
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
   }
 
@@ -269,6 +283,8 @@
     display: grid;
     gap: var(--space-5);
     padding-block-start: var(--space-10);
+    /* Jumping to a section from the bar lands its heading below both sticky bars. */
+    scroll-margin-block-start: calc(var(--stuck-top, var(--header-height)) - var(--space-6));
   }
 
   .blockTitle {

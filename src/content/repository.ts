@@ -1,5 +1,5 @@
 import 'server-only'
-import { applyRecord, hosted, savedProjects } from '@/features/projects/content'
+import { applyRecord, hosted, hostedFilm, savedProjects } from '@/features/projects/content'
 import { isSlug } from '@/lib/slug'
 import { packages, posts, stats } from './fixtures/company'
 import { faqGroups } from './fixtures/faqs'
@@ -50,7 +50,12 @@ async function currentProjects(): Promise<readonly Project[]> {
   return projects.map((bundled) => {
     const edit = saved[bundled.slug]
     const project = edit ? applyRecord(bundled, edit.record, edit.updatedAt) : bundled
-    return { ...project, gallery: project.gallery.map(hosted), ...(project.plans ? { plans: project.plans.map(hosted) } : {}) }
+    return {
+      ...project,
+      gallery: project.gallery.map(hosted),
+      ...(project.plans ? { plans: project.plans.map(hosted) } : {}),
+      ...(project.film ? { film: hostedFilm(project.film) } : {}),
+    }
   })
 }
 

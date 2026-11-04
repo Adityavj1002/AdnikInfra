@@ -60,7 +60,7 @@ describe('images on Cloudinary', () => {
   it('lists every bundled image, so none is left on this server by mistake', async () => {
     const { readdirSync } = await import('node:fs')
     const { cloudImages } = await import('@/lib/cloud-images')
-    const names = ['src/assets/images', 'src/assets/images/liv-prime', 'public/brand'].flatMap((dir) =>
+    const names = ['src/assets/images', 'src/assets/images/liv-prime', 'src/assets/images/villas-skit', 'public/brand'].flatMap((dir) =>
       readdirSync(dir)
         .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
         .map((file) => file.replace(/\.[^.]+$/, '')),

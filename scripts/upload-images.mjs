@@ -13,13 +13,16 @@ if (!cloud || !key || !secret) {
   process.exit(1)
 }
 const force = process.argv.includes('--force')
-const IMAGE = /\.(jpe?g|png|webp)$/i
+const IMAGE = /\.(jpe?g|png|webp|mp4)$/i
 
 // Folder on disk → folder on Cloudinary. Keep in step with src/lib/cloud-images.ts.
 const folders = [
   ['src/assets/images', 'adnik/site'],
   ['src/assets/images/liv-prime', 'adnik/projects/liv-prime'],
+  ['src/assets/images/villas-skit', 'adnik/projects/villas-skit'],
   ['public/brand', 'adnik/site'],
+  // Films and their posters (src/features/projects/content.ts streams them from here).
+  ['public/media', 'adnik/media'],
 ]
 
 const sign = (params) =>
@@ -33,8 +36,9 @@ for (const [dir, folder] of folders) {
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- dir comes from the fixed list above
   for (const file of (await readdir(dir, { withFileTypes: true })).filter((f) => f.isFile() && IMAGE.test(f.name))) {
     const publicId = `${folder}/${basename(file.name, extname(file.name))}`
+    const kind = extname(file.name).toLowerCase() === '.mp4' ? 'video' : 'image'
     if (!force) {
-      const head = await fetch(`https://res.cloudinary.com/${cloud}/image/upload/${publicId}`, { method: 'HEAD' })
+      const head = await fetch(`https://res.cloudinary.com/${cloud}/${kind}/upload/${publicId}${kind === 'video' ? '.mp4' : ''}`, { method: 'HEAD' })
       if (head.ok) {
         skipped += 1
         continue
@@ -45,7 +49,7 @@ for (const [dir, folder] of folders) {
     // eslint-disable-next-line security/detect-non-literal-fs-filename -- a file listed from that fixed folder
     body.set('file', new Blob([await readFile(join(dir, file.name))]), file.name)
     for (const [k, v] of Object.entries({ ...params, api_key: key, signature: sign(params) })) body.set(k, v)
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/image/upload`, { method: 'POST', body })
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/${kind}/upload`, { method: 'POST', body })
     const result = await response.json()
     if (!response.ok) {
       console.error(`✗ ${publicId}: ${result.error?.message ?? response.status}`)

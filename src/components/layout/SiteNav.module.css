@@ -62,8 +62,18 @@
     display: none;
   }
 
+  /* Below the full nav: an icon the size of the menu button. The narrowest phones drop it from
+     the header (logo, call and menu don't fit); Call stays in the menu sheet and the action bar. */
   .call {
-    padding-inline: var(--space-3);
+    inline-size: var(--tap);
+    padding-inline: 0;
+    justify-content: center;
+  }
+
+  @media (max-width: 23rem) {
+    .call {
+      display: none;
+    }
   }
 
   .menuButton,
@@ -110,6 +120,7 @@
     }
 
     .call {
+      inline-size: auto;
       padding-inline: var(--space-4);
     }
 

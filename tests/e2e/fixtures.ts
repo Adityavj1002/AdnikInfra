@@ -3,6 +3,7 @@ export const pages = [
   { path: '/', keyword: 'plan. comply. build. grow.' },
   { path: '/projects', keyword: 'new residential projects in jaipur' },
   { path: '/projects/liv-prime-jagatpura', keyword: 'liv prime, jagatpura' },
+  { path: '/projects/villas-near-skit-college-jagatpura', keyword: 'villas near skit college, jagatpura' },
   { path: '/properties', keyword: 'property for sale in jaipur' },
   { path: '/properties/3-bhk-apartment-malviya-nagar', keyword: '3 bhk apartment in malviya nagar' },
   { path: '/construction', keyword: 'home construction company in jaipur' },
