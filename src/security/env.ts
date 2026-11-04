@@ -56,6 +56,8 @@ const envSchema = z
     // instance counts on its own, which is fine for a single server.
     UPSTASH_REDIS_REST_URL: z.preprocess(blankToUndefined, z.url({ protocol: /^https$/ }).optional()),
     UPSTASH_REDIS_REST_TOKEN: z.preprocess(blankToUndefined, z.string().min(20).max(500).optional()),
+    // Set to "1" by Vercel on its builds and servers.
+    VERCEL: z.preprocess(blankToUndefined, z.string().max(8).optional()),
     // Memory mode only: the admin account seeded at start-up.
     MARKETPLACE_DEV_ADMIN_EMAIL: z.preprocess(blankToUndefined, z.email().default('admin@example.com')),
     MARKETPLACE_DEV_ADMIN_PASSWORD: z.preprocess(blankToUndefined, z.string().min(12).max(200).optional()),
@@ -109,8 +111,9 @@ const envSchema = z
         ctx.addIssue({ code: 'custom', path: ['LEADS_MODE'], message: 'The live marketplace needs SMTP: sellers confirm by email.' })
       }
     }
-    if (env.MARKETPLACE_MODE === 'memory' && env.SITE_INDEXABLE) {
-      ctx.addIssue({ code: 'custom', path: ['MARKETPLACE_MODE'], message: 'memory is for development and tests, not a live site.' })
+    // Vercel runs many short-lived instances: an in-memory store would lose every listing and edit.
+    if (env.MARKETPLACE_MODE === 'memory' && (env.SITE_INDEXABLE || env.VERCEL === '1')) {
+      ctx.addIssue({ code: 'custom', path: ['MARKETPLACE_MODE'], message: 'memory is for development and tests, not a live site. Use supabase.' })
     }
     if (env.SITE_INDEXABLE && !env.SITE_URL.startsWith('https://')) {
       ctx.addIssue({

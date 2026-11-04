@@ -270,6 +270,7 @@ describe('live marketplace configuration', () => {
     ['a short signing secret', { SIGNING_SECRET: 'short' }, 'SIGNING_SECRET'],
     ['the publishable key as the server key', { SUPABASE_SERVICE_ROLE_KEY: 'sb_publishable_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }, 'SUPABASE_SERVICE_ROLE_KEY'],
     ['the anon key as the server key', { SUPABASE_SERVICE_ROLE_KEY: 'eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.c2lnbmF0dXJl' }, 'SUPABASE_SERVICE_ROLE_KEY'],
+    ['the in-memory store on Vercel', { MARKETPLACE_MODE: 'memory', VERCEL: '1' }, 'MARKETPLACE_MODE'],
   ])('refuses to start with %s', (_label, change, field) => {
     expect(() => parseEnv({ ...live, ...change })).toThrow(field)
   })
