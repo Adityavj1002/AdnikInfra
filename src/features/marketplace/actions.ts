@@ -7,7 +7,8 @@ import { sendEmail } from '@/features/email/mailer'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 import { normalizeLine, normalizeMultiline, pickFields } from '@/security/normalize'
-import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { clientKey } from '@/security/rate-limit'
+import { createSharedLimiter } from '@/security/shared-limit'
 import { hashToken, isTokenShape, randomToken } from '@/security/tokens'
 import { PHOTOS_MIN, type ListingFormState, type UploadTicket } from './constants'
 import { CONFIRM_HOURS, listingConfirmEmail } from './emails'
@@ -16,16 +17,16 @@ import { notifyConfirmed } from './notify'
 import { getStore, marketplaceEnabled } from './runtime'
 import { LISTING_FIELDS, listingSchema, listingSlug } from './schema'
 
-const ticketLimit = createRateLimiter({ limit: 60, windowMs: 10 * 60_000 })
-const submitLimit = createRateLimiter({ limit: 5, windowMs: 60 * 60_000 })
+const ticketLimit = createSharedLimiter('upload-ticket', { limit: 60, windowMs: 10 * 60_000 })
+const submitLimit = createSharedLimiter('listing-submit', { limit: 5, windowMs: 60 * 60_000 })
 // Spoofed client keys must not let anyone flood one inbox with confirmation emails.
-const perAddress = createRateLimiter({ limit: 5, windowMs: 60 * 60_000 })
-const confirmLimit = createRateLimiter({ limit: 20, windowMs: 10 * 60_000 })
-const globalLimit = createRateLimiter({ limit: 300, windowMs: 10 * 60_000 })
+const perAddress = createSharedLimiter('listing-address', { limit: 5, windowMs: 60 * 60_000 })
+const confirmLimit = createSharedLimiter('listing-confirm', { limit: 20, windowMs: 10 * 60_000 })
+const globalLimit = createSharedLimiter('listing-all', { limit: 300, windowMs: 10 * 60_000 })
 
-const limited = async (limiter: ReturnType<typeof createRateLimiter>) => {
+const limited = async (limiter: ReturnType<typeof createSharedLimiter>) => {
   const key = clientKey(await headers())
-  return !limiter(key).allowed || !globalLimit('all').allowed
+  return !(await limiter(key)).allowed || !(await globalLimit('all')).allowed
 }
 
 /** A short-lived permission to upload one photo, straight from the browser. */
@@ -79,7 +80,7 @@ export async function submitListing(_previous: ListingFormState, form: FormData)
   }
 
   const { data } = parsed
-  if (!perAddress(data.sellerEmail).allowed) return { status: 'rate-limited' }
+  if (!(await perAddress(data.sellerEmail)).allowed) return { status: 'rate-limited' }
   const reference = newReference('MKT')
   const token = randomToken()
   try {

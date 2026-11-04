@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next'
 import { connection } from 'next/server'
 import { sectorPages, servicePages } from '@/content/consultancy'
 import { getLocalities, getPosts, getProjects, getProperties, getTowns } from '@/content/repository'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { approvedListings } from '@/features/marketplace/public'
+import { marketplaceEnabled } from '@/features/marketplace/runtime'
 import { routes } from '@/lib/routes'
 import { absoluteUrl } from '@/seo/schema'
 
@@ -34,8 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUpdated = latest([projectsUpdated, propertiesUpdated, localitiesUpdated, postsUpdated])
   // A marketplace outage must not take the whole sitemap down with it.
   const listings = marketplaceEnabled
-    ? await getStore()
-        .then((store) => store.listListings({ status: 'approved', limit: 5000 }))
+    ? await approvedListings({}, 5000, 0)
         .then((page) => page.items)
         .catch(() => [])
     : []

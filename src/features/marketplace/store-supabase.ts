@@ -86,6 +86,8 @@ function toCampaign(row: Row): Campaign {
 }
 
 /** Throws with the Postgres code only: messages can echo row data, which never reaches logs. */
+const FEATURED_PROJECT = 'featured_project'
+
 function check<T>(result: { data: T; error: PostgrestError | null }): T {
   if (result.error) throw new Error(`[marketplace] database error ${result.error.code}`)
   return result.data
@@ -413,6 +415,28 @@ export function createSupabaseStore(url: string, serviceRoleKey: string): Market
     async listCampaigns(limit) {
       const rows = check(await db.from('campaigns').select(CAMPAIGN_COLUMNS).order('created_at', { ascending: false }).limit(limit))
       return (rows ?? []).map(toCampaign)
+    },
+
+    async getFeaturedProject() {
+      const row = check(await db.from('site_settings').select('value').eq('key', FEATURED_PROJECT).maybeSingle())
+      return typeof row?.value === 'string' ? row.value : undefined
+    },
+
+    async setFeaturedProject(slug, adminId) {
+      check(
+        await db
+          .from('site_settings')
+          .upsert({ key: FEATURED_PROJECT, value: slug, updated_by: adminId, updated_at: new Date().toISOString() }),
+      )
+    },
+
+    async listProjectRecords() {
+      const rows = check(await db.from('project_content').select('slug, data, updated_at'))
+      return (rows ?? []).map((row) => ({ slug: row.slug as string, data: row.data as unknown, updatedAt: row.updated_at as string }))
+    },
+
+    async saveProjectRecord(slug, data, adminId) {
+      check(await db.from('project_content').upsert({ slug, data, updated_by: adminId, updated_at: new Date().toISOString() }))
     },
   }
   return store

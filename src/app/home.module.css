@@ -216,17 +216,10 @@
     font-size: var(--text-sm);
   }
 
-  .heroCardPrice {
+  .heroCardTagline {
     margin-block-start: var(--space-2);
     color: #c9d1dc;
     font-size: var(--text-sm);
-  }
-
-  .heroCardPrice strong {
-    color: var(--c-gold-light);
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    font-weight: 600;
   }
 
   .heroCardArrow {
@@ -705,23 +698,6 @@
     background-color: var(--surface-tint);
     font-size: var(--text-sm);
     font-weight: 500;
-  }
-
-  .spotlightPrice {
-    display: grid;
-    gap: var(--space-1);
-    padding-block: var(--space-4);
-    border-block: 1px solid var(--border);
-    color: var(--text-subtle);
-    font-size: var(--text-sm);
-  }
-
-  .spotlightPrice strong {
-    color: var(--text-accent);
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    line-height: 1;
   }
 
   .moreProjects {
@@ -1238,5 +1214,9 @@
     .post:hover img {
       transform: scale(1.04);
     }
+  }
+
+  .faq {
+    max-inline-size: 56rem;
   }
 }

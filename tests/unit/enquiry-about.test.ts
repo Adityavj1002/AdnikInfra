@@ -15,7 +15,7 @@ const walk = (dir: string): string[] =>
 
 describe('enquiry deep links', () => {
   it('name the project, listing, town or service they came from', async () => {
-    expect(await resolveEnquiryAbout('vijay-aura-villas')).toEqual({ slug: 'vijay-aura-villas', name: 'Vijay Aura Villas' })
+    expect(await resolveEnquiryAbout('liv-prime-jagatpura')).toEqual({ slug: 'liv-prime-jagatpura', name: 'Liv Prime' })
     expect((await resolveEnquiryAbout('chaksu'))?.name).toBe('Chaksu, near Jaipur')
     expect((await resolveEnquiryAbout('construction-advisory'))?.name).toBe('Construction Advisory')
     expect(await resolveEnquiryAbout('not-a-thing')).toBeUndefined()

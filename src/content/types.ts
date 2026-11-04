@@ -67,13 +67,23 @@ export type AmenityKey =
   | 'gated'
   | 'community-hall'
   | 'wifi'
+  | 'library'
+  | 'theatre'
+  | 'indoor-games'
+  | 'banquet'
+  | 'guest-room'
+  | 'water-supply'
+  | 'vastu'
+  | 'accessible'
 
 export type Configuration = Readonly<{
   label: string
   /** Single size or a range. */
   area: Area | readonly [Area, Area]
-  price: Money | null
 }>
+
+/** One unit on a typical floor; areas in sq ft, as on the approved plan. */
+export type UnitArea = Readonly<{ unit: string; bhk: number; carpet: number; builtUp: number; superBuiltUp: number }>
 
 export type Project = Readonly<{
   slug: string
@@ -85,8 +95,12 @@ export type Project = Readonly<{
   /** ≤ 160 chars: card text and meta description. */
   summary: string
   description: readonly string[]
-  priceFrom: Money | null
+  /** Street address, when it is more precise than the locality. Prices are not published. */
+  address?: string
   configurations: readonly Configuration[]
+  units?: readonly UnitArea[]
+  /** Isometric views of sample units, shown beside the unit table. */
+  plans?: readonly Img[]
   possession: string
   /** Rajasthan RERA registration number. null until issued; never invented. */
   rera: string | null
@@ -97,6 +111,7 @@ export type Project = Readonly<{
   geo: GeoPoint
   gallery: readonly Img[]
   updates: readonly Readonly<{ date: string; text: string }>[]
+  /** The default home-page spotlight; an admin can choose another project (Admin → Home page). */
   featured: boolean
   updatedAt: string
 }>

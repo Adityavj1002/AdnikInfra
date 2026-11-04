@@ -1,5 +1,6 @@
 import { Building2, CalendarCheck, ExternalLink, FileText, Key, MapPin, Ruler, ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
@@ -13,7 +14,7 @@ import { getLocality, getProject, getProjects, isValidSlug } from '@/content/rep
 import { EmiCalculator } from '@/features/calculators/EmiCalculator'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { Gallery } from '@/features/gallery/Gallery'
-import { formatAreaRange, formatDate, formatPrice, projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { formatAreaRange, formatDate, projectStatusLabel, projectTypeLabel } from '@/lib/format'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, graph, localityNode, projectNode } from '@/seo/schema'
@@ -44,13 +45,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 const sections = [
   { id: 'overview', label: 'Overview' },
-  { id: 'prices', label: 'Prices' },
+  { id: 'plans', label: 'Plans' },
   { id: 'amenities', label: 'Amenities' },
   { id: 'specifications', label: 'Specifications' },
   { id: 'location', label: 'Location' },
   { id: 'updates', label: 'Progress' },
   { id: 'emi', label: 'EMI' },
 ] as const
+
+const sqft = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export default async function ProjectPage({ params }: PageProps) {
   const data = await load((await params).slug)
@@ -63,7 +66,8 @@ export default async function ProjectPage({ params }: PageProps) {
     { name: 'Projects', path: routes.projects },
     { name: project.name, path },
   ] as const
-  const firstPrice = project.configurations.find((c) => c.price)?.price?.amount
+  const shown = sections.filter((section) => section.id !== 'updates' || project.updates.length > 0)
+  const units = project.units ?? []
 
   return (
     <>
@@ -90,9 +94,8 @@ export default async function ProjectPage({ params }: PageProps) {
           </p>
           <div className={styles.priceRow}>
             <p className={styles.price}>
-              <span className={styles.priceLabel}>{project.priceFrom ? 'Starting from' : 'Price'}</span>
-              {formatPrice(project.priceFrom)}
-              {project.priceFrom && <span className={styles.priceNote}>+ registration &amp; govt. charges</span>}
+              <span className={styles.priceLabel}>Homes</span>
+              {project.configurations.map((c) => c.label).join(' · ')}
             </p>
             <div className={styles.headerActions}>
               <Link href={contactHref('site-visit', project.slug)} className="button button--gold">
@@ -101,7 +104,7 @@ export default async function ProjectPage({ params }: PageProps) {
               </Link>
               <Link href={contactHref('buy', project.slug)} className="button button--outline">
                 <FileText aria-hidden="true" strokeWidth={1.75} />
-                Get price list
+                Get details
               </Link>
             </div>
           </div>
@@ -111,7 +114,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         <nav aria-label="On this page" className={blocks.anchorNav}>
           <ul role="list" className={blocks.anchorList}>
-            {sections.map((section) => (
+            {shown.map((section) => (
               <li key={section.id}>
                 <a href={`#${section.id}`}>{section.label}</a>
               </li>
@@ -141,18 +144,17 @@ export default async function ProjectPage({ params }: PageProps) {
               ))}
             </section>
 
-            <section id="prices" className={blocks.block} aria-labelledby="prices-title">
-              <h2 id="prices-title" className={blocks.blockTitle}>
-                Configurations and prices
+            <section id="plans" className={blocks.block} aria-labelledby="plans-title">
+              <h2 id="plans-title" className={blocks.blockTitle}>
+                Configurations and plans
               </h2>
               <div className={blocks.tableWrap}>
                 <table className={blocks.table}>
-                  <caption className="visually-hidden">Configurations, sizes and prices at {project.name}</caption>
+                  <caption className="visually-hidden">Configurations and sizes at {project.name}</caption>
                   <thead>
                     <tr>
                       <th scope="col">Type</th>
-                      <th scope="col">Size</th>
-                      <th scope="col">Price</th>
+                      <th scope="col">{units.length > 0 ? 'Super built-up' : 'Size'}</th>
                       <th scope="col">
                         <span className="visually-hidden">Action</span>
                       </th>
@@ -163,10 +165,9 @@ export default async function ProjectPage({ params }: PageProps) {
                       <tr key={config.label}>
                         <th scope="row">{config.label}</th>
                         <td className="nums">{formatAreaRange(config.area)}</td>
-                        <td className={blocks.priceCell}>{config.price ? `${formatPrice(config.price)} onwards` : 'On request'}</td>
                         <td>
                           <Link href={contactHref('buy', project.slug)} className="link-more">
-                            Enquire
+                            Ask for details
                           </Link>
                         </td>
                       </tr>
@@ -174,7 +175,49 @@ export default async function ProjectPage({ params }: PageProps) {
                   </tbody>
                 </table>
               </div>
-              <p className={blocks.note}>Prices exclude registration, stamp duty, GST and other statutory charges where applicable.</p>
+
+              {project.plans && project.plans.length > 0 && (
+                <ul role="list" className={blocks.plans}>
+                  {project.plans.map((plan) => (
+                    <li key={plan.alt} className={blocks.plan}>
+                      <Image src={plan.src} alt={plan.alt} sizes="(min-width: 64rem) 22rem, 90vw" placeholder="blur" />
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {units.length > 0 && (
+                <>
+                  <h3 id="units-title" className={blocks.subTitle}>Unit-wise areas</h3>
+                  {/* Wider than a phone: a focusable region, so keyboard users can scroll it too. */}
+                  <div className={blocks.tableWrap} role="region" aria-labelledby="units-title" tabIndex={0}>
+                    <table className={blocks.table}>
+                      <caption className="visually-hidden">Carpet, built-up and super built-up area of every unit at {project.name}, in sq ft</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Unit</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Carpet (sq ft)</th>
+                          <th scope="col">Built-up (sq ft)</th>
+                          <th scope="col">Super built-up (sq ft)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {units.map((unit) => (
+                          <tr key={unit.unit}>
+                            <th scope="row" className="nums">{unit.unit}</th>
+                            <td>{unit.bhk} BHK</td>
+                            <td className="nums">{sqft.format(unit.carpet)}</td>
+                            <td className="nums">{sqft.format(unit.builtUp)}</td>
+                            <td className="nums">{sqft.format(unit.superBuiltUp)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className={blocks.note}>Unit 103 / 503 is the same plan on floors 1 to 5. Areas are approximate; the final area is as per the approved plan.</p>
+                </>
+              )}
             </section>
 
             <section id="amenities" className={blocks.block} aria-labelledby="amenities-title">
@@ -206,6 +249,11 @@ export default async function ProjectPage({ params }: PageProps) {
               <h2 id="location-title" className={blocks.blockTitle}>
                 Location: {locality.name}, Jaipur
               </h2>
+              {project.address && (
+                <p className={styles.address}>
+                  <MapPin aria-hidden="true" className="icon" strokeWidth={1.75} /> {project.address}
+                </p>
+              )}
               <p className={blocks.lead}>{locality.summary}</p>
               <ul role="list" className={blocks.nearby}>
                 {project.nearby.map((place) => (
@@ -216,7 +264,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 ))}
               </ul>
               <p className={styles.mapLinks}>
-                <a href={mapsHref(project.geo)} target="_blank" rel="noopener noreferrer" className="link-more">
+                <a href={mapsHref(project.geo, project.address)} target="_blank" rel="noopener noreferrer" className="link-more">
                   Open in Google Maps <ExternalLink aria-hidden="true" strokeWidth={1.75} />
                 </a>
                 <Link href={routes.location(locality.slug)} className="link-more">
@@ -225,6 +273,7 @@ export default async function ProjectPage({ params }: PageProps) {
               </p>
             </section>
 
+            {project.updates.length > 0 && (
             <section id="updates" className={blocks.block} aria-labelledby="updates-title">
               <h2 id="updates-title" className={blocks.blockTitle}>
                 Construction progress
@@ -238,12 +287,13 @@ export default async function ProjectPage({ params }: PageProps) {
                 ))}
               </ol>
             </section>
+            )}
 
             <section id="emi" className={blocks.block} aria-labelledby="emi-title">
               <h2 id="emi-title" className={blocks.blockTitle}>
                 Home loan EMI calculator
               </h2>
-              <EmiCalculator price={firstPrice} />
+              <EmiCalculator />
             </section>
           </div>
 

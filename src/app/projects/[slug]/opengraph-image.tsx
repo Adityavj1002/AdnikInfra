@@ -1,5 +1,5 @@
 import { getLocality, getProject, isValidSlug } from '@/content/repository'
-import { formatPrice, projectStatusLabel } from '@/lib/format'
+import { formatAreaRange, projectStatusLabel } from '@/lib/format'
 import { ogContentType, ogSize, renderOgCard } from '@/seo/og-image'
 
 export const alt = 'Adnik Infra project'
@@ -17,7 +17,7 @@ export default async function Image({ params }: Readonly<{ params: Promise<{ slu
     title: project.name,
     facts: [
       { term: 'Homes', detail: project.configurations.map((c) => c.label).slice(0, 2).join(' · ') },
-      { term: project.priceFrom ? 'From' : 'Price', detail: formatPrice(project.priceFrom) },
+      ...(project.configurations[0] ? [{ term: 'Sizes', detail: formatAreaRange(project.configurations[0].area) }] : []),
       { term: 'Possession', detail: project.possession },
     ],
   })

@@ -29,7 +29,7 @@ test.describe('responsive layout', () => {
 
 test('the pinned phone action bar never covers the footer links', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 760 })
-  for (const path of ['/projects/vijay-aura-villas', '/properties/3-bhk-apartment-malviya-nagar']) {
+  for (const path of ['/projects/liv-prime-jagatpura', '/properties/3-bhk-apartment-malviya-nagar']) {
     await page.goto(path)
     await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
     const covered = await page.evaluate(() => {

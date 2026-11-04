@@ -124,20 +124,34 @@ success.
 Until these keys are set the marketplace pages say "not available" and the subscribe form says
 so honestly; the rest of the site is unaffected. Email needs the SMTP settings from §3.
 
-1. **Supabase:** create a project, open SQL editor, run `supabase/migrations/0001_marketplace.sql`
-   once. Copy the project URL and the **service-role** key (server-only) from Settings → API.
-2. **Cloudinary:** copy the cloud name, API key and API secret from Settings → API Keys.
+1. **Supabase:** create a project, open SQL editor, run `supabase/migrations/0001_marketplace.sql`,
+   `0002_site_content.sql` and `0003_lock_down.sql` in that order (all safe to re-run). 0003 takes
+   every table away from the public keys. Copy the project URL and the **secret** key (`sb_secret_…`,
+   or the legacy `service_role` key) from Project Settings → API Keys. Never the publishable or
+   anon key: the site refuses to start with one.
+2. **Cloudinary:** copy the cloud name, API key and API secret from Settings → API Keys. Then upload
+   the site's own images once (and again after adding any): `node --env-file=.env.local scripts/upload-images.mjs`.
+   With Cloudinary set, every image is resized and served by its CDN.
 3. **Signing secret:** `openssl rand -base64 48`.
 4. Add to the host's environment variables, then redeploy:
 
 ```bash
+SITE_URL=https://adnikinfra.com          # https: every emailed link is built from it
+MARKETPLACE_MODE=supabase
 SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=…
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_…
 CLOUDINARY_CLOUD_NAME=…
 CLOUDINARY_API_KEY=…
 CLOUDINARY_API_SECRET=…
-SIGNING_SECRET=…
+SIGNING_SECRET=…                          # keep it: changing it breaks unsubscribe links
+LEADS_MODE=email                          # plus SMTP_HOST, SMTP_USER, SMTP_PASS (§3)
+# Optional, for several server instances: shared rate limits
+UPSTASH_REDIS_REST_URL=…
+UPSTASH_REDIS_REST_TOKEN=…
 ```
+
+The build must see the same Cloudinary cloud name as the server (the image loader is compiled in).
+The site refuses to start if the live marketplace lacks an https `SITE_URL` or email delivery.
 
 5. **First admin** (run once from your computer; further admins are added at `/admin/team`):
 
@@ -154,7 +168,8 @@ an admin approves (live, seller emailed) or rejects with a reason (hidden, selle
 
 **Limits to know:** campaigns send over SMTP, so Gmail allows about 500 emails a day and Workspace
 about 2,000; a longer list needs a bulk mail service. On Vercel, a long campaign can outlive the
-function's time limit: a VPS has no such limit. Rate limits are per server process (see §5).
+function's time limit: a VPS has no such limit. Rate limits are per server process unless the
+Upstash Redis variables are set; then all instances share them (and fall back to memory if Redis is down).
 
 Local trial without any accounts: `MARKETPLACE_MODE=memory LEADS_MODE=log
 MARKETPLACE_DEV_ADMIN_PASSWORD=local-admin-password npm run dev`. Data is lost on restart, and

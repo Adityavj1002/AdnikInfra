@@ -9,6 +9,7 @@ import formStyles from '@/features/enquiry/Form.module.css'
 import { compactPhone, isEmail, isPhone, isPersonName } from '@/features/enquiry/validation'
 import { routes } from '@/lib/routes'
 import { requestUploadTicket, submitListing } from './actions'
+import { dimensions } from './photo-size'
 import {
   AREA_UNITS,
   DESCRIPTION_MAX,
@@ -92,18 +93,6 @@ function parseInitialPhotos(raw: string | undefined): readonly ListingPhoto[] {
     return Array.isArray(value) ? (value as ListingPhoto[]) : []
   } catch {
     return []
-  }
-}
-
-async function dimensions(file: File): Promise<Readonly<{ width: number; height: number }>> {
-  try {
-    const bitmap = await createImageBitmap(file)
-    const size = { width: bitmap.width, height: bitmap.height }
-    bitmap.close()
-    return size
-  } catch {
-    // HEIC and the like can't be decoded in every browser; Cloudinary reports real sizes anyway.
-    return { width: 1600, height: 1200 }
   }
 }
 

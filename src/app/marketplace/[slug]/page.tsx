@@ -9,7 +9,8 @@ import { listingArea, listingPlace, listingPrice } from '@/features/marketplace/
 import { ListingPhotos } from '@/features/marketplace/ListingPhotos'
 import { photoBase, photoUrl } from '@/features/marketplace/media'
 import styles from '@/features/marketplace/marketplace.module.css'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { listingBySlug } from '@/features/marketplace/public'
+import { marketplaceEnabled } from '@/features/marketplace/runtime'
 import { isSlug } from '@/lib/slug'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
@@ -22,7 +23,7 @@ type Params = Readonly<{ params: Promise<{ slug: string }> }>
 /** Only approved listings exist as far as the public is concerned. */
 const liveListing = cache(async (slug: string) => {
   if (!marketplaceEnabled || !isSlug(slug)) return undefined
-  const listing = await (await getStore()).getListingBySlug(slug)
+  const listing = await listingBySlug(slug)
   return listing?.status === 'approved' ? listing : undefined
 })
 

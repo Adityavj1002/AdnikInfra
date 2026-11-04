@@ -2,8 +2,7 @@
 export const pages = [
   { path: '/', keyword: 'plan. comply. build. grow.' },
   { path: '/projects', keyword: 'new residential projects in jaipur' },
-  { path: '/projects/vijay-aura-villas', keyword: 'vijay aura villas, jagatpura' },
-  { path: '/projects/vijay-greens', keyword: 'vijay greens, ajmer road' },
+  { path: '/projects/liv-prime-jagatpura', keyword: 'liv prime, jagatpura' },
   { path: '/properties', keyword: 'property for sale in jaipur' },
   { path: '/properties/3-bhk-apartment-malviya-nagar', keyword: '3 bhk apartment in malviya nagar' },
   { path: '/construction', keyword: 'home construction company in jaipur' },

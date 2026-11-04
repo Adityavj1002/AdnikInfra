@@ -18,14 +18,17 @@ import { ProjectCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import { JsonLd } from '@/components/seo/JsonLd'
+import { FaqList } from '@/components/ui/FaqList'
 import { site } from '@/config/site'
 import { photos } from '@/content/images'
 import { getLocalities, getProjects, getStats } from '@/content/repository'
+import { homeFaqs } from '@/content/consultancy'
 import { services } from '@/content/services'
-import { formatPrice, projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { NO_FEATURED, featuredProjectSlug } from '@/features/featured/featured'
+import { projectStatusLabel, projectTypeLabel } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
-import { graph, webPageNode } from '@/seo/schema'
+import { faqNode, graph, webPageNode } from '@/seo/schema'
 import { buildTitle } from '@/seo/titles'
 import styles from './home.module.css'
 
@@ -183,15 +186,18 @@ const workSteps = [
 ] as const
 
 export default async function HomePage() {
-  const [projects, localities, stats] = await Promise.all([getProjects(), getLocalities(), getStats()])
+  const [projects, localities, stats, chosen] = await Promise.all([getProjects(), getLocalities(), getStats(), featuredProjectSlug()])
   const localityOf = (slug: string) => localities.find((l) => l.slug === slug)
-  const spotlight = projects.find((p) => p.featured) ?? projects[0]
-  const moreProjects = projects.filter((p) => p.slug !== spotlight?.slug).slice(0, 3)
+  // An admin's choice (Admin → Projects) wins, including "none"; otherwise the project marked
+  // featured in content. A project without a photo is never featured: the layout is built on one.
+  const candidate = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects.find((p) => p.featured) ?? projects[0])
+  const spotlight = candidate && candidate.gallery.length > 0 ? candidate : undefined
+  const moreProjects = projects.filter((p) => p.slug !== spotlight?.slug).slice(0, spotlight ? 3 : 6)
   const spotlightLocality = spotlight ? localityOf(spotlight.localitySlug) : undefined
 
   return (
     <>
-      <JsonLd graph={graph(webPageNode({ path: routes.home, name: title, description }))} />
+      <JsonLd graph={graph(webPageNode({ path: routes.home, name: title, description }), faqNode(routes.home, homeFaqs))} />
 
       {/* Hero: dusk photograph on a navy stage, tilting into place in 3D, with glass panels. */}
       {/* data-header-overlay: the site header floats over this hero (SiteHeader.module.css). */}
@@ -226,7 +232,7 @@ export default async function HomePage() {
                 Request a proposal
                 <ArrowRight aria-hidden="true" strokeWidth={1.75} />
               </Link>
-              <Link href="#projects" className={`button ${styles.glassButton}`}>
+              <Link href={projects.length > 0 ? '#projects' : routes.projects} className={`button ${styles.glassButton}`}>
                 See our work
               </Link>
             </div>
@@ -245,9 +251,7 @@ export default async function HomePage() {
                     <MapPin aria-hidden="true" className="icon" strokeWidth={1.75} /> {spotlightLocality.name}, {site.city}
                   </span>
                 )}
-                <span className={styles.heroCardPrice}>
-                  From <strong>{formatPrice(spotlight.priceFrom)}</strong>
-                </span>
+                <span className={styles.heroCardTagline}>{spotlight.tagline}</span>
               </span>
               <ArrowUpRight aria-hidden="true" className={styles.heroCardArrow} strokeWidth={1.75} />
             </Link>
@@ -401,7 +405,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Projects: one spotlight in layered 3D, then the rest as cards */}
+      {/* Projects: one spotlight in layered 3D, then the rest as cards. Hidden when there are none. */}
+      {projects.length > 0 && (
       <section id="projects" className="section section--raised" aria-labelledby="projects-title">
         <div className="container">
           <SectionHeading
@@ -449,10 +454,6 @@ export default async function HomePage() {
                     <li key={c.label}>{c.label}</li>
                   ))}
                 </ul>
-                <p className={styles.spotlightPrice}>
-                  <span>Starting from</span>
-                  <strong className="nums">{formatPrice(spotlight.priceFrom)}</strong>
-                </p>
                 <div className={styles.actions}>
                   <Link href={routes.project(spotlight.slug)} className="button">
                     View project <ArrowRight aria-hidden="true" strokeWidth={1.75} />
@@ -473,6 +474,7 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+      )}
 
       {/* About: one founder per discipline */}
       <section id="team" className="section" aria-labelledby="team-title">
@@ -505,6 +507,19 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* Questions people search for, answered in plain words (FAQPage data above). */}
+      <section id="faq" className="section section--raised" aria-labelledby="faq-title">
+        <div className={`container ${styles.faq}`}>
+          <SectionHeading
+            id="faq-title"
+            eyebrow="Questions"
+            title="Infrastructure, clearance and construction consultants in Jaipur"
+            intro={<p>What clients ask us most before a project starts.</p>}
+          />
+          <FaqList faqs={homeFaqs} />
         </div>
       </section>
 

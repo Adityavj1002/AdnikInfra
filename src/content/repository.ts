@@ -1,4 +1,5 @@
 import 'server-only'
+import { applyRecord, hosted, savedProjects } from '@/features/projects/content'
 import { isSlug } from '@/lib/slug'
 import { packages, posts, stats } from './fixtures/company'
 import { faqGroups } from './fixtures/faqs'
@@ -43,8 +44,18 @@ export async function getLocality(slug: string): Promise<Locality | undefined> {
 
 export type ProjectFilter = Readonly<{ status?: ProjectStatus; type?: ProjectType; locality?: string; featured?: boolean }>
 
+/** Bundled projects with any admin edits applied (Admin → Projects). */
+async function currentProjects(): Promise<readonly Project[]> {
+  const saved = await savedProjects()
+  return projects.map((bundled) => {
+    const edit = saved[bundled.slug]
+    const project = edit ? applyRecord(bundled, edit.record, edit.updatedAt) : bundled
+    return { ...project, gallery: project.gallery.map(hosted), ...(project.plans ? { plans: project.plans.map(hosted) } : {}) }
+  })
+}
+
 export async function getProjects(filter: ProjectFilter = {}): Promise<readonly Project[]> {
-  return projects.filter(
+  return (await currentProjects()).filter(
     (project) =>
       (!filter.status || project.status === filter.status) &&
       (!filter.type || project.type === filter.type) &&
@@ -54,7 +65,7 @@ export async function getProjects(filter: ProjectFilter = {}): Promise<readonly 
 }
 
 export async function getProject(slug: string): Promise<Project | undefined> {
-  return projects.find((project) => project.slug === slug)
+  return (await currentProjects()).find((project) => project.slug === slug)
 }
 
 export type PropertySort = 'newest' | 'price-asc' | 'price-desc'

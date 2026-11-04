@@ -3,6 +3,10 @@ import { buildCsp, createNonce, cspHeaderName, reportingEndpoints } from '@/secu
 import { env } from '@/security/env'
 
 const ALLOWED_METHODS = new Set(['GET', 'HEAD', 'POST', 'OPTIONS'])
+// Session cookie names (features/admin/session.ts): __Host- on https, plain on localhost.
+const ADMIN_COOKIES = ['__Host-adnik_admin', 'adnik_admin']
+
+const isAdminArea = (path: string) => path === '/admin' || (path.startsWith('/admin/') && path !== '/admin/login')
 
 /**
  * Issues a fresh nonce per document request and attaches the CSP to both the
@@ -14,15 +18,23 @@ export function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 405, headers: { Allow: [...ALLOWED_METHODS].join(', ') } })
   }
 
+  // Defence in depth: every admin page and action checks the session itself; this turns away
+  // visitors without a session cookie before anything renders.
+  const adminArea = isAdminArea(request.nextUrl.pathname)
+  if (adminArea && !ADMIN_COOKIES.some((name) => request.cookies.has(name))) {
+    return NextResponse.redirect(new URL('/admin/login', request.url), 303)
+  }
+
   const nonce = createNonce()
   const policy = buildCsp({
     nonce,
     isDev: env.NODE_ENV === 'development',
     siteUrl: env.SITE_URL,
     mediaOrigin: env.MEDIA_ORIGIN,
-    ...(env.CLOUDINARY_CLOUD_NAME
-      ? { imageOrigin: 'https://res.cloudinary.com', uploadOrigin: 'https://api.cloudinary.com' }
-      : {}),
+    // Images come from Cloudinary whenever this build's image loader points there (the cloud name
+    // is inlined at build time); uploads only when this server holds the Cloudinary keys.
+    ...(env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_IMAGE_CLOUD ? { imageOrigin: 'https://res.cloudinary.com' } : {}),
+    ...(env.CLOUDINARY_CLOUD_NAME ? { uploadOrigin: 'https://api.cloudinary.com' } : {}),
   })
   const headerName = cspHeaderName(env.CSP_MODE)
 
@@ -38,6 +50,11 @@ export function proxy(request: NextRequest) {
 
   // Belt and braces with the robots meta tag: previews must never be indexed.
   if (!env.SITE_INDEXABLE) response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  if (adminArea || request.nextUrl.pathname === '/admin/login') {
+    // Admin screens are private: never stored by a browser or proxy, never indexed.
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+    response.headers.set('Cache-Control', 'private, no-store')
+  }
 
   return response
 }

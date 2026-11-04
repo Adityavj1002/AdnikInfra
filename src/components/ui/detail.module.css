@@ -53,10 +53,27 @@
     font-weight: 400;
   }
 
+  /* Phones: one full-width button per row. Letting them wrap made them jump to two rows when
+     the web font arrived (it is wider than the fallback), shifting the gallery below. */
   .headerActions {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     gap: var(--space-3);
+    inline-size: 100%;
+  }
+
+  @media (min-width: 30rem) {
+    .headerActions {
+      display: flex;
+      flex-wrap: wrap;
+      inline-size: auto;
+    }
+  }
+
+  .address {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-weight: 600;
   }
 
   .mapLinks {

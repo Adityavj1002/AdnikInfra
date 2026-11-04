@@ -1,9 +1,10 @@
 import { ArrowUpRight, BedDouble, Building2, MapPin, Ruler } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Locality, Project, Property } from '@/content/types'
+import type { Area, Locality, Project, Property } from '@/content/types'
 import {
   formatArea,
+  formatAreaRange,
   formatPrice,
   possessionText,
   projectStatusLabel,
@@ -22,12 +23,25 @@ const statusBadge: Record<Project['status'], string> = {
 /** Card sizes for next/image: one column on phones, two on tablets, three on desktop. */
 const CARD_SIZES = '(min-width: 72rem) 400px, (min-width: 40rem) 50vw, 100vw'
 
+/** Smallest to largest home across a project's configurations, when they share a unit. */
+function sizeRange(project: Project): string | undefined {
+  const areas = project.configurations.flatMap((c): readonly Area[] => (Array.isArray(c.area) ? (c.area as readonly Area[]) : [c.area as Area]))
+  const first = areas[0]
+  if (!first || areas.some((a) => a.unit !== first.unit)) return undefined
+  const values = areas.map((a) => a.value)
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const round = (value: number): Area => ({ value: Math.round(value), unit: first.unit })
+  return min === max ? formatArea(round(min)) : formatAreaRange([round(min), round(max)])
+}
+
 type CardProps<T> = Readonly<{ item: T; locality?: Locality; headingLevel?: 'h2' | 'h3'; priority?: boolean }>
 
 /** Whole card is one link with a real heading inside it: one big touch target, screen-reader friendly. */
 export function ProjectCard({ item: project, locality, headingLevel: Heading = 'h3', priority }: CardProps<Project>) {
   const cover = project.gallery[0]
   const bhk = project.configurations.map((c) => c.label.replace(/ \(.*\)$/, '')).join(' · ')
+  const sizes = sizeRange(project)
   return (
     <article className={styles.card}>
       <Link href={routes.project(project.slug)} className={styles.link}>
@@ -58,8 +72,8 @@ export function ProjectCard({ item: project, locality, headingLevel: Heading = '
           <p className={styles.meta}>{bhk}</p>
           <div className={styles.footer}>
             <p className={styles.price}>
-              <span className={styles.priceLabel}>{project.priceFrom ? 'Starting from' : 'Price'}</span>
-              {formatPrice(project.priceFrom)}
+              <span className={styles.priceLabel}>{sizes ? 'Sizes' : 'Possession'}</span>
+              <span className="nums">{sizes ?? project.possession}</span>
             </p>
             <span className={styles.arrow} aria-hidden="true">
               <ArrowUpRight strokeWidth={1.75} />

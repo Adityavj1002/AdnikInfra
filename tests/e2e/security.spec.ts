@@ -51,6 +51,17 @@ test.describe('security in the browser', () => {
     expect(response.headers().location).toBe('/#sectors')
   })
 
+  test('admin pages turn away visitors without a session before rendering', async ({ request }) => {
+    for (const path of ['/admin', '/admin/projects', '/admin/projects/liv-prime-jagatpura', '/admin/listings']) {
+      const response = await request.get(path, { maxRedirects: 0 })
+      expect(response.status(), path).toBe(303)
+      expect(new URL(response.headers().location!, 'http://x').pathname, path).toBe('/admin/login')
+    }
+    const login = await request.get('/admin/login')
+    expect(login.status()).toBe(200)
+    expect(login.headers()['x-robots-tag']).toContain('noindex')
+  })
+
   test('external links cannot reach back into the page', async ({ page }) => {
     await page.goto('/')
     const unsafe = await page.locator('a[target="_blank"]:not([rel*="noopener"])').count()

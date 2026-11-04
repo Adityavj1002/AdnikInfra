@@ -52,8 +52,8 @@ test('contact: choosing "site visit" reveals the date fields (pure CSS, no JS ne
 })
 
 test('contact: deep links name the project and ignore junk parameters', async ({ page }) => {
-  await page.goto('/contact?topic=site-visit&ref=vijay-aura-villas')
-  await expect(page.getByText('Enquiring about Vijay Aura Villas')).toBeVisible()
+  await page.goto('/contact?topic=site-visit&ref=liv-prime-jagatpura')
+  await expect(page.getByText('Enquiring about Liv Prime')).toBeVisible()
 
   // Town pages link the same way.
   await page.goto('/locations/near-jaipur/chaksu')
@@ -66,7 +66,7 @@ test('contact: deep links name the project and ignore junk parameters', async ({
 })
 
 test('project page: the site-visit card books a visit', async ({ page }) => {
-  await page.goto('/projects/vijay-skyline-residences')
+  await page.goto('/projects/liv-prime-jagatpura')
   const card = page.getByRole('complementary', { name: 'Book a free site visit' })
   await card.getByRole('textbox', { name: 'Full name' }).fill('Ravi Sharma')
   await card.getByRole('textbox', { name: 'Mobile number' }).fill('+91 98290 12345')

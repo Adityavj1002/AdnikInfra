@@ -18,6 +18,12 @@ export const staticKeywords = {
     supporting: [
       'builders in Jaipur',
       'infrastructure consultants in Jaipur',
+      'environmental clearance consultant in Jaipur',
+      'construction consultant in Jaipur',
+      'project management consultants in Jaipur',
+      'EIA consultant in Rajasthan',
+      'CTE and CTO consent in Rajasthan',
+      'ECBC compliance consultant',
       'real estate developers in Jaipur',
       'construction company in Jaipur',
       'modern homes in Jaipur',
@@ -27,7 +33,15 @@ export const staticKeywords = {
   },
   [routes.projects]: {
     primary: 'new residential projects in Jaipur',
-    supporting: ['RERA projects Jaipur', 'villas for sale in Jaipur', 'new apartments in Jaipur', 'plots in Jaipur'],
+    supporting: [
+      'RERA projects Jaipur',
+      'villas for sale in Jaipur',
+      'new apartments in Jaipur',
+      'plots in Jaipur',
+      '2 BHK flats in Jagatpura',
+      '3 BHK flats in Jagatpura',
+      'apartments near SKIT College Jaipur',
+    ],
   },
   [routes.properties]: {
     primary: 'property for sale in Jaipur',
@@ -70,7 +84,13 @@ export const staticKeywords = {
   },
   [routes.services]: {
     primary: 'infrastructure consulting services',
-    supporting: ['construction advisory', 'project management consultants', 'real estate consultancy Jaipur'],
+    supporting: [
+      'construction advisory',
+      'project management consultants',
+      'real estate consultancy Jaipur',
+      'infrastructure development consultants',
+      'environmental clearance services',
+    ],
   },
   [routes.marketplace]: {
     primary: 'property marketplace',
@@ -82,7 +102,16 @@ export const staticKeywords = {
   },
   [routes.environmentalClearance]: {
     primary: 'environmental clearance and compliance',
-    supporting: ['EIA and EMP reports', 'ECBC and ENS compliance', 'Consent to Establish and Operate', 'mine closure plans'],
+    supporting: [
+      'EIA and EMP reports',
+      'ECBC and ENS compliance',
+      'Consent to Establish and Operate',
+      'mine closure plans',
+      'environmental clearance in Rajasthan',
+      'SEIAA Rajasthan',
+      'EC compliance reports',
+      'mining environmental clearance',
+    ],
   },
   [routes.contact]: {
     primary: 'contact Adnik Infra',

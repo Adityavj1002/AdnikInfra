@@ -52,6 +52,10 @@ const envSchema = z
     CLOUDINARY_API_SECRET: z.preprocess(blankToUndefined, z.string().min(10).max(200).optional()),
     // Signs unsubscribe links. 32+ random characters; changing it invalidates links already sent.
     SIGNING_SECRET: z.preprocess(blankToUndefined, z.string().min(32).max(512).optional()),
+    // Optional shared rate limits across server instances (Upstash Redis, REST API). Unset: each
+    // instance counts on its own, which is fine for a single server.
+    UPSTASH_REDIS_REST_URL: z.preprocess(blankToUndefined, z.url({ protocol: /^https$/ }).optional()),
+    UPSTASH_REDIS_REST_TOKEN: z.preprocess(blankToUndefined, z.string().min(20).max(500).optional()),
     // Memory mode only: the admin account seeded at start-up.
     MARKETPLACE_DEV_ADMIN_EMAIL: z.preprocess(blankToUndefined, z.email().default('admin@example.com')),
     MARKETPLACE_DEV_ADMIN_PASSWORD: z.preprocess(blankToUndefined, z.string().min(12).max(200).optional()),
@@ -87,6 +91,15 @@ const envSchema = z
         if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'Required when MARKETPLACE_MODE is supabase.' })
       }
     }
+    // The server key must be the secret one: a public key here would quietly see no data at all.
+    const serverKey = env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+    if (serverKey.startsWith('sb_publishable_') || jwtRole(serverKey) === 'anon') {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SUPABASE_SERVICE_ROLE_KEY'],
+        message: 'This is a public key. Use the secret key (sb_secret_…) or the service_role key.',
+      })
+    }
     if (env.MARKETPLACE_MODE === 'supabase' && env.NODE_ENV === 'production') {
       // Every emailed link is built from SITE_URL: localhost would send sellers nowhere.
       if (!env.SITE_URL.startsWith('https://')) {
@@ -111,6 +124,18 @@ const envSchema = z
 export type Env = Readonly<z.infer<typeof envSchema>>
 
 /** Validates environment variables once; throws with every problem listed. */
+/** The "role" claim of a legacy Supabase JWT key, without verifying it (only to catch a mix-up). */
+function jwtRole(key: string): string | undefined {
+  const payload = key.split('.')[1]
+  if (!payload) return undefined
+  try {
+    const claims: unknown = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'))
+    return typeof claims === 'object' && claims !== null && 'role' in claims ? String(claims.role) : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export function parseEnv(source: Readonly<Record<string, string | undefined>>): Env {
   const result = envSchema.safeParse(source)
   if (!result.success) {

@@ -165,7 +165,7 @@ test('an altered unsubscribe link is refused', async ({ page, request }) => {
 })
 
 test('admin pages need a signed-in admin', async ({ page }) => {
-  for (const path of ['/admin', '/admin/listings', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
+  for (const path of ['/admin', '/admin/listings', '/admin/projects', '/admin/projects/liv-prime-jagatpura', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
     await page.goto(path)
     await expect(page).toHaveURL(/\/admin\/login$/)
   }
@@ -211,7 +211,7 @@ test.describe('marketplace on a small phone', () => {
     await fits(page)
 
     await signIn(page)
-    for (const path of ['/admin', '/admin/listings', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
+    for (const path of ['/admin', '/admin/listings', '/admin/projects', '/admin/projects/liv-prime-jagatpura', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
       await page.goto(path)
       await fits(page)
     }
@@ -320,10 +320,76 @@ test.describe('accessibility beyond the public pages', () => {
       expect(await violations(page), 'sell form with errors').toEqual([])
 
       await signIn(page)
-      for (const path of ['/admin', '/admin/listings', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
+      for (const path of ['/admin', '/admin/listings', '/admin/projects', '/admin/projects/liv-prime-jagatpura', '/admin/subscribers', '/admin/campaigns', '/admin/team', '/admin/account']) {
         await page.goto(path)
         expect(await violations(page), path).toEqual([])
       }
     })
+  }
+})
+
+test('an admin edits the project, with clear errors, and the website follows', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('#projects').getByRole('heading', { level: 3, name: 'Liv Prime' })).toBeVisible()
+
+  await signIn(page)
+  await page.getByRole('navigation', { name: 'Admin' }).getByRole('link', { name: 'Projects' }).click()
+  await expect(page.getByText('Featured on the home page')).toBeVisible()
+  await page.getByRole('link', { name: 'Edit project' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Edit Liv Prime' })).toBeVisible()
+
+  // A malformed line is named, and nothing typed is lost.
+  const units = page.getByLabel('Unit-wise areas')
+  const original = await units.inputValue()
+  await units.fill(`${original}\n999 | two | 1 | 2 | 3`)
+  await page.getByRole('button', { name: 'Save project' }).click()
+  await expect(page.getByRole('alert').filter({ hasText: 'Unit-wise areas' })).toContainText('Unit-wise areas, line 18')
+  await expect(units).toHaveValue(`${original}\n999 | two | 1 | 2 | 3`)
+  await units.fill(original)
+
+  // A new tagline and a new photo go live on save.
+  const tagline = page.getByLabel('Tagline')
+  const before = await tagline.inputValue()
+  await tagline.fill('2 & 3 BHK homes beside SKIT College, Jagatpura')
+  await page.getByLabel('Choose project photos').setInputFiles([photo('terrace.png')])
+  await expect(page.getByText('11 of 30 photos')).toBeVisible()
+  await page.getByRole('button', { name: 'Save project' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Liv Prime is updated' })).toBeVisible()
+
+  await page.goto('/projects/liv-prime-jagatpura')
+  await expect(page.getByText('2 & 3 BHK homes beside SKIT College, Jagatpura')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'View all 11 photos' })).toBeVisible()
+
+  // Put it back: other tests read this project.
+  await page.goto('/admin/projects/liv-prime-jagatpura')
+  await page.getByLabel('Tagline').fill(before)
+  await page.getByRole('button', { name: 'Remove photo 11' }).click()
+  await page.getByRole('button', { name: 'Save project' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Liv Prime is updated' })).toBeVisible()
+  await page.goto('/projects/liv-prime-jagatpura')
+  await expect(page.getByRole('button', { name: 'View all 10 photos' })).toBeVisible()
+})
+
+test('an admin can take the featured project off the home page and put it back', async ({ page }) => {
+  await signIn(page)
+  await page.goto('/admin/projects')
+  await page.getByRole('button', { name: 'Remove from home page' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'No project is featured' })).toBeVisible()
+  await page.goto('/')
+  await expect(page.getByText(/^Featured ·/)).toHaveCount(0)
+  // The project is still listed, as a card, just not in the spotlight.
+  await expect(page.locator('#projects').getByRole('heading', { name: 'Liv Prime' })).toBeVisible()
+
+  await page.goto('/admin/projects')
+  await page.getByRole('button', { name: 'Feature on home page' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Liv Prime is now featured' })).toBeVisible()
+  await page.goto('/')
+  await expect(page.getByText(/^Featured ·/).first()).toBeVisible()
+})
+
+test('project editing needs a signed-in admin', async ({ page }) => {
+  for (const path of ['/admin/projects', '/admin/projects/liv-prime-jagatpura']) {
+    await page.goto(path)
+    await expect(page).toHaveURL(/\/admin\/login/)
   }
 })

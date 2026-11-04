@@ -14,6 +14,8 @@ export type ServicePage = Readonly<{
   metaTitle: string
   metaDescription: string
   serviceType: string
+  /** Supporting search phrases the copy is written to answer; never emitted as meta keywords. */
+  supporting: readonly string[]
   lead: string
   who: string
   includes: readonly Readonly<{ title: string; body: string }>[]
@@ -31,6 +33,14 @@ export const servicePages: readonly ServicePage[] = [
     metaDescription:
       'Independent construction advice in Jaipur: design review, specifications, costing and contractor selection, so you commit money with the facts in front of you.',
     serviceType: 'Construction consulting',
+    supporting: [
+      'construction consultant in Jaipur',
+      'construction advisory services Jaipur',
+      'building design review',
+      'construction cost estimate Jaipur',
+      'contractor selection and tendering',
+      'civil engineering consultant Rajasthan',
+    ],
     lead: 'Technical advice on design review, specifications, costing and contractor selection, before the decisions that are expensive to reverse.',
     who: 'For landowners, developers and institutions planning a building, a campus or an industrial shed who want a second set of technical eyes.',
     includes: [
@@ -47,6 +57,14 @@ export const servicePages: readonly ServicePage[] = [
     faqs: [
       { question: 'Do you build the project as well?', answer: 'We can advise only, or stay on through project management. The scope is agreed in writing at the start.' },
       { question: 'Can you review drawings another consultant prepared?', answer: 'Yes. An independent review of existing drawings is a common reason clients come to us.' },
+      {
+        question: 'What does a construction consultant in Jaipur do?',
+        answer: 'A construction consultant reviews the design, writes the specifications, estimates the cost and helps you choose a contractor, so you build what you planned at the price you planned.',
+      },
+      {
+        question: 'How are your fees worked out?',
+        answer: 'On the scope of work. We review your project first, then quote a fixed scope in writing before any work starts.',
+      },
     ],
   },
   {
@@ -58,6 +76,14 @@ export const servicePages: readonly ServicePage[] = [
     metaDescription:
       'Construction project management in Jaipur: scheduling, site coordination, quality and cost control from mobilisation to handover, reported against one plan.',
     serviceType: 'Construction project management',
+    supporting: [
+      'project management consultants Jaipur',
+      'PMC services Jaipur',
+      'construction project management Rajasthan',
+      'site supervision and quality control',
+      'construction cost control',
+      'building project manager Jaipur',
+    ],
     lead: 'Scheduling, site coordination, quality and cost control from mobilisation to handover.',
     who: 'For owners and developers who need one accountable team between the contractors, the consultants and the budget.',
     includes: [
@@ -74,6 +100,14 @@ export const servicePages: readonly ServicePage[] = [
     faqs: [
       { question: 'Can you join a project already under way?', answer: 'Yes. We start by auditing progress, cost and pending approvals, then reset the plan from where the project stands.' },
       { question: 'How do you report progress?', answer: 'In a format agreed at the start, against the programme and the budget, so problems are visible early.' },
+      {
+        question: 'What does a project management consultant (PMC) do?',
+        answer: 'A PMC plans the programme, coordinates the contractors and consultants on site, checks quality at each stage and controls cost, from mobilisation to handover.',
+      },
+      {
+        question: 'Who hires a project management consultant?',
+        answer: 'Owners, developers and institutions building a home, a commercial building, a campus or an industrial unit who want one accountable team on their side.',
+      },
     ],
   },
   {
@@ -85,6 +119,14 @@ export const servicePages: readonly ServicePage[] = [
     metaDescription:
       'Real estate consultancy in Jaipur: land due diligence, feasibility and approvals support for developers and landowners, before you buy, build or sell.',
     serviceType: 'Real estate consulting',
+    supporting: [
+      'real estate consultant in Jaipur',
+      'land due diligence Jaipur',
+      'property feasibility study',
+      'land use and approvals Rajasthan',
+      'real estate advisory Rajasthan',
+      'sell property in Jaipur',
+    ],
     lead: 'Land due diligence, feasibility and approvals support for developers and landowners.',
     who: 'For anyone about to buy land, develop a plot or decide what a site is really worth building on.',
     includes: [
@@ -101,6 +143,14 @@ export const servicePages: readonly ServicePage[] = [
     faqs: [
       { question: 'Do you give legal title opinions?', answer: 'Formal title opinions come from an advocate. We organise the technical and approvals side and work alongside your legal adviser.' },
       { question: 'Can I sell my property through you?', answer: 'You can list it on our marketplace. Our team reviews every listing before it is published.' },
+      {
+        question: 'What should I check before buying land in Jaipur?',
+        answer: 'The title papers, the land use, road access, the approvals the site needs and what you can actually build on it. We check the technical and approvals side alongside your legal adviser.',
+      },
+      {
+        question: 'Do you sell flats in Jaipur?',
+        answer: 'Yes. Liv Prime, our own project on Ram Nagariya Road near SKIT College, Jagatpura, offers 2 and 3 BHK apartments and penthouses.',
+      },
     ],
   },
   {
@@ -112,6 +162,14 @@ export const servicePages: readonly ServicePage[] = [
     metaDescription:
       'Infrastructure development consultants in Jaipur: planning and delivery of buildings, roads, utilities and campuses, with approvals planned in from the start.',
     serviceType: 'Infrastructure consulting',
+    supporting: [
+      'infrastructure consultants in Jaipur',
+      'infrastructure development company Rajasthan',
+      'township and campus planning',
+      'roads, drainage and utilities planning',
+      'warehouse and industrial park development',
+      'infrastructure project consultant India',
+    ],
     lead: 'Planning and delivery of buildings, roads, utilities and campuses.',
     who: 'For institutions, developers and industrial clients planning a campus, a township or the services that connect them.',
     includes: [
@@ -128,6 +186,10 @@ export const servicePages: readonly ServicePage[] = [
     faqs: [
       { question: 'Do you handle environmental clearance too?', answer: 'Yes. Our environmental team works alongside every service, so approvals are planned in with the design.' },
       { question: 'Where do you work?', answer: 'We are based in Jaipur. Tell us the location and we will confirm how we can support the project.' },
+      {
+        question: 'What kinds of infrastructure projects do you support?',
+        answer: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, internal roads and site utilities, with the environmental approvals planned in from the start.',
+      },
     ],
   },
 ]
@@ -197,5 +259,73 @@ export const sectorPages: readonly SectorPage[] = [
       { title: 'Mine closure plans', body: 'Progressive and final closure, reclamation and post-closure monitoring.' },
       { title: 'Environmental monitoring', body: 'Ambient air, water, noise and soil sampling with lab reports.' },
     ],
+  },
+]
+
+/** Questions people search for before hiring us; on the home page with FAQPage data. */
+export const homeFaqs: readonly Faq[] = [
+  {
+    question: 'What does an infrastructure consultant in Jaipur do?',
+    answer:
+      'Adnik Infra plans, approves and delivers building and infrastructure projects: construction advisory, environmental clearance, project management, real estate consultancy and infrastructure development, for clients in Jaipur and across Rajasthan.',
+  },
+  {
+    question: 'Do you help with environmental clearance in Rajasthan?',
+    answer:
+      'Yes. We prepare EIA and EMP reports, Environmental Clearance applications for buildings, townships, industrial units and mines, Consent to Establish and Operate applications to the State Pollution Control Board, and the compliance reports that follow the approval.',
+  },
+  {
+    question: 'Which projects need Consent to Establish (CTE) and Consent to Operate (CTO)?',
+    answer:
+      'Most industrial units, and many large buildings, need consent from the State Pollution Control Board under the Water and Air Acts: CTE before construction and CTO before operation. The pollution category of the unit decides the process. We confirm which consents apply to your project.',
+  },
+  {
+    question: 'Do you prepare ECBC and ENS compliance reports?',
+    answer:
+      'Yes. We prepare Energy Conservation Building Code (ECBC) reports for commercial buildings and Eco Niwas Samhita (ENS) reports for residential buildings, with simulation-backed energy models.',
+  },
+  {
+    question: 'Can you manage a construction project from start to handover?',
+    answer:
+      'Yes. Our project management service covers scheduling, site coordination, stage-wise quality checks and cost control, from mobilisation to handover.',
+  },
+  {
+    question: 'Do you have flats for sale in Jaipur?',
+    answer:
+      'Yes. Liv Prime, on Ram Nagariya Road near SKIT College in Jagatpura, has 2 and 3 BHK apartments and penthouses, with an indoor pool, gym, library, theatre and more than 20 amenities.',
+  },
+  {
+    question: 'Where do you work?',
+    answer:
+      'We are based in Jaipur and take on projects across Rajasthan, including towns near Jaipur such as Chaksu, Bagru, Chomu, Bassi and Kukas. Tell us the location and we will confirm how we can help.',
+  },
+]
+
+/** Questions on the Environmental Clearance page, also published as FAQPage data. */
+export const clearanceFaqs: readonly Faq[] = [
+  {
+    question: 'Who grants Environmental Clearance in Rajasthan?',
+    answer:
+      'Under the EIA Notification, 2006, Category A projects are appraised by the Ministry of Environment, Forest and Climate Change, and Category B projects by the State Environment Impact Assessment Authority (SEIAA) in Rajasthan. We confirm the category and the authority for your project.',
+  },
+  {
+    question: 'Does my building or township need Environmental Clearance?',
+    answer:
+      'Building and construction projects and townships above the built-up area thresholds in the EIA Notification need prior Environmental Clearance. Share your project area and we will tell you whether it applies.',
+  },
+  {
+    question: 'What is the difference between Environmental Clearance and CTE/CTO?',
+    answer:
+      'Environmental Clearance is granted once, before work starts, for listed projects. Consent to Establish and Consent to Operate come from the State Pollution Control Board, and the Consent to Operate is renewed periodically.',
+  },
+  {
+    question: 'Do you handle mining EIA and mine closure plans?',
+    answer:
+      'Yes. For major and minor minerals, quarries and sand, we prepare EIA and EMP reports, support public hearings, and prepare progressive and final mine closure plans.',
+  },
+  {
+    question: 'What happens after the clearance is granted?',
+    answer:
+      'Clearances come with conditions. We prepare six-monthly EC compliance reports, consent renewals and annual environmental statements, and arrange monitoring, so nothing lapses.',
   },
 ]

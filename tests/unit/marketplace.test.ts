@@ -260,6 +260,7 @@ describe('live marketplace configuration', () => {
 
   it('accepts a complete setup', () => {
     expect(() => parseEnv(live)).not.toThrow()
+    expect(() => parseEnv({ ...live, SUPABASE_SERVICE_ROLE_KEY: `sb_secret_${'x'.repeat(30)}` })).not.toThrow()
   })
 
   it.each([
@@ -267,6 +268,8 @@ describe('live marketplace configuration', () => {
     ['no email delivery', { LEADS_MODE: 'off' }, 'LEADS_MODE'],
     ['a missing Cloudinary secret', { CLOUDINARY_API_SECRET: '' }, 'CLOUDINARY_API_SECRET'],
     ['a short signing secret', { SIGNING_SECRET: 'short' }, 'SIGNING_SECRET'],
+    ['the publishable key as the server key', { SUPABASE_SERVICE_ROLE_KEY: 'sb_publishable_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' }, 'SUPABASE_SERVICE_ROLE_KEY'],
+    ['the anon key as the server key', { SUPABASE_SERVICE_ROLE_KEY: 'eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIn0.c2lnbmF0dXJl' }, 'SUPABASE_SERVICE_ROLE_KEY'],
   ])('refuses to start with %s', (_label, change, field) => {
     expect(() => parseEnv({ ...live, ...change })).toThrow(field)
   })

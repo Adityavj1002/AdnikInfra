@@ -1,6 +1,14 @@
 import {
+  Accessibility,
   ArrowUpDown,
   Baby,
+  BedDouble,
+  Clapperboard,
+  Compass,
+  Droplets,
+  Gamepad2,
+  Library,
+  PartyPopper,
   BatteryCharging,
   Cctv,
   CloudRain,
@@ -39,6 +47,14 @@ export const amenityMeta: Readonly<Record<AmenityKey, Readonly<{ label: string; 
   gated: { label: 'Gated community', icon: Fence },
   'community-hall': { label: 'Community hall', icon: Users },
   wifi: { label: 'Fibre internet', icon: Wifi },
+  library: { label: 'Library and reading room', icon: Library },
+  theatre: { label: 'Private theatre', icon: Clapperboard },
+  'indoor-games': { label: 'Indoor games room', icon: Gamepad2 },
+  banquet: { label: 'Banquet hall', icon: PartyPopper },
+  'guest-room': { label: 'Guest room', icon: BedDouble },
+  'water-supply': { label: '24×7 water supply', icon: Droplets },
+  vastu: { label: 'Vastu-friendly layout', icon: Compass },
+  accessible: { label: 'Accessible toilet', icon: Accessibility },
 }
 
 export function AmenityGrid({ amenities }: Readonly<{ amenities: readonly AmenityKey[] }>) {

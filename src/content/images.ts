@@ -17,6 +17,18 @@ import houseModernDay from '@/assets/images/house-modern-day.jpg'
 import jaipurAerial from '@/assets/images/jaipur-aerial.jpg'
 import kitchenIsland from '@/assets/images/kitchen-island.jpg'
 import kitchenModular from '@/assets/images/kitchen-modular.jpg'
+import livAerial from '@/assets/images/liv-prime/aerial.jpg'
+import livBanquetHall from '@/assets/images/liv-prime/banquet-hall.jpg'
+import livExteriorFront from '@/assets/images/liv-prime/exterior-front.jpg'
+import livExteriorStreet from '@/assets/images/liv-prime/exterior-street.jpg'
+import livGamesRoom from '@/assets/images/liv-prime/games-room.jpg'
+import livGym from '@/assets/images/liv-prime/gym.jpg'
+import livIndoorPool from '@/assets/images/liv-prime/indoor-pool.jpg'
+import livKidsPlayroom from '@/assets/images/liv-prime/kids-playroom.jpg'
+import livLibrary from '@/assets/images/liv-prime/library.jpg'
+import livPlan2bhk from '@/assets/images/liv-prime/plan-2bhk-3d.jpg'
+import livPlan3bhk from '@/assets/images/liv-prime/plan-3bhk-3d.jpg'
+import livTheatre from '@/assets/images/liv-prime/private-theatre.jpg'
 import livingApartment from '@/assets/images/living-apartment.jpg'
 import livingRoom from '@/assets/images/living-room.jpg'
 import officeTower from '@/assets/images/office-tower.jpg'
@@ -58,4 +70,20 @@ export const photos = {
   handoverKeys: { src: handoverKeys, alt: 'Hand holding the keys to a new home' },
   jaipurAerial: { src: jaipurAerial, alt: 'Aerial view across Jaipur city' },
   agriculturalLand: { src: agriculturalLand, alt: 'Open agricultural land with dry grass under an evening sky' },
+} as const satisfies Record<string, Img>
+
+/** Liv Prime: the company's own renders, from the project brochure. */
+export const livPrime = {
+  exteriorFront: { src: livExteriorFront, alt: 'Liv Prime, Jagatpura: seven-level apartment building in beige, grey and brown, seen from the road' },
+  exteriorStreet: { src: livExteriorStreet, alt: 'Liv Prime apartments along Ram Nagariya Road, Jagatpura, with landscaped frontage' },
+  aerial: { src: livAerial, alt: 'Aerial view of Liv Prime with landscaped terraces, surrounded by trees' },
+  indoorPool: { src: livIndoorPool, alt: 'Indoor swimming pool at Liv Prime with timber walls and a slatted ceiling' },
+  gym: { src: livGym, alt: 'Gym at Liv Prime with weight benches and mirrored walls' },
+  library: { src: livLibrary, alt: 'Library and reading room at Liv Prime with timber shelves and lounge chairs' },
+  theatre: { src: livTheatre, alt: 'Private theatre at Liv Prime with red recliner seats and a large screen' },
+  gamesRoom: { src: livGamesRoom, alt: 'Games room at Liv Prime with a pool table and sports equipment' },
+  kidsPlayroom: { src: livKidsPlayroom, alt: 'Kids’ playroom at Liv Prime with a ball pit, toys and a colourful wall' },
+  banquetHall: { src: livBanquetHall, alt: 'Banquet hall at Liv Prime with a chandelier and dining tables' },
+  plan2bhk: { src: livPlan2bhk, alt: '3D plan of a 2 BHK apartment at Liv Prime: two bedrooms, two bathrooms, kitchen, living and dining' },
+  plan3bhk: { src: livPlan3bhk, alt: '3D plan of a 3 BHK apartment at Liv Prime: three bedrooms, kitchen, living and dining' },
 } as const satisfies Record<string, Img>

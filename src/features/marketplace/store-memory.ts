@@ -24,6 +24,8 @@ export function createMemoryStore(): MarketplaceStore {
   const subscribers = new Map<string, Subscriber>()
   const subscriberTokens = new Map<string, string>()
   const campaigns: Campaign[] = []
+  let featuredProject: string | undefined
+  const projectRecords = new Map<string, { data: unknown; updatedAt: string }>()
   let eventId = 0
   const now = () => new Date().toISOString()
 
@@ -255,6 +257,22 @@ export function createMemoryStore(): MarketplaceStore {
 
     async listCampaigns(limit) {
       return [...campaigns].sort(newest).slice(0, limit)
+    },
+
+    async getFeaturedProject() {
+      return featuredProject
+    },
+
+    async setFeaturedProject(slug) {
+      featuredProject = slug
+    },
+
+    async listProjectRecords() {
+      return [...projectRecords].map(([slug, row]) => ({ slug, ...row }))
+    },
+
+    async saveProjectRecord(slug, data) {
+      projectRecords.set(slug, { data: structuredClone(data), updatedAt: now() })
     },
   }
   return store

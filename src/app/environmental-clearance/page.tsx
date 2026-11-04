@@ -3,12 +3,14 @@ import Link from 'next/link'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { CtaBand } from '@/components/ui/CtaBand'
+import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
+import { clearanceFaqs } from '@/content/consultancy'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
-import { breadcrumbNode, graph, webPageNode, type Crumb } from '@/seo/schema'
+import { breadcrumbNode, faqNode, graph, webPageNode, type Crumb } from '@/seo/schema'
 import { buildTitle } from '@/seo/titles'
 import styles from './environmental.module.css'
 
@@ -117,6 +119,7 @@ export default function EnvironmentalClearancePage() {
         graph={graph(
           webPageNode({ path: routes.environmentalClearance, name: title, description, breadcrumb: true }),
           breadcrumbNode(routes.environmentalClearance, crumbs),
+          faqNode(routes.environmentalClearance, clearanceFaqs),
         )}
       />
       <Breadcrumbs crumbs={crumbs} />
@@ -212,6 +215,14 @@ export default function EnvironmentalClearancePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="section" aria-labelledby="faq-title">
+        <div className={`container ${styles.faq}`}>
+          <SectionHeading id="faq-title" title="Environmental clearance in Rajasthan: common questions" />
+          <FaqList faqs={clearanceFaqs} />
         </div>
       </section>
 

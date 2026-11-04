@@ -9,7 +9,8 @@ import { LISTING_KINDS, LISTING_PURPOSES, listingKindLabels, listingPurposeLabel
 import { ListingCard } from '@/features/marketplace/ListingCard'
 import { photoBase } from '@/features/marketplace/media'
 import styles from '@/features/marketplace/marketplace.module.css'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { approvedListings } from '@/features/marketplace/public'
+import { marketplaceEnabled } from '@/features/marketplace/runtime'
 import type { Listing } from '@/features/marketplace/types'
 import { routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
@@ -59,12 +60,11 @@ export default async function MarketplacePage({ searchParams }: Readonly<{ searc
   let failed = !marketplaceEnabled
   if (marketplaceEnabled) {
     try {
-      const result = await (await getStore()).listListings({
-        status: 'approved',
-        filters: { kind: filters.kind, purpose: filters.purpose, city: filters.city, maxPrice: filters.budget },
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE,
-      })
+      const result = await approvedListings(
+        { kind: filters.kind, purpose: filters.purpose, city: filters.city, maxPrice: filters.budget },
+        PAGE_SIZE,
+        (page - 1) * PAGE_SIZE,
+      )
       listings = result.items
       total = result.total
     } catch (error) {

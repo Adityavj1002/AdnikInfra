@@ -1,15 +1,16 @@
 import { PayloadTooLargeError, readBodyWithLimit } from '@/security/body'
 import { MAX_REPORT_BYTES, normalizeCspReports } from '@/security/csp-report'
-import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { clientKey } from '@/security/rate-limit'
+import { createSharedLimiter } from '@/security/shared-limit'
 
 const ACCEPTED_TYPES = ['application/csp-report', 'application/reports+json', 'application/json']
 
 // Per-client limit, plus a global ceiling because forwarding headers can be spoofed.
-const perClient = createRateLimiter({ limit: 30, windowMs: 60_000 })
-const globalLimit = createRateLimiter({ limit: 600, windowMs: 60_000 })
+const perClient = createSharedLimiter('csp-client', { limit: 30, windowMs: 60_000 })
+const globalLimit = createSharedLimiter('csp-all', { limit: 600, windowMs: 60_000 })
 
 export async function POST(request: Request): Promise<Response> {
-  const limited = [perClient(clientKey(request.headers)), globalLimit('all')].find((r) => !r.allowed)
+  const limited = (await Promise.all([perClient(clientKey(request.headers)), globalLimit('all')])).find((r) => !r.allowed)
   if (limited) {
     return new Response(null, {
       status: 429,

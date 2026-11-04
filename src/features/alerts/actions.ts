@@ -9,15 +9,16 @@ import { listUnsubscribeHeaders, readUnsubscribe, unsubscribeUrl } from '@/featu
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 import { normalizeLine, pickFields } from '@/security/normalize'
-import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { clientKey } from '@/security/rate-limit'
+import { createSharedLimiter } from '@/security/shared-limit'
 import { hashToken, isTokenShape, randomToken } from '@/security/tokens'
 import type { AlertsState, SubscriptionActionState } from './constants'
 
-const perClient = createRateLimiter({ limit: 3, windowMs: 10 * 60_000 })
-const globalLimit = createRateLimiter({ limit: 200, windowMs: 10 * 60_000 })
+const perClient = createSharedLimiter('alerts-client', { limit: 3, windowMs: 10 * 60_000 })
+const globalLimit = createSharedLimiter('alerts-all', { limit: 200, windowMs: 10 * 60_000 })
 // Spoofed client keys must not let anyone flood one inbox with confirmation emails.
-const perAddress = createRateLimiter({ limit: 2, windowMs: 60 * 60_000 })
-const confirmLimit = createRateLimiter({ limit: 20, windowMs: 10 * 60_000 })
+const perAddress = createSharedLimiter('alerts-address', { limit: 2, windowMs: 60 * 60_000 })
+const confirmLimit = createSharedLimiter('alerts-confirm', { limit: 20, windowMs: 10 * 60_000 })
 const emailSchema = z.email().max(254)
 const FIELDS = ['email', 'website'] as const
 
@@ -28,7 +29,7 @@ const FIELDS = ['email', 'website'] as const
  */
 export async function subscribeAlerts(_previous: AlertsState, form: FormData): Promise<AlertsState> {
   const key = clientKey(await headers())
-  if (!perClient(key).allowed || !globalLimit('all').allowed) return { status: 'rate-limited' }
+  if (!(await perClient(key)).allowed || !(await globalLimit('all')).allowed) return { status: 'rate-limited' }
 
   const raw = pickFields(form, FIELDS)
   // Honeypot: bots get a convincing success.
@@ -37,7 +38,7 @@ export async function subscribeAlerts(_previous: AlertsState, form: FormData): P
   const email = normalizeLine(raw.email).toLowerCase()
   if (!emailSchema.safeParse(email).success) return { status: 'error', email: email.slice(0, 254) }
   if (!marketplaceEnabled) return { status: 'unavailable' }
-  if (!perAddress(email).allowed) return { status: 'success' }
+  if (!(await perAddress(email)).allowed) return { status: 'success' }
 
   try {
     const store = await getStore()
@@ -57,7 +58,7 @@ export async function subscribeAlerts(_previous: AlertsState, form: FormData): P
 /** A button on the confirm page, not the link itself: mail scanners follow links. */
 export async function confirmSubscription(_previous: SubscriptionActionState, form: FormData): Promise<SubscriptionActionState> {
   if (!marketplaceEnabled) return { status: 'unavailable' }
-  if (!confirmLimit(clientKey(await headers())).allowed) return { status: 'unavailable' }
+  if (!(await confirmLimit(clientKey(await headers()))).allowed) return { status: 'unavailable' }
   const token = form.get('token')
   if (!isTokenShape(token)) return { status: 'invalid' }
   try {

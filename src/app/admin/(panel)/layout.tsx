@@ -11,6 +11,7 @@ export const metadata: Metadata = { title: 'Admin', robots: { index: false, foll
 const links = [
   { href: routes.admin, label: 'Overview' },
   { href: routes.adminListings, label: 'Listings' },
+  { href: routes.adminProjects, label: 'Projects' },
   { href: routes.adminSubscribers, label: 'Subscribers' },
   { href: routes.adminCampaigns, label: 'Campaigns' },
   { href: routes.adminTeam, label: 'Team' },

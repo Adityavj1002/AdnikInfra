@@ -37,6 +37,10 @@ export default defineConfig({
       MARKETPLACE_MODE: 'memory',
       MARKETPLACE_DEV_ADMIN_EMAIL: 'admin@example.com',
       MARKETPLACE_DEV_ADMIN_PASSWORD: 'e2e-admin-password',
+      // Never the real photo host: empty values also stop Next loading them from .env.local.
+      CLOUDINARY_CLOUD_NAME: '',
+      CLOUDINARY_API_KEY: '',
+      CLOUDINARY_API_SECRET: '',
     },
   },
 })

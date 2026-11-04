@@ -2,19 +2,20 @@
 
 import { headers } from 'next/headers'
 import { normalizeLine, normalizeMultiline, pickFields } from '@/security/normalize'
-import { clientKey, createRateLimiter } from '@/security/rate-limit'
+import { clientKey } from '@/security/rate-limit'
+import { createSharedLimiter } from '@/security/shared-limit'
 import { resolveEnquiryAbout } from './about'
 import type { FormState } from './constants'
 import { deliverLead, newReference } from './lead-sink'
 import { ENQUIRY_FIELDS, enquirySchema, toFieldErrors } from './schema'
 
 // Coarse abuse limits per client, plus a global ceiling (forwarding headers are spoofable).
-const perClient = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 })
-const globalLimit = createRateLimiter({ limit: 300, windowMs: 10 * 60_000 })
+const perClient = createSharedLimiter('enquiry-client', { limit: 5, windowMs: 10 * 60_000 })
+const globalLimit = createSharedLimiter('enquiry-all', { limit: 300, windowMs: 10 * 60_000 })
 
 async function isRateLimited(): Promise<boolean> {
   const key = clientKey(await headers())
-  return !perClient(key).allowed || !globalLimit('all').allowed
+  return !(await perClient(key)).allowed || !(await globalLimit('all')).allowed
 }
 
 function echo(values: Record<string, unknown>): Record<string, string> {

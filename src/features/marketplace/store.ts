@@ -20,6 +20,8 @@ export type ReviewDecision = 'approved' | 'rejected' | 'unpublished'
 
 export type SubscribeOutcome = 'created' | 'renewed' | 'already-active'
 
+export type ProjectRow = Readonly<{ slug: string; data: unknown; updatedAt: string }>
+
 /**
  * Everything the marketplace persists, behind one interface: Supabase in production, process
  * memory in development and the e2e suite. Callers never see which one is in use.
@@ -60,4 +62,12 @@ export interface MarketplaceStore {
   createCampaign(input: Readonly<{ subject: string; body: string; includeListings: boolean; recipients: number; createdBy: string }>): Promise<Campaign>
   finishCampaign(id: string, result: Readonly<{ sentCount: number; failedCount: number }>): Promise<void>
   listCampaigns(limit: number): Promise<readonly Campaign[]>
+
+  /** The project an admin chose for the home-page spotlight; undefined until one is chosen. */
+  getFeaturedProject(): Promise<string | undefined>
+  setFeaturedProject(slug: string, adminId: string): Promise<void>
+
+  /** Admin edits to bundled projects, as raw JSON: the caller validates before use. */
+  listProjectRecords(): Promise<readonly ProjectRow[]>
+  saveProjectRecord(slug: string, data: unknown, adminId: string): Promise<void>
 }

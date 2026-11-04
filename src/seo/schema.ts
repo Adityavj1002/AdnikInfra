@@ -4,7 +4,6 @@ import type {
   BreadcrumbList,
   FAQPage,
   Graph,
-  ItemAvailability,
   Organization,
   Place,
   RealEstateListing,
@@ -93,6 +92,18 @@ export function siteNodes(): readonly Thing[] {
     logo: absoluteUrl('/brand/adnik-infra-logo-512.png'),
     description: site.description,
     areaServed,
+    knowsAbout: [
+      'Infrastructure consulting',
+      'Construction advisory',
+      'Environmental clearance',
+      'Environmental Impact Assessment (EIA)',
+      'Consent to Establish and Consent to Operate',
+      'ECBC and ENS compliance',
+      'Mine closure plans',
+      'Construction project management',
+      'Real estate consultancy',
+      'Infrastructure development',
+    ],
     ...(site.business.profiles.length > 0 ? { sameAs: [...site.business.profiles] } : {}),
     department: [ref(ids.builder), ref(ids.sales)],
     ...businessDetails(),
@@ -218,27 +229,8 @@ const residenceType: Record<Project['type'], string> = {
   commercial: 'Place',
 }
 
-const projectAvailability: Record<Project['status'], ItemAvailability> = {
-  ongoing: 'https://schema.org/PreOrder',
-  upcoming: 'https://schema.org/PreSale',
-  completed: 'https://schema.org/LimitedAvailability',
-}
-
 export function projectNode(project: Project, locality: Locality): RealEstateListing {
   const url = absoluteUrl(routes.project(project.slug))
-  const prices = project.configurations.flatMap((c) => (c.price ? [c.price.amount] : []))
-  const offers =
-    prices.length > 0
-      ? {
-          '@type': 'AggregateOffer' as const,
-          lowPrice: Math.min(...prices),
-          highPrice: Math.max(...prices),
-          priceCurrency: 'INR',
-          offerCount: project.configurations.length,
-          availability: projectAvailability[project.status],
-          offeredBy: ref(ids.sales),
-        }
-      : undefined
 
   return {
     '@type': 'RealEstateListing',
@@ -251,12 +243,12 @@ export function projectNode(project: Project, locality: Locality): RealEstateLis
     isPartOf: ref(ids.website),
     breadcrumb: ref(`${url}#breadcrumb`),
     image: project.gallery.map((img) => absoluteUrl(img.src.src)),
-    ...(offers ? { offers } : {}),
     mainEntity: {
       '@type': residenceType[project.type],
       name: project.name,
       description: project.summary,
       containedInPlace: ref(ids.locality(locality.slug)),
+      ...(project.address ? { address: project.address } : {}),
       geo: { '@type': 'GeoCoordinates', latitude: project.geo.lat, longitude: project.geo.lng },
       ...(project.rera ? { identifier: { '@type': 'PropertyValue', name: 'RERA registration', value: project.rera } } : {}),
     },

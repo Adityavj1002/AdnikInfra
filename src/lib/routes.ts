@@ -37,6 +37,8 @@ export const routes = {
   adminCampaigns: '/admin/campaigns',
   adminTeam: '/admin/team',
   adminAccount: '/admin/account',
+  adminProjects: '/admin/projects',
+  adminProject: (slug: string) => `/admin/projects/${slug}`,
 } as const
 
 export type EnquiryTopic = 'proposal' | 'buy' | 'site-visit' | 'construction' | 'sell' | 'other'
@@ -49,6 +51,7 @@ export function contactHref(topic: EnquiryTopic, ref?: string): string {
 }
 
 /** Google Maps search link for a coordinate. A link, not an embed: no third-party script or frame. */
-export function mapsHref({ lat, lng }: Readonly<{ lat: number; lng: number }>): string {
-  return `https://www.google.com/maps/search/?api=1&query=${lat.toFixed(5)},${lng.toFixed(5)}`
+export function mapsHref({ lat, lng }: Readonly<{ lat: number; lng: number }>, address?: string): string {
+  const query = address ?? `${lat.toFixed(5)},${lng.toFixed(5)}`
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
 }

@@ -44,22 +44,25 @@ test('request a proposal opens the form on the right topic, with the message req
 })
 
 test('project gallery opens a lightbox that arrows and Escape control', async ({ page }) => {
-  await page.goto('/projects/vijay-aura-villas')
-  await page.getByRole('button', { name: /View all 6 photos/ }).click()
+  await page.goto('/projects/liv-prime-jagatpura')
+  // The count comes from the page: an admin test may add a photo while this runs.
+  const all = page.getByRole('button', { name: /View all \d+ photos/ })
+  const count = Number((await all.textContent())?.match(/\d+/)?.[0])
+  await all.click()
   const dialog = page.getByRole('dialog', { name: /photos/ })
   await expect(dialog).toBeVisible()
-  await expect(dialog).toContainText('1 / 6')
+  await expect(dialog).toContainText(`1 / ${count}`)
   await page.keyboard.press('ArrowRight')
-  await expect(dialog).toContainText('2 / 6')
+  await expect(dialog).toContainText(`2 / ${count}`)
   await page.keyboard.press('ArrowLeft')
   await page.keyboard.press('ArrowLeft')
-  await expect(dialog).toContainText('6 / 6')
+  await expect(dialog).toContainText(`${count} / ${count}`)
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
 })
 
 test('EMI calculator recalculates as the visitor changes the inputs', async ({ page }) => {
-  await page.goto('/projects/vijay-aura-villas#emi')
+  await page.goto('/projects/liv-prime-jagatpura#emi')
   const emi = page.locator('#emi').getByText('Your monthly EMI').locator('xpath=following-sibling::p[1]')
   const before = await emi.textContent()
   const tenure = page.getByRole('slider', { name: 'Loan tenure' })
@@ -102,6 +105,26 @@ test('project status tabs filter the list', async ({ page }) => {
   await page.goto('/projects')
   await page.getByRole('navigation', { name: 'Project status' }).getByRole('link', { name: 'Completed' }).click()
   await expect(page).toHaveURL(/status=completed/)
-  await expect(page.getByRole('heading', { level: 2, name: 'Vijay Courtyard Homes' })).toBeVisible()
-  await expect(page.getByRole('heading', { level: 2, name: 'Vijay Aura Villas' })).toHaveCount(0)
+  await expect(page.getByRole('heading', { level: 2, name: 'Liv Prime' })).toHaveCount(0)
+  await page.getByRole('navigation', { name: 'Project status' }).getByRole('link', { name: 'Under construction' }).click()
+  await expect(page.getByRole('heading', { level: 2, name: 'Liv Prime' })).toBeVisible()
+})
+
+test('projects show plans and sizes, never a price', async ({ page }) => {
+  await page.goto('/projects/liv-prime-jagatpura')
+  await expect(page.getByRole('heading', { level: 1, name: 'Liv Prime, Jagatpura' })).toBeVisible()
+  const units = page.getByRole('table', { name: /every unit at Liv Prime/ })
+  await expect(units.getByRole('row')).toHaveCount(18)
+  await expect(units).toContainText('1,656.95')
+  await expect(page.getByRole('link', { name: /Open in Google Maps/ })).toHaveAttribute('href', /Ram%20Nagariya%20Road/)
+  for (const path of ['/', '/projects', '/projects/liv-prime-jagatpura']) {
+    await page.goto(path)
+    // The EMI calculator works in rupees; everything else on these pages must be price-free.
+    const text = await page.locator('main').evaluate((main) => {
+      const copy = main.cloneNode(true) as HTMLElement
+      copy.querySelector('#emi')?.remove()
+      return copy.textContent ?? ''
+    })
+    expect(text, path).not.toMatch(/Starting from|₹|Price on request/)
+  }
 })

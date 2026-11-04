@@ -72,6 +72,10 @@ describe('keyword ownership', () => {
       'modular homes jaipur',
       'villas for sale in jaipur',
       'plots for sale in jaipur',
+      'infrastructure consultants in jaipur',
+      'environmental clearance consultant in jaipur',
+      'eia consultant in rajasthan',
+      '2 bhk flats in jagatpura',
     ]) {
       expect(all).toContain(target)
     }
@@ -148,7 +152,7 @@ describe('JSON-LD graph integrity', () => {
 
   it('uses only real schema.org types (no "ConstructionBusiness")', () => {
     expect(json).not.toContain('ConstructionBusiness')
-    for (const type of ['GeneralContractor', 'RealEstateAgent', 'RealEstateListing', 'City', 'Place', 'Service', 'AggregateOffer']) {
+    for (const type of ['GeneralContractor', 'RealEstateAgent', 'RealEstateListing', 'City', 'Place', 'Service']) {
       expect(json).toContain(`"@type":"${type}"`)
     }
   })
@@ -163,11 +167,12 @@ describe('JSON-LD graph integrity', () => {
     if (!site.contact.phone) expect(json).not.toContain('"telephone"')
   })
 
-  it('prices projects as an AggregateOffer range', () => {
-    const villa = projectNode(projects[0]!, localityOf(projects[0]!.localitySlug)) as unknown as {
-      offers: { lowPrice: number; highPrice: number }
+  it('never publishes a project price, in the page or its structured data', () => {
+    for (const project of projects) {
+      const node = JSON.stringify(projectNode(project, localityOf(project.localitySlug)))
+      expect(node).not.toContain('"offers"')
+      expect(node).not.toMatch(/"price|lowPrice|highPrice/)
     }
-    expect(villa.offers.lowPrice).toBeLessThan(villa.offers.highPrice)
   })
 })
 
