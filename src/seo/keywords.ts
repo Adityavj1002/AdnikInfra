@@ -87,7 +87,7 @@ export const staticKeywords = {
     primary: 'infrastructure consulting services',
     supporting: [
       'construction advisory',
-      'project management consultants',
+      'construction project management',
       'real estate consultancy Jaipur',
       'infrastructure development consultants',
       'environmental clearance services',

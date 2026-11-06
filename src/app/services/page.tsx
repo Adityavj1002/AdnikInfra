@@ -29,7 +29,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="Our services"
         title="Infrastructure consulting services in Jaipur"
-        lead={<p>Five services, one team from first plan to final approval.</p>}
+        lead={<p>Four services, one team from first plan to final approval.</p>}
       />
       <section className="section section--tight" aria-label="Services">
         <div className="container">

@@ -48,7 +48,7 @@ test.describe('security in the browser', () => {
   test('/sectors leads to the sectors section', async ({ request }) => {
     const response = await request.get('/sectors', { maxRedirects: 0 })
     expect(response.status()).toBe(307)
-    expect(response.headers().location).toBe('/#sectors')
+    expect(response.headers().location).toBe('/environmental-clearance#sectors')
   })
 
   test('admin pages turn away visitors without a session before rendering', async ({ request }) => {

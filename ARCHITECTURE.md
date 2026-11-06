@@ -16,7 +16,7 @@ src/
     enquiry/      The enquiry form, its validation and lead delivery
     marketplace/  Owner listings: sell form, review states, public pages, emails
     media/        Cloudinary uploads and delivery, shared by listings and projects
-    projects/     Project records, the admin editor, the featured project
+    projects/     Project records, the admin editor, the featured project, the home slideshow
     calculators/  EMI and construction cost estimators
     email/        SMTP transport and the branded email layout
     gallery/, cinematic/

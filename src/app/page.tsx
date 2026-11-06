@@ -1,22 +1,10 @@
-import {
-  Activity,
-  ArrowRight,
-  ArrowUpRight,
-  Building2,
-  ClipboardCheck,
-  Factory,
-  FileText,
-  Leaf,
-  MapPin,
-  Mountain,
-  Pickaxe,
-  Zap,
-} from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Building2, Leaf, MapPin, MessageCircle, Phone, Pickaxe } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ProjectCard } from '@/components/ui/Cards'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { TileGrid } from '@/components/ui/TileGrid'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { FaqList } from '@/components/ui/FaqList'
 import { site } from '@/config/site'
@@ -25,7 +13,8 @@ import { getLocalities, getProjects, getStats } from '@/content/repository'
 import { homeFaqs } from '@/content/consultancy'
 import { services } from '@/content/services'
 import { NO_FEATURED, featuredProjectSlug } from '@/features/projects/featured'
-import { projectStage, projectTypeLabel } from '@/lib/format'
+import { ProjectShowcase, type Slide } from '@/features/projects/ProjectShowcase'
+import { formatPhone, projectStage, projectTypeLabel } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { faqNode, graph, webPageNode } from '@/seo/schema'
@@ -62,17 +51,6 @@ function RoadsIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGSVGElemen
   )
 }
 
-function ProjectManagementIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGSVGElement> & { strokeWidth?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <rect x="4" y="5" width="16" height="16" rx="2" />
-      <path d="M9 3h6a1 1 0 0 1 1 1v2H8V4a1 1 0 0 1 1-1z" />
-      <path d="M9 12l2 2 4-4" />
-      <line x1="9" y1="17" x2="15" y2="17" />
-    </svg>
-  )
-}
-
 function RealEstateIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGSVGElement> & { strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -94,65 +72,12 @@ function EnvironmentalIcon({ strokeWidth = 1.75, ...props }: React.SVGProps<SVGS
 const serviceIcons: Readonly<Record<string, typeof BuildingIcon>> = {
   'construction-advisory': BuildingIcon,
   'environmental-clearance': EnvironmentalIcon,
-  'project-management': ProjectManagementIcon,
   'real-estate-consultancy': RealEstateIcon,
   'infrastructure-development': RoadsIcon,
 }
 
-const categories = services.map((service) => ({ ...service, icon: serviceIcons[service.slug] ?? BuildingIcon }))
-
 /** Where an enquiry with no particular service in mind goes: the proposal request. */
 const proposalHref = contactHref('proposal')
-
-const sectors = [
-  {
-    slug: 'infrastructure',
-    icon: Building2,
-    title: 'Infrastructure',
-    body: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, roads and utilities.',
-  },
-  { slug: 'industrial', icon: Factory, title: 'Industrial', body: 'Factories, processing plants, industrial estates and warehousing parks.' },
-  { slug: 'mining', icon: Pickaxe, title: 'Mining', body: 'Major and minor minerals, quarries and sand: mine planning, lease approvals and closure.' },
-] as const
-
-const clearances = [
-  {
-    icon: FileText,
-    title: 'EIA and Environmental Clearance',
-    body: 'Screening, scoping, EIA/EMP reports and public hearing support.',
-    sectors: 'Infrastructure · Industrial · Mining',
-  },
-  {
-    icon: ClipboardCheck,
-    title: 'Pollution Control Board consents',
-    body: 'Consent to Establish and Operate applications and renewals.',
-    sectors: 'Infrastructure · Industrial · Mining',
-  },
-  {
-    icon: Zap,
-    title: 'ECBC and ENS energy compliance',
-    body: 'Building envelope, HVAC and lighting compliance reports with energy modelling.',
-    sectors: 'Infrastructure',
-  },
-  {
-    icon: Mountain,
-    title: 'Mine closure and reclamation plans',
-    body: 'Progressive and final closure plans, land restoration and post-closure monitoring.',
-    sectors: 'Mining',
-  },
-  {
-    icon: Activity,
-    title: 'Monitoring and audits',
-    body: 'Air, water, noise and soil monitoring, plus statutory environmental audits.',
-    sectors: 'Infrastructure · Industrial · Mining',
-  },
-  {
-    icon: Leaf,
-    title: 'Green building certification',
-    body: 'GRIHA and related rating support for new buildings and campuses.',
-    sectors: 'Infrastructure',
-  },
-] as const
 
 /** The three founding disciplines. Founder names, portraits and bios go here once supplied. */
 const disciplines = [
@@ -192,8 +117,27 @@ export default async function HomePage() {
   // A project without a photo is never featured: the layout is built on one.
   const candidate = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects[0])
   const spotlight = candidate && candidate.gallery.length > 0 ? candidate : undefined
-  const moreProjects = projects.filter((p) => p.slug !== spotlight?.slug).slice(0, spotlight ? 3 : 6)
   const spotlightLocality = spotlight ? localityOf(spotlight.localitySlug) : undefined
+  // The slideshow needs a photo per project; the featured project leads.
+  const slides: Slide[] = [...(spotlight ? [spotlight] : []), ...projects.filter((p) => p !== spotlight)].flatMap((project) => {
+    const image = project.gallery[0]
+    if (!image) return []
+    const locality = localityOf(project.localitySlug)
+    return [
+      {
+        slug: project.slug,
+        href: routes.project(project.slug),
+        name: project.name,
+        kind: projectTypeLabel[project.type],
+        stage: projectStage(project),
+        place: locality ? `${locality.name}, ${site.city}` : undefined,
+        summary: project.summary,
+        homes: project.configurations.map((c) => c.label),
+        image,
+      },
+    ]
+  })
+  const { phone, whatsapp } = site.contact
 
   return (
     <>
@@ -272,112 +216,53 @@ export default async function HomePage() {
         )}
       </section>
 
+      {/* Projects: every project as a full-width slide, the featured one first. */}
+      {slides.length > 0 ? (
+        <ProjectShowcase slides={slides} title="Homes we are building in Jaipur" allHref={routes.projects} />
+      ) : (
+        projects.length > 0 && (
+          <section id="projects" className="section section--raised" aria-labelledby="projects-title">
+            <div className="container">
+              <SectionHeading id="projects-title" eyebrow="Projects" title="Homes we are building in Jaipur" />
+              <div className="grid-cards">
+                {projects.map((project) => (
+                  <ProjectCard key={project.slug} item={project} locality={localityOf(project.localitySlug)} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )
+      )}
+
       {/* Services */}
       <section id="services" className="section" aria-labelledby="categories-title">
         <div className="container">
           <SectionHeading
             id="categories-title"
-            eyebrow="Our services"
-            title="Five services, one team from first plan to final approval"
+            eyebrow="What we do"
+            title={
+              <>
+                Everything your project needs, <span className={styles.accent}>under one roof</span>
+              </>
+            }
+            intro={<p>Advice, approvals, land and delivery, from one team that answers for all of it.</p>}
           />
-          <ul role="list" className={styles.categoriesGrid}>
-            {categories.map((cat) => (
-              <li key={cat.slug} className="reveal">
-                <Link
-                  href={cat.href}
-                  className={`${styles.categoryCard} ${cat.highlight ? styles.categoryCardHighlight : ''}`}
-                >
-                  <div className={styles.categoryTop}>
-                    <span className={styles.categoryIcon} aria-hidden="true">
-                      <cat.icon strokeWidth={1.5} />
-                    </span>
-                    <span className={styles.categoryNumber}>{cat.number}</span>
-                  </div>
-                  <div className={styles.categoryContent}>
-                    <h3 className={styles.categoryTitle}>{cat.title}</h3>
-                    <p className={styles.categoryBody}>{cat.body}</p>
-                  </div>
-                  <div className={styles.categoryFooter}>
-                    <span className={styles.categoryCta}>{cat.cta ?? 'Explore Service'}</span>
-                    <span className={styles.categoryArrow} aria-hidden="true">
-                      <ArrowUpRight strokeWidth={2} />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Sectors */}
-      <section id="sectors" className="section section--raised" aria-labelledby="sectors-title">
-        <div className="container">
-          <SectionHeading id="sectors-title" eyebrow="Sectors we serve" title="Infrastructure, industrial and mining" />
-          <ul role="list" className={styles.categoriesGrid}>
-            {sectors.map(({ slug, icon: Icon, title: sectorTitle, body }, i) => (
-              <li key={sectorTitle} className="reveal">
-                <Link href={routes.sector(slug)} className={styles.categoryCard}>
-                  <div className={styles.categoryTop}>
-                    <span className={styles.categoryIcon} aria-hidden="true">
-                      <Icon strokeWidth={1.5} />
-                    </span>
-                    <span className={styles.categoryNumber}>{String(i + 1).padStart(2, '0')}</span>
-                  </div>
-                  <div className={styles.categoryContent}>
-                    <h3 className={styles.categoryTitle}>{sectorTitle}</h3>
-                    <p className={styles.categoryBody}>{body}</p>
-                  </div>
-                  <div className={styles.categoryFooter}>
-                    <span className={styles.categoryCta}>See what we do</span>
-                    <span className={styles.categoryArrow} aria-hidden="true">
-                      <ArrowUpRight strokeWidth={2} />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Environmental clearance: the one deep navy band */}
-      <section id="clearance" className={`section ${styles.promise}`} aria-labelledby="clearance-title">
-        <div className="container">
-          <div className={styles.promiseHead}>
-            <p className={`eyebrow ${styles.promiseEyebrow}`}>Environmental Clearance</p>
-            <h2 id="clearance-title" className={styles.promiseTitle}>
-              Clearances and compliance, <span className={styles.promiseAccent}>handled in-house</span>
-            </h2>
-            <p className={styles.promiseIntro}>
-              Most project delays come from approvals. Our environmental team works across all our services, so
-              assessments, consents and energy compliance are planned in with the design and the mine plan, not chased at
-              the end. It also takes on independent clients across infrastructure, industrial and mining projects.
-            </p>
-            <div className={styles.actions}>
-              <Link href={routes.environmentalClearance} className="button button--gold">
-                See all clearance services <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            </div>
-          </div>
-          <ol className={styles.promiseList}>
-            {clearances.map(({ icon: Icon, title: clearanceTitle, body, sectors: tags }, i) => (
-              <li key={clearanceTitle} className={`${styles.promiseItem} reveal`}>
-                <span className={styles.promiseNum} aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <Icon aria-hidden="true" className={styles.promiseIcon} strokeWidth={1.5} />
-                <h3 className={styles.promiseItemTitle}>{clearanceTitle}</h3>
-                <p className={styles.promiseBody}>{body}</p>
-                <p className={styles.promiseTag}>{tags}</p>
-              </li>
-            ))}
-          </ol>
+          <TileGrid
+            tiles={services.map((service) => ({
+              href: service.href,
+              icon: serviceIcons[service.slug] ?? BuildingIcon,
+              title: service.title,
+              body: service.body,
+              cta: service.cta ?? 'Explore Service',
+              number: service.number,
+              highlight: service.highlight,
+            }))}
+          />
         </div>
       </section>
 
       {/* How we work: the four stages stacked in CSS 3D, layer by layer, beside the steps */}
-      <section className="section" aria-labelledby="process-title">
+      <section className="section section--ivory" aria-labelledby="process-title">
         <div className={`container ${styles.build}`}>
           <div className={styles.iso} aria-hidden="true">
             <div className={styles.isoScene}>
@@ -405,77 +290,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Projects: one spotlight in layered 3D, then the rest as cards. Hidden when there are none. */}
-      {projects.length > 0 && (
-      <section id="projects" className="section section--raised" aria-labelledby="projects-title">
-        <div className="container">
-          <SectionHeading
-            id="projects-title"
-            eyebrow="Projects"
-            title="Selected work"
-            action={
-              <Link href={routes.projects} className="link-more">
-                View all projects <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-              </Link>
-            }
-          />
-          {spotlight && (
-            <article className={styles.spotlight}>
-              <div className={styles.spotlightMedia}>
-                {spotlight.gallery[1] && (
-                  <div className={styles.spotlightBack} aria-hidden="true">
-                    <Image src={spotlight.gallery[1].src} alt="" fill sizes="(min-width: 64rem) 30vw, 60vw" placeholder="blur" />
-                  </div>
-                )}
-                {spotlight.gallery[0] && (
-                  <div className={styles.spotlightFront}>
-                    <Image
-                      src={spotlight.gallery[0].src}
-                      alt={spotlight.gallery[0].alt}
-                      fill
-                      sizes="(min-width: 64rem) 45vw, 100vw"
-                      placeholder="blur"
-                    />
-                    <span className={`badge badge--gold ${styles.spotlightBadge}`}>{projectStage(spotlight)}</span>
-                  </div>
-                )}
-              </div>
-              <div className={styles.spotlightBody}>
-                <p className="eyebrow">Featured · {projectTypeLabel[spotlight.type]}</p>
-                <h3 className={styles.spotlightTitle}>{spotlight.name}</h3>
-                {spotlightLocality && (
-                  <p className={styles.spotlightPlace}>
-                    <MapPin aria-hidden="true" className="icon" strokeWidth={1.75} /> {spotlightLocality.name}, {site.city}
-                  </p>
-                )}
-                <p className={styles.spotlightLead}>{spotlight.summary}</p>
-                <ul role="list" className={styles.spotlightConfigs}>
-                  {spotlight.configurations.map((c) => (
-                    <li key={c.label}>{c.label}</li>
-                  ))}
-                </ul>
-                <div className={styles.actions}>
-                  <Link href={routes.project(spotlight.slug)} className="button">
-                    View project <ArrowRight aria-hidden="true" strokeWidth={1.75} />
-                  </Link>
-                  <Link href={contactHref('site-visit', spotlight.slug)} className="button button--outline">
-                    Book a site visit
-                  </Link>
-                </div>
-              </div>
-            </article>
-          )}
-          {moreProjects.length > 0 && (
-            <div className={`grid-cards ${styles.moreProjects}`}>
-              {moreProjects.map((project) => (
-                <ProjectCard key={project.slug} item={project} locality={localityOf(project.localitySlug)} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-      )}
-
       {/* About: one founder per discipline */}
       <section id="team" className="section" aria-labelledby="team-title">
         <div className="container">
@@ -484,41 +298,39 @@ export default async function HomePage() {
             eyebrow="About us"
             title="Three founders, three disciplines"
           />
-          <ul role="list" className={styles.categoriesGrid}>
-            {disciplines.map(({ icon: Icon, title: disciplineTitle }, i) => (
-              <li key={disciplineTitle} className="reveal">
-                <Link href={routes.about} className={styles.categoryCard}>
-                  <div className={styles.categoryTop}>
-                    <span className={styles.categoryIcon} aria-hidden="true">
-                      <Icon strokeWidth={1.5} />
-                    </span>
-                    <span className={styles.categoryNumber}>{String(i + 1).padStart(2, '0')}</span>
-                  </div>
-                  <div className={styles.categoryContent}>
-                    <h3 className={styles.categoryTitle}>{disciplineTitle}</h3>
-                  </div>
-                  <div className={styles.categoryFooter}>
-                    <span className={styles.categoryCta}>Meet the team</span>
-                    <span className={styles.categoryArrow} aria-hidden="true">
-                      <ArrowUpRight strokeWidth={2} />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <TileGrid tiles={disciplines.map(({ icon, title: disciplineTitle }) => ({ href: routes.about, icon, title: disciplineTitle, cta: 'Meet the team' }))} />
         </div>
       </section>
 
       {/* Questions people search for, answered in plain words (FAQPage data above). */}
       <section id="faq" className="section section--raised" aria-labelledby="faq-title">
         <div className={`container ${styles.faq}`}>
-          <SectionHeading
-            id="faq-title"
-            eyebrow="Questions"
-            title="Infrastructure, clearance and construction consultants in Jaipur"
-            intro={<p>What clients ask us most before a project starts.</p>}
-          />
+          <div className={styles.faqAside}>
+            <SectionHeading
+              id="faq-title"
+              eyebrow="Questions"
+              title="Infrastructure, clearance and construction consultants in Jaipur"
+              intro={<p>What clients ask us most before a project starts.</p>}
+            />
+            <div className={styles.faqHelp}>
+              <p className={styles.faqHelpTitle}>Still have a question?</p>
+              <p className={styles.faqHelpBody}>Talk to the team directly. We usually reply the same working day.</p>
+              <div className={styles.faqHelpActions}>
+                {phone && (
+                  <a href={`tel:${phone}`} className="button button--gold">
+                    <Phone aria-hidden="true" strokeWidth={1.75} />
+                    {formatPhone(phone)}
+                  </a>
+                )}
+                {whatsapp && (
+                  <a href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`} className={`button ${styles.faqHelpLink}`}>
+                    <MessageCircle aria-hidden="true" strokeWidth={1.75} />
+                    WhatsApp
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
           <FaqList faqs={homeFaqs} />
         </div>
       </section>

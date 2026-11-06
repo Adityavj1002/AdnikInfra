@@ -1,4 +1,17 @@
-import { ArrowRight, Building2, Check, Factory, Mountain, Phone } from 'lucide-react'
+import {
+  Activity,
+  ArrowRight,
+  Building2,
+  Check,
+  ClipboardCheck,
+  Factory,
+  FileText,
+  Leaf,
+  Mountain,
+  Phone,
+  Pickaxe,
+  Zap,
+} from 'lucide-react'
 import Link from 'next/link'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -6,6 +19,7 @@ import { CtaBand } from '@/components/ui/CtaBand'
 import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
+import { TileGrid, type Tile } from '@/components/ui/TileGrid'
 import { site } from '@/config/site'
 import { clearanceFaqs } from '@/content/consultancy'
 import { photos } from '@/content/images'
@@ -93,6 +107,69 @@ const tracks = [
       },
       { title: 'Environmental monitoring', body: 'Ambient air, water, noise and soil sampling with lab reports.' },
     ],
+  },
+] as const
+
+const sectors: readonly Tile[] = [
+  {
+    href: routes.sector('infrastructure'),
+    icon: Building2,
+    title: 'Infrastructure',
+    body: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, roads and utilities.',
+    cta: 'See what we do',
+  },
+  {
+    href: routes.sector('industrial'),
+    icon: Factory,
+    title: 'Industrial',
+    body: 'Factories, processing plants, industrial estates and warehousing parks.',
+    cta: 'See what we do',
+  },
+  {
+    href: routes.sector('mining'),
+    icon: Pickaxe,
+    title: 'Mining',
+    body: 'Major and minor minerals, quarries and sand: mine planning, lease approvals and closure.',
+    cta: 'See what we do',
+  },
+]
+
+const clearances = [
+  {
+    icon: FileText,
+    title: 'EIA and Environmental Clearance',
+    body: 'Screening, scoping, EIA/EMP reports and public hearing support.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Pollution Control Board consents',
+    body: 'Consent to Establish and Operate applications and renewals.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: Zap,
+    title: 'ECBC and ENS energy compliance',
+    body: 'Building envelope, HVAC and lighting compliance reports with energy modelling.',
+    sectors: 'Infrastructure',
+  },
+  {
+    icon: Mountain,
+    title: 'Mine closure and reclamation plans',
+    body: 'Progressive and final closure plans, land restoration and post-closure monitoring.',
+    sectors: 'Mining',
+  },
+  {
+    icon: Activity,
+    title: 'Monitoring and audits',
+    body: 'Air, water, noise and soil monitoring, plus statutory environmental audits.',
+    sectors: 'Infrastructure · Industrial · Mining',
+  },
+  {
+    icon: Leaf,
+    title: 'Green building certification',
+    body: 'GRIHA and related rating support for new buildings and campuses.',
+    sectors: 'Infrastructure',
   },
 ] as const
 
@@ -194,37 +271,48 @@ export default function EnvironmentalClearancePage() {
         </div>
       </section>
 
-      <section className={`section ${styles.processSection}`} aria-labelledby="process-title">
+      <section id="sectors" className="section section--raised" aria-labelledby="sectors-title">
         <div className="container">
-          <header className={styles.darkHead}>
-            <p className={`eyebrow ${styles.darkEyebrow}`}>How it works</p>
-            <h2 id="process-title" className={styles.darkTitle}>
-              The road to an environmental clearance
-            </h2>
-            <p className={styles.darkIntro}>
-              Six stages under the EIA Notification, 2006. We tell you on day one which of them your project goes
-              through, and we handle each one.
-            </p>
-          </header>
-          <ol className={styles.process}>
-            {stages.map((step, i) => (
-              <li key={step.title} className={styles.processStep}>
-                <span className={styles.processNumber} aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className={styles.processTitle}>{step.title}</h3>
-                <p className={styles.processBody}>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-          <p className={styles.processNote}>
-            Building and construction projects are appraised on Form 1, Form 1A and a conceptual plan, without a
-            public hearing.
-          </p>
+          <SectionHeading id="sectors-title" eyebrow="Sectors we serve" title="Infrastructure, industrial and mining" />
+          <TileGrid tiles={sectors} />
         </div>
       </section>
 
-      <section className="section" aria-labelledby="tracks-title">
+      <section id="clearance" className={`section ${styles.promise}`} aria-labelledby="clearance-title">
+        <div className="container">
+          <div className={styles.promiseHead}>
+            <p className={`eyebrow ${styles.promiseEyebrow}`}>Environmental Clearance</p>
+            <h2 id="clearance-title" className={styles.promiseTitle}>
+              Clearances and compliance, <span className={styles.promiseAccent}>handled in-house</span>
+            </h2>
+            <p className={styles.promiseIntro}>
+              Most project delays come from approvals. Our environmental team works across all our services, so
+              assessments, consents and energy compliance are planned in with the design and the mine plan, not chased at
+              the end. It also takes on independent clients across infrastructure, industrial and mining projects.
+            </p>
+            <div className={styles.promiseActions}>
+              <a href="#services" className="button button--gold">
+                See all clearance services <ArrowRight aria-hidden="true" strokeWidth={1.75} />
+              </a>
+            </div>
+          </div>
+          <ol className={styles.promiseList}>
+            {clearances.map(({ icon: Icon, title: clearanceTitle, body, sectors: tags }, i) => (
+              <li key={clearanceTitle} className={`${styles.promiseItem} reveal`}>
+                <span className={styles.promiseNum} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <Icon aria-hidden="true" className={styles.promiseIcon} strokeWidth={1.5} />
+                <h3 className={styles.promiseItemTitle}>{clearanceTitle}</h3>
+                <p className={styles.promiseBody}>{body}</p>
+                <p className={styles.promiseTag}>{tags}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section id="services" className="section" aria-labelledby="tracks-title">
         <div className="container">
           <SectionHeading
             id="tracks-title"
@@ -266,6 +354,36 @@ export default function EnvironmentalClearancePage() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className={`section ${styles.processSection}`} aria-labelledby="process-title">
+        <div className="container">
+          <header className={styles.darkHead}>
+            <p className={`eyebrow ${styles.darkEyebrow}`}>How it works</p>
+            <h2 id="process-title" className={styles.darkTitle}>
+              The road to an environmental clearance
+            </h2>
+            <p className={styles.darkIntro}>
+              Six stages under the EIA Notification, 2006. We tell you on day one which of them your project goes
+              through, and we handle each one.
+            </p>
+          </header>
+          <ol className={styles.process}>
+            {stages.map((step, i) => (
+              <li key={step.title} className={styles.processStep}>
+                <span className={styles.processNumber} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className={styles.processTitle}>{step.title}</h3>
+                <p className={styles.processBody}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p className={styles.processNote}>
+            Building and construction projects are appraised on Form 1, Form 1A and a conceptual plan, without a
+            public hearing.
+          </p>
         </div>
       </section>
 

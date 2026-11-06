@@ -1,7 +1,7 @@
 import { routes } from '@/lib/routes'
 
 /**
- * The five service lines: the home page cards and the footer's Services column. The slug goes
+ * The four service lines: the home page cards and the footer's Services column. The slug goes
  * on contact links from each service's page, so an enquiry says which service it's about.
  */
 export type Service = Readonly<{
@@ -20,7 +20,7 @@ export const services: readonly Service[] = [
     slug: 'construction-advisory',
     number: '01',
     title: 'Construction Advisory',
-    body: 'Technical advice on design review, specifications, costing and contractor selection.',
+    body: 'Design review, costing and contractor selection, then project management on site through to handover.',
     href: routes.service('construction-advisory'),
   },
   {
@@ -33,22 +33,15 @@ export const services: readonly Service[] = [
     highlight: true,
   },
   {
-    slug: 'project-management',
-    number: '03',
-    title: 'Project Management',
-    body: 'Scheduling, site coordination, quality and cost control from mobilisation to handover.',
-    href: routes.service('project-management'),
-  },
-  {
     slug: 'real-estate-consultancy',
-    number: '04',
+    number: '03',
     title: 'Real Estate Consultancy',
     body: 'Land due diligence, feasibility and approvals support for developers and landowners.',
     href: routes.service('real-estate-consultancy'),
   },
   {
     slug: 'infrastructure-development',
-    number: '05',
+    number: '04',
     title: 'Infrastructure Development',
     body: 'Planning and delivery of buildings, roads, utilities and campuses.',
     href: routes.service('infrastructure-development'),

@@ -63,6 +63,139 @@
     font-size: var(--text-sm);
   }
 
+  /* In-house clearances: deep navy with a faint blueprint grid. */
+  .promise {
+    --focus-ring: var(--c-gold-light);
+    position: relative;
+    background-color: var(--c-navy);
+    color: var(--c-cream);
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .promise::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(212 180 92 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(212 180 92 / 0.08) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at 80% 0%, black 0%, transparent 70%);
+  }
+
+  .promiseHead {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 48rem;
+    margin-block-end: var(--space-12);
+  }
+
+  .promiseEyebrow {
+    color: var(--c-gold-bright);
+  }
+
+  .promiseEyebrow::before {
+    background-color: var(--c-gold-bright);
+  }
+
+  .promiseTitle {
+    color: var(--c-cream);
+    font-size: var(--text-4xl);
+  }
+
+  .promiseAccent {
+    color: var(--c-gold-light);
+  }
+
+  .promiseActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .promiseIntro {
+    color: #c9d1dc;
+    font-size: var(--text-lg);
+  }
+
+  /* One-pixel gaps over a gold background draw the hairlines between cells. */
+  .promiseList {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgb(212 180 92 / 0.2);
+    background-color: rgb(212 180 92 / 0.2);
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .promiseList {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .promiseList {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .promiseItem {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-8) var(--space-6);
+    background-color: var(--c-navy);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .promiseItem:hover {
+      background-color: var(--c-navy-2);
+    }
+  }
+
+  .promiseNum {
+    position: absolute;
+    inset-block-start: var(--space-6);
+    inset-inline-end: var(--space-6);
+    color: rgb(212 180 92 / 0.4);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .promiseIcon {
+    inline-size: 2rem;
+    block-size: 2rem;
+    color: var(--c-gold-bright);
+  }
+
+  .promiseItemTitle {
+    color: var(--c-cream);
+    font-size: var(--text-lg);
+  }
+
+  .promiseBody {
+    color: #c9d1dc;
+    font-size: var(--text-sm);
+  }
+
+  /* Which sectors a clearance applies to, in small gold capitals. */
+  .promiseTag {
+    color: var(--c-gold-bright);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   /* The approval road: numbered stages on navy, joined by a gold line on wide screens. */
   .processSection {
     background-color: var(--c-navy);

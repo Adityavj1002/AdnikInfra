@@ -377,8 +377,8 @@ test('an admin can take the featured project off the home page and put it back',
   await expect(page.getByRole('status').filter({ hasText: 'No project is featured' })).toBeVisible()
   await page.goto('/')
   await expect(page.getByText(/^Featured ·/)).toHaveCount(0)
-  // The project is still listed, as a card, just not in the spotlight.
-  await expect(page.locator('#projects').getByRole('heading', { name: 'Liv Prime' })).toBeVisible()
+  // The project is still in the slideshow, just no longer featured in the hero.
+  await expect(page.locator('#projects').getByRole('group', { name: /Liv Prime/ })).toHaveCount(1)
 
   await page.goto('/admin/projects')
   await page.getByRole('listitem').filter({ hasText: 'Liv Prime' }).getByRole('button', { name: 'Feature on home page' }).click()

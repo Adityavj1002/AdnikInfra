@@ -24,9 +24,11 @@ const nextConfig: NextConfig = {
     proxyClientMaxBodySize: '128kb',
   },
   async redirects() {
-    // Sectors live on the home page; each has its own page below /sectors/.
+    // The sectors overview lives on the environmental clearance page; each has its own page below /sectors/.
     return [
-      { source: '/sectors', destination: '/#sectors', permanent: false },
+      { source: '/sectors', destination: '/environmental-clearance#sectors', permanent: false },
+      // Project management is now part of construction advisory.
+      { source: '/services/project-management', destination: '/services/construction-advisory', permanent: true },
       // The old sample property listings are gone; real ones live on the marketplace.
       { source: '/properties', destination: '/marketplace', permanent: true },
       { source: '/properties/:slug*', destination: '/marketplace', permanent: true },

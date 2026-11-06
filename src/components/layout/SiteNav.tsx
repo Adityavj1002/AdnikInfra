@@ -11,9 +11,8 @@ import { Logo } from './Logo'
 import styles from './SiteNav.module.css'
 
 const items = [
-  { href: `${routes.home}#services`, label: 'Services', note: 'Five services, one team' },
-  { href: `${routes.home}#sectors`, label: 'Sectors', note: 'Infrastructure, industrial and mining' },
-  { href: routes.environmentalClearance, label: 'Environmental Clearance', note: 'Clearances and compliance' },
+  { href: `${routes.home}#services`, label: 'Services', note: 'Four services, one team' },
+  { href: `${routes.environmentalClearance}#sectors`, label: 'Sectors', note: 'Infrastructure, industrial and mining' },
   { href: routes.projects, label: 'Projects', note: 'Selected work' },
   { href: routes.marketplace, label: 'Marketplace', note: 'Buy, or list your property' },
   { href: routes.about, label: 'About', note: 'Who we are' },

@@ -10,7 +10,6 @@ export const pages = [
   { path: '/environmental-clearance', keyword: 'environmental clearance and compliance' },
   { path: '/services', keyword: 'infrastructure consulting services' },
   { path: '/services/construction-advisory', keyword: 'construction advisory services' },
-  { path: '/services/project-management', keyword: 'project management consultants' },
   { path: '/services/real-estate-consultancy', keyword: 'real estate consultancy' },
   { path: '/services/infrastructure-development', keyword: 'infrastructure development' },
   { path: '/sectors/infrastructure', keyword: 'consultants for infrastructure projects' },
