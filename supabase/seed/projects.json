@@ -445,7 +445,8 @@
       "configurations": [
         {
           "label": "4 BHK villa",
-          "from": 70
+          "from": 70,
+        "unit": "sqyd"
         }
       ],
       "facts": [

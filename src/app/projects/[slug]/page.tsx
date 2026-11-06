@@ -10,7 +10,8 @@ import { AmenityGrid } from '@/components/ui/amenities'
 import { ProjectCard } from '@/components/ui/Cards'
 import { KeyFacts } from '@/components/ui/KeyFacts'
 import blocks from '@/components/ui/blocks.module.css'
-import { getLocality, getProject, getProjects, isValidSlug } from '@/content/repository'
+import { getLocality, getProject, getProjects } from '@/content/repository'
+import { isSlug } from '@/lib/slug'
 import { EmiCalculator } from '@/features/calculators/EmiCalculator'
 import { LazyVideo } from '@/features/cinematic/LazyVideo'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
@@ -26,7 +27,7 @@ import styles from '@/components/ui/detail.module.css'
 type PageProps = Readonly<{ params: Promise<{ slug: string }> }>
 
 async function load(slug: string) {
-  if (!isValidSlug(slug)) return undefined
+  if (!isSlug(slug)) return undefined
   const project = await getProject(slug)
   const locality = project && (await getLocality(project.localitySlug))
   return project && locality ? { project, locality } : undefined

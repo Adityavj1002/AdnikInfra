@@ -1,8 +1,8 @@
 import 'server-only'
 import { randomUUID } from 'node:crypto'
-import { LISTING_STATUSES } from './constants'
-import type { MarketplaceStore, Page } from './store'
-import type { Admin, AdminWithHash, Campaign, Listing, ListingEvent, Subscriber } from './types'
+import { LISTING_STATUSES } from '@/features/marketplace/constants'
+import type { Store, Page } from './store'
+import type { Admin, AdminWithHash, Campaign, Listing, ListingEvent, Subscriber } from '@/features/marketplace/types'
 
 const page = <T>(items: readonly T[], limit: number, offset = 0): Page<T> => ({
   items: items.slice(offset, offset + limit),
@@ -13,7 +13,7 @@ const page = <T>(items: readonly T[], limit: number, offset = 0): Page<T> => ({
  * Process-memory store for development and the e2e suite. Data is lost on restart and is
  * not shared between server instances: never a production store (env.ts refuses it there).
  */
-export function createMemoryStore(): MarketplaceStore {
+export function createMemoryStore(): Store {
   const listings = new Map<string, Listing>()
   // Secrets live beside the records, as the database keeps them in columns the app never returns.
   const listingTokens = new Map<string, { hash: string; expiresAt: string }>()
@@ -32,7 +32,7 @@ export function createMemoryStore(): MarketplaceStore {
   const adminName = (id: string | null) => (id ? (admins.get(id)?.name ?? null) : null)
   const newest = <T extends { createdAt: string }>(a: T, b: T) => b.createdAt.localeCompare(a.createdAt)
 
-  const store: MarketplaceStore = {
+  const store: Store = {
     async createListing(input) {
       const { confirmTokenHash, confirmExpiresAt, ...rest } = input
       const listing: Listing = {

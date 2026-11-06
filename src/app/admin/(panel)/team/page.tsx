@@ -2,7 +2,7 @@ import { ActionForm } from '@/features/admin/ActionForm'
 import { addAdmin, removeAdmin, resetAdminPassword } from '@/features/admin/actions'
 import styles from '@/features/admin/admin.module.css'
 import { requireAdmin } from '@/features/admin/session'
-import { getStore } from '@/features/marketplace/runtime'
+import { getStore } from '@/store/runtime'
 import { PASSWORD_MIN } from '@/security/password'
 
 const when = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })

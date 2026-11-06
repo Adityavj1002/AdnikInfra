@@ -1,5 +1,5 @@
 /**
- * Input normalisation before validation (§11.2 step 4). Unicode NFKC folds look-alike
+ * Input normalisation before validation. Unicode NFKC folds look-alike
  * characters, control characters are removed, and whitespace is tidied. Newlines and tabs
  * survive only where multi-line text is expected.
  */

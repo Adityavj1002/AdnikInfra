@@ -10,7 +10,8 @@ import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
-import { getLocalities, getLocality, getProjects, isValidSlug } from '@/content/repository'
+import { getLocalities, getLocality, getProjects } from '@/content/repository'
+import { isSlug } from '@/lib/slug'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, faqNode, graph, ids, localityNode, webPageNode } from '@/seo/schema'
@@ -20,7 +21,7 @@ import styles from '../locations.module.css'
 type PageProps = Readonly<{ params: Promise<{ slug: string }> }>
 
 async function load(slug: string) {
-  return isValidSlug(slug) ? getLocality(slug) : undefined
+  return isSlug(slug) ? getLocality(slug) : undefined
 }
 
 const titleFor = (name: string) => buildTitle({ name: `Property in ${name}, Jaipur: Villas, Flats & Plots` })

@@ -4,7 +4,7 @@ import { ActionForm } from '@/features/admin/ActionForm'
 import { login } from '@/features/admin/actions'
 import styles from '@/features/admin/admin.module.css'
 import { currentAdmin } from '@/features/admin/session'
-import { marketplaceEnabled } from '@/features/marketplace/runtime'
+import { storeEnabled } from '@/store/runtime'
 import { routes } from '@/lib/routes'
 
 export const metadata: Metadata = { title: 'Admin sign-in', robots: { index: false, follow: false } }
@@ -15,7 +15,7 @@ export default async function AdminLoginPage() {
     <div className="container">
       <div className={styles.login}>
         <h1 className={styles.title}>Admin sign-in</h1>
-        {marketplaceEnabled ? (
+        {storeEnabled ? (
           <ActionForm action={login} submitLabel="Sign in" pendingLabel="Signing in…">
             <div className="field">
               <label className="field__label" htmlFor="login-email">Email</label>

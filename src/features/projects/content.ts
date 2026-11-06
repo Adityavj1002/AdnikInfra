@@ -3,8 +3,8 @@ import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 import { z } from 'zod'
 import type { AmenityKey, Film, GeoPoint, Img, Project, UnitArea } from '@/content/types'
-import { cloudBase, photoBase, isPhotoId } from '@/features/marketplace/media'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { cloudBase, photoBase, isPhotoId } from '@/features/media/media'
+import { getStore, storeEnabled } from '@/store/runtime'
 import { CACHE_SECONDS, cacheTags } from '@/lib/cache-tags'
 import { isSlug } from '@/lib/slug'
 
@@ -95,7 +95,7 @@ export const recordSchema = z.object({
   address: z.string().trim().max(200, 'Address: please keep it under 200 characters.'),
   description: z.array(text(20, 1500, 'Description paragraph')).min(1, 'Description: please write at least one paragraph.').max(8),
   configurations: z
-    .array(z.object({ label: text(1, 40, 'Home type'), from: amount, to: amount.optional() }))
+    .array(z.object({ label: text(1, 40, 'Home type'), from: amount, to: amount.optional(), unit: z.enum(['sqft', 'sqyd']).optional() }))
     .min(1, 'Homes: please add at least one type.')
     .max(10),
   facts: z.array(z.object({ label: text(1, 40, 'Fact'), value: text(1, 80, 'Fact') })).max(12),
@@ -177,7 +177,6 @@ export function resolveFilm(film: FilmRecord): Film | undefined {
   }
 }
 
-const sqft = (value: number) => ({ value, unit: 'sqft' as const })
 
 /** A record as the project the pages render. */
 export function toProject(slug: string, record: ProjectRecord, updatedAt: string, geo: GeoPoint): Project {
@@ -194,7 +193,10 @@ export function toProject(slug: string, record: ProjectRecord, updatedAt: string
     summary: record.summary,
     description: record.description,
     ...(record.address ? { address: record.address } : {}),
-    configurations: record.configurations.map((c) => ({ label: c.label, area: c.to && c.to !== c.from ? ([sqft(c.from), sqft(c.to)] as const) : sqft(c.from) })),
+    configurations: record.configurations.map(({ label, from, to, unit = 'sqft' }) => ({
+      label,
+      area: to && to !== from ? ([{ value: from, unit }, { value: to, unit }] as const) : { value: from, unit },
+    })),
     units: record.units as readonly UnitArea[],
     plans: resolve(record.plans),
     ...(film ? { film } : {}),
@@ -220,7 +222,7 @@ export type SavedProject = Readonly<{ slug: string; record: ProjectRecord; updat
 
 /** Every valid project record, oldest first, read once per request. A failure means "no projects". */
 export const savedProjects = cache(async (): Promise<readonly SavedProject[]> => {
-  if (!marketplaceEnabled) return []
+  if (!storeEnabled) return []
   try {
     const rows = await projectRows()
     const valid: SavedProject[] = []

@@ -12,7 +12,7 @@ function prefersLite(): boolean {
 }
 
 /**
- * Lazy cinematic video (§9, §10.4). Sources attach only near the viewport, playback pauses
+ * Lazy cinematic video. Sources attach only near the viewport, playback pauses
  * offscreen, and Save-Data / reduced-motion visitors get the poster until they press play.
  * Captions and a full transcript are always in the HTML for people and crawlers alike.
  */

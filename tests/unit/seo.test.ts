@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { site } from '@/config/site'
-import { packages, posts } from '@/content/fixtures/company'
-import { localities } from '@/content/fixtures/localities'
+import { packages, posts } from '@/content/data/company'
+import { localities } from '@/content/data/localities'
 import { seedProjects as projects } from './seed-projects'
-import { towns } from '@/content/fixtures/towns'
+import { towns } from '@/content/data/towns'
 import { localityKeywords, postKeywords, projectKeywords, staticKeywords, townKeywords } from '@/seo/keywords'
 import { safeJsonLd } from '@/seo/safe-json-ld'
 import {

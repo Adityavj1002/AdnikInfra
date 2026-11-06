@@ -17,7 +17,7 @@ type Bucket = { count: number; resetAt: number }
 /**
  * Fixed-window limiter held in process memory. It is per-instance, which is enough
  * for coarse abuse control on a single node; multi-instance deployments swap in a
- * shared store behind the same signature (ARCHITECTURE.md §11.2).
+ * shared store behind the same signature (shared-limit.ts).
  */
 export function createRateLimiter({
   limit,

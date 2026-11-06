@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getLocalities, isValidSlug } from '@/content/repository'
+import { getLocalities } from '@/content/repository'
+import { isSlug } from '@/lib/slug'
 import { ActionForm } from '@/features/admin/ActionForm'
 import { deleteProject } from '@/features/admin/actions'
 import styles from '@/features/admin/admin.module.css'
@@ -14,7 +15,7 @@ type Props = Readonly<{ params: Promise<{ slug: string }>; searchParams: Promise
 export default async function AdminProjectPage({ params, searchParams }: Props) {
   await requireAdmin()
   const { slug } = await params
-  const saved = isValidSlug(slug) ? await savedProject(slug) : undefined
+  const saved = isSlug(slug) ? await savedProject(slug) : undefined
   if (!saved) notFound()
   const [localities, { created }] = await Promise.all([getLocalities(), searchParams])
 

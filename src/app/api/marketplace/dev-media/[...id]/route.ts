@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { devUploadsEnabled, readDevPhoto } from '@/features/marketplace/media'
+import { devUploadsEnabled, readDevPhoto } from '@/features/media/media'
 
 /** Memory mode only: serves photos uploaded through /api/marketplace/dev-upload. */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string[] }> }) {

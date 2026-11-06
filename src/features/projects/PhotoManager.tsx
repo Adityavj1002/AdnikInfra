@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { useRef, useState, type ChangeEvent } from 'react'
 import { requestUploadTicket } from '@/features/marketplace/actions'
 import { PHOTO_MAX_BYTES, PHOTO_TYPES } from '@/features/marketplace/constants'
-import { MarketImage } from '@/features/marketplace/MarketImage'
-import { dimensions } from '@/features/marketplace/photo-size'
+import { RemoteImage } from '@/features/media/RemoteImage'
+import { dimensions } from '@/features/media/photo-size'
 import styles from '@/features/admin/admin.module.css'
 
 export type ManagedPhoto = Readonly<{ ref: string; alt: string; width: number; height: number; preview?: string }>
@@ -96,7 +96,7 @@ export function PhotoManager({ initial, photoBase, limit, name = 'photos', label
                 // Library photos come with their URL; a fresh upload shows its local copy.
                 <Image src={photo.preview} alt="" fill unoptimized={photo.preview.startsWith('blob:')} sizes="8rem" />
               ) : (
-                <MarketImage id={photo.ref.slice('upload:'.length)} base={photoBase} alt="" fill sizes="8rem" />
+                <RemoteImage id={photo.ref.slice('upload:'.length)} base={photoBase} alt="" fill sizes="8rem" />
               )}
               {i === 0 && min > 0 && <span className={`badge badge--gold ${styles.coverBadge}`}>Cover</span>}
             </span>

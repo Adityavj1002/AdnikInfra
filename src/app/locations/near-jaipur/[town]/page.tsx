@@ -10,7 +10,8 @@ import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
 import blocks from '@/components/ui/blocks.module.css'
 import { site } from '@/config/site'
-import { getTown, getTowns, isValidSlug } from '@/content/repository'
+import { getTown, getTowns } from '@/content/repository'
+import { isSlug } from '@/lib/slug'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, faqNode, graph, ids, townNodes, webPageNode } from '@/seo/schema'
@@ -24,7 +25,7 @@ export async function generateStaticParams() {
 }
 
 async function load(slug: string) {
-  return isValidSlug(slug) ? getTown(slug) : undefined
+  return isSlug(slug) ? getTown(slug) : undefined
 }
 
 const titleFor = (name: string) => buildTitle({ name: `Property & Construction in ${name}, near Jaipur` })

@@ -1,9 +1,9 @@
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { PageHero } from '@/components/ui/PageHero'
-import { photoBase } from '@/features/marketplace/media'
+import { photoBase } from '@/features/media/media'
 import styles from '@/features/marketplace/marketplace.module.css'
-import { marketplaceEnabled } from '@/features/marketplace/runtime'
+import { storeEnabled } from '@/store/runtime'
 import { SellForm } from '@/features/marketplace/SellForm'
 import { routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
@@ -33,7 +33,7 @@ export default function SellPage() {
       />
       <section className="section section--tight" aria-label="Listing form">
         <div className="container">
-          {marketplaceEnabled ? (
+          {storeEnabled ? (
             <SellForm photoBase={photoBase()} />
           ) : (
             <div className={styles.empty} role="status">

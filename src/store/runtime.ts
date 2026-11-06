@@ -4,13 +4,13 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { hashPassword } from '@/security/password'
 import { env } from '@/security/env'
-import type { MarketplaceStore } from './store'
-import { createMemoryStore } from './store-memory'
-import { createSupabaseStore } from './store-supabase'
+import type { Store } from './store'
+import { createMemoryStore } from './memory'
+import { createSupabaseStore } from './supabase'
 
-export const marketplaceEnabled = env.MARKETPLACE_MODE !== 'off'
+export const storeEnabled = env.MARKETPLACE_MODE !== 'off'
 
-type Runtime = { store: MarketplaceStore; ready: Promise<void>; secret: string }
+type Runtime = { store: Store; ready: Promise<void>; secret: string }
 
 // One store per server process. Kept on globalThis so development hot reloads, which
 // re-evaluate this module, don't wipe the memory store.
@@ -41,7 +41,7 @@ function createRuntime(): Runtime {
  * (supabase/seed/projects.json, scripts/seed-projects.mjs), so development and the e2e suite
  * have content to show. Data, not code: the live site reads its projects from Supabase only.
  */
-async function seedProjects(store: MarketplaceStore): Promise<void> {
+async function seedProjects(store: Store): Promise<void> {
   try {
     const seed = JSON.parse(await readFile(join(process.cwd(), 'supabase', 'seed', 'projects.json'), 'utf8')) as unknown
     if (!Array.isArray(seed)) return
@@ -59,8 +59,8 @@ function runtime(): Runtime {
 }
 
 /** The store, once start-up seeding is done. Throws if the marketplace is switched off. */
-export async function getStore(): Promise<MarketplaceStore> {
-  if (!marketplaceEnabled) throw new Error('[marketplace] MARKETPLACE_MODE is off')
+export async function getStore(): Promise<Store> {
+  if (!storeEnabled) throw new Error('[marketplace] MARKETPLACE_MODE is off')
   const { store, ready } = runtime()
   await ready
   return store

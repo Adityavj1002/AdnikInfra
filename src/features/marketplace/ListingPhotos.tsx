@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { ListingPhoto } from './constants'
-import { MarketImage } from './MarketImage'
+import { RemoteImage } from '@/features/media/RemoteImage'
 import styles from './marketplace.module.css'
 
 /** One large photo with a row of thumbnails that swap it. */
@@ -13,7 +13,7 @@ export function ListingPhotos({ photos, base, title }: Readonly<{ photos: readon
   return (
     <div className={styles.photos}>
       <div className={styles.photoMain}>
-        <MarketImage
+        <RemoteImage
           id={current.id}
           base={base}
           alt={`${title}, photo ${index + 1} of ${photos.length}`}
@@ -35,7 +35,7 @@ export function ListingPhotos({ photos, base, title }: Readonly<{ photos: readon
                 aria-pressed={i === index}
                 onClick={() => setIndex(i)}
               >
-                <MarketImage id={photo.id} base={base} alt="" fill sizes="6rem" className={styles.photoImage} />
+                <RemoteImage id={photo.id} base={base} alt="" fill sizes="6rem" className={styles.photoImage} />
               </button>
             </li>
           ))}

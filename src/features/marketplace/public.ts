@@ -1,7 +1,7 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { CACHE_SECONDS, cacheTags } from '@/lib/cache-tags'
-import { getStore } from './runtime'
+import { getStore } from '@/store/runtime'
 import type { ListingFilters } from './types'
 
 const options = { tags: [cacheTags.listings], revalidate: CACHE_SECONDS }

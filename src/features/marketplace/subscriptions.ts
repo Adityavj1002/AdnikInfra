@@ -2,7 +2,7 @@ import 'server-only'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 import { sign, verifySignature } from '@/security/tokens'
-import { signingSecret } from './runtime'
+import { signingSecret } from '@/store/runtime'
 
 /**
  * Unsubscribe links carry the address and an HMAC of it, so they work forever without a

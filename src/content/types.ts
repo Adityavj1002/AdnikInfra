@@ -1,7 +1,7 @@
 import type { StaticImageData } from 'next/image'
 
 /**
- * Content model (ARCHITECTURE.md §5). Everything is readonly: content flows down from
+ * Content model. Everything is readonly: content flows down from
  * the repository as immutable data and is never mutated by components.
  */
 

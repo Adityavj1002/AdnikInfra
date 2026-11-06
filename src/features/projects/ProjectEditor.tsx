@@ -3,7 +3,7 @@ import type { Locality } from '@/content/types'
 import { ActionForm } from '@/features/admin/ActionForm'
 import { saveProject } from '@/features/admin/actions'
 import styles from '@/features/admin/admin.module.css'
-import { cloudBase, photoBase } from '@/features/marketplace/media'
+import { cloudBase, photoBase } from '@/features/media/media'
 import { AMENITY_KEYS, PHOTOS_LIMIT, PLANS_LIMIT, resolvePhoto, type PhotoRef, type ProjectRecord } from './content'
 import { PhotoManager } from './PhotoManager'
 import { bullets, facts, homes, nearby, paragraphs, specifications, units, updates } from './text'
@@ -156,7 +156,7 @@ export function ProjectEditor({ mode, slug, record, localities }: Props) {
 
       <section className={styles.panel} aria-labelledby="homes-title">
         <h2 id="homes-title" className={styles.sectionTitle}>Homes and areas</h2>
-        <TextArea name="configurations" label="Home types" hint={`One per line: ${homes.shape} (super built-up). Leave “to” out for a single size.`} value={homes.format(record.configurations)} rows={4} />
+        <TextArea name="configurations" label="Home types" hint={`One per line: ${homes.shape} (super built-up). Leave “to” out for a single size; write “sq yd” after a plot size.`} value={homes.format(record.configurations)} rows={4} />
         <TextArea name="units" label="Unit-wise areas" hint={`One per line, in sq ft: ${units.shape}. Leave empty to hide the table.`} value={units.format(record.units)} rows={12} />
         <TextArea name="facts" label="Key facts" hint={`One per line: ${facts.shape}`} value={facts.format(record.facts)} rows={6} />
       </section>

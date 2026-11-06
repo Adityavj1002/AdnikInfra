@@ -4,7 +4,7 @@ import cards from '@/components/ui/Cards.module.css'
 import { routes } from '@/lib/routes'
 import { listingKindLabels, listingPurposeLabels } from './constants'
 import { listingArea, listingPlace, listingPrice } from './format'
-import { MarketImage } from './MarketImage'
+import { RemoteImage } from '@/features/media/RemoteImage'
 import type { PublicListing } from './types'
 
 export function ListingCard({ listing, base }: Readonly<{ listing: PublicListing; base: string }>) {
@@ -15,7 +15,7 @@ export function ListingCard({ listing, base }: Readonly<{ listing: PublicListing
       <Link prefetch={false} href={routes.marketplaceListing(listing.slug)} className={cards.link}>
         <div className={cards.media}>
           {cover && (
-            <MarketImage
+            <RemoteImage
               id={cover.id}
               base={base}
               alt={listing.title}

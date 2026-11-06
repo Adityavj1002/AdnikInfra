@@ -1,5 +1,5 @@
 /**
- * Content Security Policy builder (ARCHITECTURE.md §11.1).
+ * Content Security Policy builder.
  * Pure functions so the policy can be unit tested without a server.
  */
 

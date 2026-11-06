@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 import { readUnsubscribe } from '@/features/marketplace/subscriptions'
 
 /**
@@ -7,7 +7,7 @@ import { readUnsubscribe } from '@/features/marketplace/subscriptions'
  * "Unsubscribe" button. The signed address in the URL is the only authority needed.
  */
 export async function POST(request: NextRequest) {
-  if (!marketplaceEnabled) return new NextResponse(null, { status: 404 })
+  if (!storeEnabled) return new NextResponse(null, { status: 404 })
   const { searchParams } = request.nextUrl
   const email = readUnsubscribe(searchParams.get('e'), searchParams.get('s'))
   if (!email) return new NextResponse(null, { status: 400 })

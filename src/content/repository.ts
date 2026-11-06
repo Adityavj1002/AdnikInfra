@@ -1,10 +1,9 @@
 import 'server-only'
 import { savedProjects, toProject } from '@/features/projects/content'
-import { isSlug } from '@/lib/slug'
-import { packages, posts, stats } from './fixtures/company'
-import { faqGroups } from './fixtures/faqs'
-import { localities } from './fixtures/localities'
-import { towns } from './fixtures/towns'
+import { packages, posts, stats } from './data/company'
+import { faqGroups } from './data/faqs'
+import { localities } from './data/localities'
+import { towns } from './data/towns'
 import type {
   ConstructionPackage,
   FaqGroup,
@@ -18,14 +17,9 @@ import type {
 } from './types'
 
 /**
- * Read-only content access (ARCHITECTURE.md §5). Async so a CMS adapter can replace the
- * local fixtures without touching any page.
+ * Read-only content access for pages. Static content comes from ./data; projects come from the
+ * database. Async throughout, so a source can change without touching any page.
  */
-
-/** Rejects malformed route params before they reach a lookup. */
-export function isValidSlug(value: string): boolean {
-  return isSlug(value)
-}
 
 export async function getLocalities(): Promise<readonly Locality[]> {
   return localities

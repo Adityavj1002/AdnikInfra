@@ -20,7 +20,7 @@ Read [ARCHITECTURE.md](ARCHITECTURE.md) for why things are built the way they ar
 | 2 | Set the real domain and allow indexing | `SITE_URL=https://adnikinfra.com`, `SITE_INDEXABLE=true` (production only, never on previews). |
 | 3 | Enforce the Content Security Policy | Run a few days with the default `CSP_MODE=report-only`, check the server logs for `[csp]` reports, then set `CSP_MODE=enforce`. |
 | 4 | HTTPS, redirect and real client IP | Use the Nginx block in §4 or Vercel. The app rate-limits on `X-Forwarded-For`, so the proxy must **overwrite** it. |
-| 5 | Replace sample content | Projects, prices, photos (`src/content/`), and the phone, address and RERA number in `src/config/site.ts`. The footer shows a sample-content notice until then. |
+| 5 | Replace sample content | Projects are managed in Admin → Projects. Replace the sample photos and figures in `src/content/`, and add the address in `src/config/site.ts`. |
 
 ### Medium: first week
 

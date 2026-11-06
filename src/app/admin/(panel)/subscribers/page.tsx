@@ -1,6 +1,6 @@
 import styles from '@/features/admin/admin.module.css'
 import { requireAdmin } from '@/features/admin/session'
-import { getStore } from '@/features/marketplace/runtime'
+import { getStore } from '@/store/runtime'
 
 const date = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeZone: 'Asia/Kolkata' })
 const statusLabel = { active: 'Subscribed', pending: 'Not confirmed', unsubscribed: 'Unsubscribed' } as const

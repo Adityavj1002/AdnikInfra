@@ -1,5 +1,5 @@
 import 'server-only'
-import type { ListingStatus } from './constants'
+import type { ListingStatus } from '@/features/marketplace/constants'
 import type {
   Admin,
   AdminWithHash,
@@ -12,7 +12,7 @@ import type {
   StatusCounts,
   Subscriber,
   SubscriberStatus,
-} from './types'
+} from '@/features/marketplace/types'
 
 export type Page<T> = Readonly<{ items: readonly T[]; total: number }>
 
@@ -26,7 +26,7 @@ export type ProjectRow = Readonly<{ slug: string; data: unknown; updatedAt: stri
  * Everything the marketplace persists, behind one interface: Supabase in production, process
  * memory in development and the e2e suite. Callers never see which one is in use.
  */
-export interface MarketplaceStore {
+export interface Store {
   createListing(input: NewListing): Promise<Listing>
   /** Moves an unconfirmed listing into the review queue. 'expired' when the link is too old. */
   confirmListing(tokenHash: string, now: Date): Promise<Listing | 'expired' | undefined>

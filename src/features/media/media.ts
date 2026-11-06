@@ -1,7 +1,7 @@
 import 'server-only'
 import { createHash, randomBytes } from 'node:crypto'
 import { env } from '@/security/env'
-import { PHOTOS_MAX, type ListingPhoto, type UploadTicket } from './constants'
+import { PHOTOS_MAX, type ListingPhoto, type UploadTicket } from '@/features/marketplace/constants'
 
 /**
  * Listing photos. In production the seller's browser uploads straight to Cloudinary with a

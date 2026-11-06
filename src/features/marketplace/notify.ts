@@ -1,11 +1,11 @@
 import 'server-only'
 import { sendEmail, teamInbox, type Address } from '@/features/email/mailer'
 import { listingApprovedEmail, listingForReviewEmail, listingReceivedEmail, listingRejectedEmail } from './emails'
-import type { MarketplaceStore } from './store'
+import type { Store } from '@/store/store'
 import type { Listing } from './types'
 
 /** Every admin, plus the shared inbox, once each. */
-async function reviewers(store: MarketplaceStore): Promise<readonly Address[]> {
+async function reviewers(store: Store): Promise<readonly Address[]> {
   const admins = await store.listAdmins()
   const team = teamInbox()
   const seen = new Set<string>([team.address])
@@ -21,7 +21,7 @@ async function reviewers(store: MarketplaceStore): Promise<readonly Address[]> {
 const seller = (listing: Listing): Address => ({ name: listing.sellerName, address: listing.sellerEmail })
 
 /** After the seller confirms: tell them it's queued, and tell the admins there's work. */
-export async function notifyConfirmed(store: MarketplaceStore, listing: Listing): Promise<void> {
+export async function notifyConfirmed(store: Store, listing: Listing): Promise<void> {
   const team = await reviewers(store)
   await Promise.all([
     sendEmail({ to: seller(listing), message: listingReceivedEmail(listing), tag: `listing-received ${listing.reference}` }),

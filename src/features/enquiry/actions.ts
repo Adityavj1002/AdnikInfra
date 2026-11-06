@@ -27,7 +27,7 @@ function echo(values: Record<string, unknown>): Record<string, string> {
   )
 }
 
-/** One server action for every enquiry form on the site (§11.2 pipeline). */
+/** One server action for every enquiry form on the site: normalise, validate, rate-limit, deliver. */
 export async function submitEnquiry(_previous: FormState, form: FormData): Promise<FormState> {
   if (await isRateLimited()) return { status: 'rate-limited' }
 

@@ -9,7 +9,7 @@ import formStyles from '@/features/enquiry/Form.module.css'
 import { compactPhone, isEmail, isPhone, isPersonName } from '@/features/enquiry/validation'
 import { routes } from '@/lib/routes'
 import { requestUploadTicket, submitListing } from './actions'
-import { dimensions } from './photo-size'
+import { dimensions } from '@/features/media/photo-size'
 import {
   AREA_UNITS,
   DESCRIPTION_MAX,
@@ -31,7 +31,7 @@ import {
   type ListingKind,
   type ListingPhoto,
 } from './constants'
-import { MarketImage } from './MarketImage'
+import { RemoteImage } from '@/features/media/RemoteImage'
 import styles from './marketplace.module.css'
 
 const labels = {
@@ -345,7 +345,7 @@ export function SellForm({ photoBase }: Readonly<{ photoBase: string }>) {
                   {preview ? (
                     <Image src={preview} alt={`Photo ${i + 1}`} fill unoptimized sizes="10rem" className={styles.photoImage} />
                   ) : (
-                    <MarketImage id={photo.id} base={photoBase} alt={`Photo ${i + 1}`} fill sizes="10rem" className={styles.photoImage} />
+                    <RemoteImage id={photo.id} base={photoBase} alt={`Photo ${i + 1}`} fill sizes="10rem" className={styles.photoImage} />
                   )}
                   <button
                     type="button"

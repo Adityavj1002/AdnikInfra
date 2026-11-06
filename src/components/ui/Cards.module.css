@@ -72,23 +72,6 @@
     font-size: var(--text-sm);
   }
 
-  .specs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
-    margin: 0;
-    padding: 0;
-    color: var(--text-muted);
-    font-size: var(--text-sm);
-    list-style: none;
-  }
-
-  .specs li {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-
   .footer {
     display: flex;
     align-items: flex-end;

@@ -5,7 +5,7 @@ import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 import { listingKindLabels, listingPurposeLabels, sellerRoleLabels } from './constants'
 import { listingArea, listingPlace, listingPrice, listingSummary } from './format'
-import { photoUrl } from './media'
+import { photoUrl } from '@/features/media/media'
 import type { Listing, PublicListing } from './types'
 
 /** Every marketplace email, in the shared layout. Links are absolute, built from SITE_URL. */

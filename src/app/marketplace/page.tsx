@@ -7,10 +7,10 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { PageHero } from '@/components/ui/PageHero'
 import { LISTING_KINDS, LISTING_PURPOSES, listingKindLabels, listingPurposeLabels } from '@/features/marketplace/constants'
 import { ListingCard } from '@/features/marketplace/ListingCard'
-import { photoBase } from '@/features/marketplace/media'
+import { photoBase } from '@/features/media/media'
 import styles from '@/features/marketplace/marketplace.module.css'
 import { approvedListings } from '@/features/marketplace/public'
-import { marketplaceEnabled } from '@/features/marketplace/runtime'
+import { storeEnabled } from '@/store/runtime'
 import type { Listing } from '@/features/marketplace/types'
 import { routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
@@ -57,8 +57,8 @@ export default async function MarketplacePage({ searchParams }: Readonly<{ searc
   const page = filters.page ?? 1
   let listings: readonly Listing[] = []
   let total = 0
-  let failed = !marketplaceEnabled
-  if (marketplaceEnabled) {
+  let failed = !storeEnabled
+  if (storeEnabled) {
     try {
       const result = await approvedListings(
         { kind: filters.kind, purpose: filters.purpose, city: filters.city, maxPrice: filters.budget },

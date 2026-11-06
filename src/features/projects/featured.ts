@@ -1,6 +1,6 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 import { CACHE_SECONDS, cacheTags } from '@/lib/cache-tags'
 
 /** Stored when an admin chooses to feature no project: the home page then shows no spotlight. */
@@ -16,7 +16,7 @@ const readFeatured = unstable_cache(async () => (await (await getStore()).getFea
  * home page down, so any failure falls back to the first project.
  */
 export async function featuredProjectSlug(): Promise<string | undefined> {
-  if (!marketplaceEnabled) return undefined
+  if (!storeEnabled) return undefined
   try {
     return (await readFeatured()) ?? undefined
   } catch (error) {

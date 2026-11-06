@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { PHOTO_MAX_BYTES, PHOTO_TYPES } from '@/features/marketplace/constants'
-import { devUploadsEnabled, saveDevPhoto } from '@/features/marketplace/media'
+import { devUploadsEnabled, saveDevPhoto } from '@/features/media/media'
 
 /** Memory mode only: stands in for Cloudinary so the sell flow works in development and e2e. */
 export async function POST(request: Request) {

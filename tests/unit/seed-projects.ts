@@ -1,5 +1,5 @@
 import seed from '../../supabase/seed/projects.json'
-import { localities } from '@/content/fixtures/localities'
+import { localities } from '@/content/data/localities'
 import type { Project } from '@/content/types'
 import { recordSchema, toProject, type ProjectRecord } from '@/features/projects/content'
 

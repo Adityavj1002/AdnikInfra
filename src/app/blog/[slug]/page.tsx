@@ -6,7 +6,8 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { CtaBand } from '@/components/ui/CtaBand'
 import { PageHero } from '@/components/ui/PageHero'
 import { site } from '@/config/site'
-import { getPost, isValidSlug } from '@/content/repository'
+import { getPost } from '@/content/repository'
+import { isSlug } from '@/lib/slug'
 import { formatDate } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
@@ -17,7 +18,7 @@ import styles from '../blog.module.css'
 type PageProps = Readonly<{ params: Promise<{ slug: string }> }>
 
 async function load(slug: string) {
-  return isValidSlug(slug) ? getPost(slug) : undefined
+  return isSlug(slug) ? getPost(slug) : undefined
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

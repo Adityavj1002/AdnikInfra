@@ -1,7 +1,7 @@
 import 'server-only'
 import { getLocality, getProject, getTown } from '@/content/repository'
 import { services } from '@/content/services'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 
 export type EnquiryAbout = Readonly<{ slug: string; name: string }>
 
@@ -25,7 +25,7 @@ export async function resolveEnquiryAbout(ref: string | undefined): Promise<Enqu
   if (page) return page
   const service = services.find((s) => s.slug === ref)
   if (service) return { slug: service.slug, name: service.title }
-  if (!marketplaceEnabled) return undefined
+  if (!storeEnabled) return undefined
   // Only a live listing can be named; a store outage must not break the enquiry itself.
   const listing = await (await getStore()).getListingBySlug(ref).catch(() => undefined)
   return listing?.status === 'approved' ? { slug: listing.slug, name: listing.title } : undefined

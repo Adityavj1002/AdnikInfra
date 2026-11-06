@@ -1,8 +1,8 @@
 import 'server-only'
 import { createClient, type PostgrestError } from '@supabase/supabase-js'
-import { LISTING_STATUSES, type ListingPhoto, type ListingStatus } from './constants'
-import type { MarketplaceStore } from './store'
-import type { Admin, AdminWithHash, Campaign, Listing, ListingEvent, StatusCounts, Subscriber, SubscriberStatus } from './types'
+import { LISTING_STATUSES, type ListingPhoto, type ListingStatus } from '@/features/marketplace/constants'
+import type { Store } from './store'
+import type { Admin, AdminWithHash, Campaign, Listing, ListingEvent, StatusCounts, Subscriber, SubscriberStatus } from '@/features/marketplace/types'
 
 type Row = Record<string, unknown>
 
@@ -101,13 +101,13 @@ const row = (value: Row | null): Row => {
 
 const UNIQUE_VIOLATION = '23505'
 
-export function createSupabaseStore(url: string, serviceRoleKey: string): MarketplaceStore {
+export function createSupabaseStore(url: string, serviceRoleKey: string): Store {
   const db = createClient(url, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     global: { headers: { 'x-client-info': 'adnik-infra-website' } },
   })
 
-  const store: MarketplaceStore = {
+  const store: Store = {
     async createListing(input) {
       const inserted = check(
         await db

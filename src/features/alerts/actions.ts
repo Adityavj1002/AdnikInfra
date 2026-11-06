@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 import { z } from 'zod'
 import { sendEmail } from '@/features/email/mailer'
 import { subscribeConfirmEmail, subscribeWelcomeEmail } from '@/features/marketplace/emails'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 import { listUnsubscribeHeaders, readUnsubscribe, unsubscribeUrl } from '@/features/marketplace/subscriptions'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
@@ -37,7 +37,7 @@ export async function subscribeAlerts(_previous: AlertsState, form: FormData): P
 
   const email = normalizeLine(raw.email).toLowerCase()
   if (!emailSchema.safeParse(email).success) return { status: 'error', email: email.slice(0, 254) }
-  if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!storeEnabled) return { status: 'unavailable' }
   if (!(await perAddress(email)).allowed) return { status: 'success' }
 
   try {
@@ -57,7 +57,7 @@ export async function subscribeAlerts(_previous: AlertsState, form: FormData): P
 
 /** A button on the confirm page, not the link itself: mail scanners follow links. */
 export async function confirmSubscription(_previous: SubscriptionActionState, form: FormData): Promise<SubscriptionActionState> {
-  if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!storeEnabled) return { status: 'unavailable' }
   if (!(await confirmLimit(clientKey(await headers()))).allowed) return { status: 'unavailable' }
   const token = form.get('token')
   if (!isTokenShape(token)) return { status: 'invalid' }
@@ -79,7 +79,7 @@ export async function confirmSubscription(_previous: SubscriptionActionState, fo
 }
 
 export async function unsubscribeAction(_previous: SubscriptionActionState, form: FormData): Promise<SubscriptionActionState> {
-  if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!storeEnabled) return { status: 'unavailable' }
   const email = readUnsubscribe(form.get('e'), form.get('s'))
   if (!email) return { status: 'invalid' }
   try {

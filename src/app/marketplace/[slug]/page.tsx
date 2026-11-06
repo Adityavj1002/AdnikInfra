@@ -7,10 +7,10 @@ import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { listingKindLabels, listingPurposeLabels } from '@/features/marketplace/constants'
 import { listingArea, listingPlace, listingPrice } from '@/features/marketplace/format'
 import { ListingPhotos } from '@/features/marketplace/ListingPhotos'
-import { photoBase, photoUrl } from '@/features/marketplace/media'
+import { photoBase, photoUrl } from '@/features/media/media'
 import styles from '@/features/marketplace/marketplace.module.css'
 import { listingBySlug } from '@/features/marketplace/public'
-import { marketplaceEnabled } from '@/features/marketplace/runtime'
+import { storeEnabled } from '@/store/runtime'
 import { isSlug } from '@/lib/slug'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
@@ -22,7 +22,7 @@ type Params = Readonly<{ params: Promise<{ slug: string }> }>
 
 /** Only approved listings exist as far as the public is concerned. */
 const liveListing = cache(async (slug: string) => {
-  if (!marketplaceEnabled || !isSlug(slug)) return undefined
+  if (!storeEnabled || !isSlug(slug)) return undefined
   const listing = await listingBySlug(slug)
   return listing?.status === 'approved' ? listing : undefined
 })

@@ -7,8 +7,8 @@ import { requireAdmin } from '@/features/admin/session'
 import { listingKindLabels, listingPurposeLabels, listingStatusLabels, sellerRoleLabels } from '@/features/marketplace/constants'
 import { listingArea, listingPlace, listingPrice } from '@/features/marketplace/format'
 import { ListingPhotos } from '@/features/marketplace/ListingPhotos'
-import { photoBase } from '@/features/marketplace/media'
-import { getStore } from '@/features/marketplace/runtime'
+import { photoBase } from '@/features/media/media'
+import { getStore } from '@/store/runtime'
 import { routes } from '@/lib/routes'
 
 const when = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })

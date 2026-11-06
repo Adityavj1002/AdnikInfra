@@ -27,6 +27,8 @@ describe('project editor text', () => {
     })
     expect(nearby.parse('SKIT College | 0.3 km')).toEqual({ ok: true, value: [{ place: 'SKIT College', km: 0.3 }] })
     expect(homes.parse('Penthouse | 2,400')).toEqual({ ok: true, value: [{ label: 'Penthouse', from: 2400 }] })
+    expect(homes.parse('4 BHK villa | 70 sq yd')).toEqual({ ok: true, value: [{ label: '4 BHK villa', from: 70, unit: 'sqyd' }] })
+    expect(homes.format([{ label: '4 BHK villa', from: 70, unit: 'sqyd' }])).toBe('4 BHK villa | 70 sq yd')
   })
 
   it('leaves out what a brochure does not give: carpet areas and distances', () => {

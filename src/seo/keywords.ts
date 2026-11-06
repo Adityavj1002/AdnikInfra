@@ -2,7 +2,7 @@ import type { Locality, Post, Project, Town } from '@/content/types'
 import { routes } from '@/lib/routes'
 
 /**
- * Keyword ownership (ARCHITECTURE.md §3). Each URL owns exactly one primary phrase,
+ * Keyword ownership. Each URL owns exactly one primary phrase,
  * which must appear in its H1; supporting phrases belong in H2s, copy and descriptions,
  * written naturally, never stuffed. A unit test fails on any duplicate primary, so two
  * pages never compete for the same search.

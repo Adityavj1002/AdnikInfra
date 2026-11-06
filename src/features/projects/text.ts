@@ -23,7 +23,7 @@ const cells = (line: string) => line.split('|').map((cell) => cell.trim())
 
 /** "1,107.75" → 1107.75; anything else → NaN. */
 export function toNumber(cell: string | undefined): number {
-  const cleaned = (cell ?? '').replace(/,/g, '').replace(/\s*(sq\s*ft|km)$/i, '').trim()
+  const cleaned = (cell ?? '').replace(/,/g, '').replace(/\s*(sq\s*ft|sq\s*yd|km)$/i, '').trim()
   const value = Number(cleaned)
   return cleaned !== '' && /^[\d.]+$/.test(cleaned) && Number.isFinite(value) ? value : Number.NaN
 }
@@ -46,17 +46,28 @@ function table<T>(raw: string, field: string, shape: string, row: (cells: readon
   return { ok: true, value: items }
 }
 
+type Home = Readonly<{ label: string; from: number; to?: number; unit?: 'sqft' | 'sqyd' }>
+
+const isSqyd = (cell: string | undefined) => /sq\s*yd$/i.test(cell ?? '')
+
+/** Sizes are in sq ft unless written "sq yd" (plots and villas are sold by the square yard). */
 export const homes = {
   shape: 'Type | from sq ft | to sq ft',
   parse: (raw: string) =>
-    table(raw, 'Homes', homes.shape, ([label, from, to]) => {
+    table(raw, 'Homes', homes.shape, ([label, from, to]): Home | undefined => {
       const start = toNumber(from)
       const end = to ? toNumber(to) : undefined
       if (!label || Number.isNaN(start) || (end !== undefined && (Number.isNaN(end) || end < start))) return undefined
-      return end === undefined || end === start ? { label, from: start } : { label, from: start, to: end }
+      const unit = isSqyd(from) || isSqyd(to) ? { unit: 'sqyd' as const } : {}
+      return end === undefined || end === start ? { label, from: start, ...unit } : { label, from: start, to: end, ...unit }
     }),
-  format: (items: readonly Readonly<{ label: string; from: number; to?: number }>[]) =>
-    items.map((item) => [item.label, item.from, ...(item.to ? [item.to] : [])].join(' | ')).join('\n'),
+  format: (items: readonly Home[]) =>
+    items
+      .map((item) => {
+        const size = (value: number) => (item.unit === 'sqyd' ? `${value} sq yd` : `${value}`)
+        return [item.label, size(item.from), ...(item.to ? [size(item.to)] : [])].join(' | ')
+      })
+      .join('\n'),
 }
 
 export const facts = {

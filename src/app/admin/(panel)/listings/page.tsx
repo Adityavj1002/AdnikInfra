@@ -3,7 +3,7 @@ import styles from '@/features/admin/admin.module.css'
 import { requireAdmin } from '@/features/admin/session'
 import { LISTING_STATUSES, listingKindLabels, listingStatusLabels, type ListingStatus } from '@/features/marketplace/constants'
 import { listingPlace, listingPrice } from '@/features/marketplace/format'
-import { getStore } from '@/features/marketplace/runtime'
+import { getStore } from '@/store/runtime'
 import { routes } from '@/lib/routes'
 
 const PAGE_SIZE = 25

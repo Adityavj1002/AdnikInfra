@@ -4,7 +4,7 @@
  *
  * Contact and business details stay empty until the real ones are supplied: the site must
  * never show or claim a phone number, address or RERA number we don't have. Each one that is
- * filled in turns on its buttons and local-SEO structured data (ARCHITECTURE.md §8).
+ * filled in turns on its buttons and local-SEO structured data.
  */
 
 export type PostalAddress = Readonly<{

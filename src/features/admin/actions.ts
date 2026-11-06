@@ -5,22 +5,22 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { after } from 'next/server'
 import { z } from 'zod'
-import { getLocality, getProject, isValidSlug } from '@/content/repository'
+import { getLocality, getProject } from '@/content/repository'
 import { nameField } from '@/features/enquiry/schema'
 import { sendEmail } from '@/features/email/mailer'
 import { adminWelcomeEmail, campaignEmail } from '@/features/marketplace/emails'
-import { NO_FEATURED } from '@/features/featured/featured'
-import { createVideoUploadTicket, photosExist, videoExists } from '@/features/marketplace/media'
+import { NO_FEATURED } from '@/features/projects/featured'
+import { createVideoUploadTicket, photosExist, videoExists } from '@/features/media/media'
 import type { UploadTicket } from '@/features/marketplace/constants'
 import { notifyDecision } from '@/features/marketplace/notify'
 import { AMENITY_KEYS, isKnownPhotoRef, recordSchema, savedProject } from '@/features/projects/content'
 import { bullets, facts, homes, nearby, paragraphs, specifications, units, updates, type Parsed } from '@/features/projects/text'
-import { getStore } from '@/features/marketplace/runtime'
-import type { ReviewDecision } from '@/features/marketplace/store'
+import { getStore } from '@/store/runtime'
+import type { ReviewDecision } from '@/store/store'
 import { listUnsubscribeHeaders, unsubscribeUrl } from '@/features/marketplace/subscriptions'
 import { cacheTags } from '@/lib/cache-tags'
 import { routes } from '@/lib/routes'
-import { toSlug } from '@/lib/slug'
+import { isSlug, toSlug } from '@/lib/slug'
 import { normalizeLine, normalizeMultiline } from '@/security/normalize'
 import { hashPassword, PASSWORD_MAX, PASSWORD_MIN, verifyAgainstDummy, verifyPassword } from '@/security/password'
 import { clientKey } from '@/security/rate-limit'
@@ -108,7 +108,7 @@ const campaignSchema = z.object({
 export async function setFeaturedProject(_previous: AdminFormState, form: FormData): Promise<AdminFormState> {
   const admin = await requireAdmin()
   const slug = normalizeLine(form.get('project'))
-  const project = isValidSlug(slug) ? await getProject(slug) : undefined
+  const project = isSlug(slug) ? await getProject(slug) : undefined
   if (!project && slug !== NO_FEATURED) return failure('Please choose a project.')
   try {
     await (await getStore()).setFeaturedProject(project?.slug ?? NO_FEATURED, admin.id)
@@ -132,7 +132,7 @@ export async function saveProject(_previous: AdminFormState, form: FormData): Pr
   const creating = field('mode') === 'create'
   const name = normalizeLine(field('name'))
   const slug = creating ? normalizeLine(field('slug')) || toSlug(name) : normalizeLine(field('slug'))
-  if (!isValidSlug(slug) || slug === 'new') return failure('Web address: please use lowercase words joined by hyphens, like liv-gyan-jagatpura.')
+  if (!isSlug(slug) || slug === 'new') return failure('Web address: please use lowercase words joined by hyphens, like liv-gyan-jagatpura.')
   const existing = await savedProject(slug)
   if (creating && existing) return failure('A project with this web address already exists. Please choose another.')
   if (!creating && !existing) return failure('That project no longer exists.')
@@ -225,7 +225,7 @@ export async function saveProject(_previous: AdminFormState, form: FormData): Pr
 export async function deleteProject(_previous: AdminFormState, form: FormData): Promise<AdminFormState> {
   await requireAdmin()
   const slug = normalizeLine(form.get('slug'))
-  if (!isValidSlug(slug) || !(await savedProject(slug))) return failure('That project no longer exists.')
+  if (!isSlug(slug) || !(await savedProject(slug))) return failure('That project no longer exists.')
   if (normalizeLine(form.get('confirm')).toLowerCase() !== slug) return failure(`To delete, type the web address “${slug}” in the box.`)
   try {
     await (await getStore()).deleteProjectRecord(slug)

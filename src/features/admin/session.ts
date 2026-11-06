@@ -2,7 +2,7 @@ import 'server-only'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
-import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 import type { Admin } from '@/features/marketplace/types'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
@@ -25,13 +25,13 @@ export async function startSession(adminId: string): Promise<void> {
 export async function endSession(): Promise<void> {
   const jar = await cookies()
   const token = jar.get(COOKIE)?.value
-  if (isTokenShape(token) && marketplaceEnabled) await (await getStore()).deleteSession(hashToken(token))
+  if (isTokenShape(token) && storeEnabled) await (await getStore()).deleteSession(hashToken(token))
   jar.delete(COOKIE)
 }
 
 /** The signed-in admin, checked against the database on every request. Memoised per render. */
 export const currentAdmin = cache(async (): Promise<Admin | undefined> => {
-  if (!marketplaceEnabled) return undefined
+  if (!storeEnabled) return undefined
   const token = (await cookies()).get(COOKIE)?.value
   if (!isTokenShape(token)) return undefined
   const store = await getStore()

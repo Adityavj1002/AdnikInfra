@@ -46,13 +46,6 @@
     font-weight: 500;
   }
 
-  .priceNote {
-    color: var(--text-subtle);
-    font-family: var(--font-text);
-    font-size: var(--text-xs);
-    font-weight: 400;
-  }
-
   /* Phones: one full-width button per row. Letting them wrap made them jump to two rows when
      the web font arrived (it is wider than the fallback), shifting the gallery below. */
   .headerActions {

@@ -1,85 +1,85 @@
-# Architecture Plan v2: Vijay Builders (Modern Homes & Real Estate, Jaipur)
+# Architecture
 
-Status: **v2, replaces the heritage concept** · 2026-10-24
-v1 (heritage real estate + travel) was retired at the client's request. The engineering foundation (security, SEO engine, testing, mobile-first system) carries over unchanged; positioning, information architecture, design system and content model are new.
+Adnik Infra's website: projects, home and warehouse construction, environmental consultancy,
+a property marketplace and the admin that runs them. Next.js 16 (App Router), React 19,
+TypeScript strict, hand-written CSS. [DEPLOYMENT.md](DEPLOYMENT.md) covers hosting.
 
----
+## Layout
 
-## 1. Positioning
+```
+src/
+  app/            Routes only: pages, layouts, route handlers, metadata files
+  components/     Shared UI: layout/ (header, nav, footer), ui/ (cards, hero, FAQ…), seo/
+  features/       One folder per feature, owning its components, server actions and rules
+    admin/        Session, sign-in, admin actions and the admin form helper
+    alerts/       Listing alerts: subscribe, confirm, unsubscribe
+    enquiry/      The enquiry form, its validation and lead delivery
+    marketplace/  Owner listings: sell form, review states, public pages, emails
+    media/        Cloudinary uploads and delivery, shared by listings and projects
+    projects/     Project records, the admin editor, the featured project
+    calculators/  EMI and construction cost estimators
+    email/        SMTP transport and the branded email layout
+    gallery/, cinematic/
+  store/          Persistence behind one interface: Supabase in production, memory in dev/e2e
+  content/        Static content (data/) and the read-only repository pages use
+  config/         Brand and business constants (site.ts)
+  security/       Env validation, CSP, headers, rate limits, tokens, passwords, input limits
+  seo/            Titles, metadata, JSON-LD graph, keyword ownership, share images
+  lib/            Small pure helpers: routes, formatting, slugs, image loader, cache tags
+  design/         Tokens, reset, primitives and cascade layers
+supabase/         SQL migrations and the first projects (seed/projects.json)
+scripts/          One-off operations: create the first admin, seed projects, upload images
+tests/            unit/ (Vitest) and e2e/ (Playwright)
+```
 
-**Vijay Builders** is a Jaipur builder and real-estate company. It does three things:
+Dependencies point one way: `app` → `features` / `components` → `store`, `content`, `lib`,
+`security`, `seo`. Nothing under `lib` or `security` imports a feature.
 
-| Line of business | What the visitor wants | Primary page |
-|---|---|---|
-| **Our projects**: modern villas, apartments and plotted developments the company builds and sells | Compare projects, see prices and plans, book a site visit | `/projects` |
-| **Home construction**: modern and modular homes built on the customer's own plot | Know the cost, the process and the timeline, and trust the builder | `/construction` |
-| **Property sales**: ready, resale and new properties (flats, villas, plots, commercial) | Search by type, area and budget; contact quickly | `/properties` |
+## Data
 
-Tone: modern, direct, trustworthy. Plain language, real numbers, no heritage or "luxury" clichés.
+- **Static content** (localities, towns, FAQs, packages, guides) is typed, readonly data in
+  `src/content/data`, read through `src/content/repository.ts`.
+- **Projects** exist only in the database: one JSON record per project in `project_content`,
+  validated by `recordSchema` (`features/projects/content.ts`) on every read and write.
+  An invalid record is logged and skipped, never rendered. Admins create, edit and delete
+  projects in Admin → Projects; a fresh database is filled once with `scripts/seed-projects.mjs`.
+- **Everything else that changes** (listings, admins, sessions, subscribers, campaigns, the
+  featured project) goes through the `Store` interface in `src/store/store.ts`.
+  `MARKETPLACE_MODE` picks Supabase or the in-memory store; the memory store refuses to run on
+  Vercel or an indexable site.
+- **Caching:** public reads use `unstable_cache` with a tag per dataset (`lib/cache-tags.ts`).
+  The admin action that changes the data expires its tag immediately; other instances catch up
+  within `CACHE_SECONDS`.
 
-## 2. Design direction
+## Media
 
-The reference was arggroupjaipur.com: photography first, a clean sans-serif, a gold accent, prominent phone contact and a RERA disclaimer. We keep that structure in a modern, faster, more readable form.
+Photos and videos are uploaded from the browser straight to Cloudinary with a short-lived
+signature from a server action, so large files never pass through the app. Only Cloudinary ids
+are stored, and every id is checked to exist before it is saved. Bundled images are served from
+Cloudinary too when it is configured (`lib/image-loader.ts`, `lib/cloud-images.ts`).
 
-| Element | Decision |
-|---|---|
-| Typography | **Plus Jakarta Sans** (headings, 600–800) + **Inter** (body/UI). Body 16–18px, line-height 1.6. No light-weight display serifs |
-| Palette | Off-white `#F9F8F6` base, charcoal `#1A1A1A` text, gold `#C5A880`/`#D4AF37` accents (CTAs on dark, badges, highlights), stone `#E2DFD5` panels, white cards. Gold-coloured text on light surfaces uses `#7D6224` (5.4:1) |
-| Shape | 12–16px radius cards, 999px pills, soft layered shadows, generous whitespace |
-| Imagery | Full-bleed hero photography, 4:3 and 16:9 card images, gallery lightbox. Placeholders until real project photos arrive (§7) |
-| Icons | Lucide line icons (amenities, specs, contact). Stroke 1.75, one consistent set |
-| Motion | Subtle: fade/rise on scroll, image zoom on hover, animated counters. All off under reduced motion |
-| Avoid | Gradient blobs, glassmorphism, emoji, stock slogans ("Elevate your lifestyle"), auto-advancing carousels |
+## Security
 
-## 3. Information architecture and keywords (Jaipur local SEO)
+- Nonce-based CSP per request (`src/proxy.ts`, `security/csp.ts`), plus static headers
+  (`security/headers.ts`). `CSP_MODE` switches between report-only and enforce.
+- Server actions normalise input, validate it with Zod, cap its size and rate-limit by client
+  and globally (`security/rate-limit.ts`, shared through Upstash when configured).
+- Zod stays on the server: client components import plain `constants.ts` / `validation.ts`.
+- Admin sessions are opaque random tokens, stored hashed; passwords use scrypt. Every admin page
+  and action calls `requireAdmin()`; the proxy check is only a first filter.
+- No HTML sinks except the escaped JSON-LD script (`components/seo/JsonLd.tsx`).
+- Environment variables are validated once at start-up (`security/env.ts`); a misconfigured
+  production build stops with the full list of problems.
 
-Each URL owns one primary search phrase, enforced by a unit test.
+## SEO
 
-| URL | Primary keyword | Supporting |
-|---|---|---|
-| `/` | builders in Jaipur | real estate developers in Jaipur, modern homes Jaipur |
-| `/projects` | new residential projects in Jaipur | RERA approved projects Jaipur, villas for sale in Jaipur |
-| `/projects/[slug]` | `[Project] [Locality] Jaipur` | `[n] BHK villa in [Locality]` |
-| `/properties` | property for sale in Jaipur | flats for sale in Jaipur, plots in Jaipur, resale property Jaipur |
-| `/properties/[slug]` | `[n] BHK [type] for sale in [Locality]` | — |
-| `/construction` | home construction company in Jaipur | house construction cost per sq ft Jaipur, modular homes Jaipur, turnkey construction |
-| `/locations/[area]` | property in `[Area]` Jaipur | builders in `[Area]`, villas in `[Area]` |
-| `/about` | about Vijay Builders | trusted builders Jaipur |
-| `/blog/[slug]` | long-tail guides (cost, RERA, buying checklist) | — |
-| `/contact` | contact Vijay Builders Jaipur | site visit, call, WhatsApp |
+Every internal URL comes from `lib/routes.ts`. Each page owns one primary keyword
+(`seo/keywords.ts`, checked by a unit test) that appears in its H1. Titles step down a length
+ladder (`seo/titles.ts`), and structured data is one `@graph` of linked nodes (`seo/schema.ts`).
+Non-production deployments are `noindex` through both the meta tag and `X-Robots-Tag`.
 
-**Local ranking** also needs a verified Google Business Profile with the same name, address and phone as the site, plus customer reviews there (see §8).
+## Quality gates
 
-## 4. Key features
-
-- **Smart search** on the home page: type, locality and budget, which jumps to filtered `/properties`.
-- **Project pages:** gallery and lightbox, configuration table (BHK / area / price), amenities with icons, specifications, location and distances, possession date, RERA number, construction updates, site-visit booking, and a brochure request.
-- **EMI calculator** (loan amount, rate, tenure) on project and property pages.
-- **Construction cost estimator:** plot area × floors × package gives an instant estimate with a breakdown, then a "get exact quote" form.
-- **Construction process timeline** with stage-wise payments.
-- **Sticky mobile action bar** (Call · WhatsApp · Enquire) and a floating WhatsApp button once a number is configured.
-- **RERA disclaimer** and "images are representative" notices, as Indian real-estate advertising requires.
-- **Testimonials and stats** are shown only when real data is configured. The site never fabricates reviews or numbers.
-
-## 5. Content model
-
-`Project` (developer projects), `Property` (listings), `Locality`, `ConstructionPackage`, `Post`, plus `site` config (contact, address, RERA, social profiles, stats). All are typed and readonly, and served through `ContentRepository` (local fixtures → CMS later, as in v1).
-
-## 6. Engineering (unchanged from v1, still in force)
-
-- **Stack:** Next.js 16 App Router, React 19, TypeScript strict, hand-written CSS (tokens + modules + cascade layers).
-- **Security:** nonce CSP via `src/proxy.ts`, static security headers, Zod-validated server actions with rate limits, honeypot, size caps, no `eval` / HTML sinks (lint-enforced), Zod kept out of client bundles, `security.txt`, honest lead delivery (`LEADS_MODE`).
-- **SEO:** `buildTitle` ladder (≤ 60 chars, keeps the locality), `buildMetadata`, generated OG cards, JSON-LD `@graph` (Organization → `GeneralContractor` + `RealEstateAgent`; `Residence`/`Accommodation` listings with `Offer`; `Place` for localities; `BreadcrumbList`; `FAQPage`), sitemap, robots, breadcrumbs, keyword-ownership test.
-- **Mobile:** 280px → 1440px device matrix, 44px targets, safe areas, 16px inputs, hover only where hover exists.
-- **Quality gates:** typecheck, lint, Vitest (unit), Playwright (responsive × 11 devices, axe WCAG 2.2 AA, SEO, CSP violations, forms incl. no-JS).
-
-## 7. Placeholders to replace before launch
-
-Project photos, project names, prices, RERA numbers, contact details, address and stats are **sample data** and marked as such. Placeholder photos are licence-free stock (Unsplash Licence) and must be replaced with the company's own renders and site photos before going live; RERA rules treat misleading project imagery as false advertising.
-
-## 8. Go-live checklist (client)
-
-1. Real project data, photos and RERA registration numbers.
-2. Business name, address, phone and WhatsApp in `src/config/site.ts`, matching the Google Business Profile exactly.
-3. Create and verify the Google Business Profile, add photos, and ask customers for reviews.
-4. Set `SITE_URL`, `SITE_INDEXABLE=true` and a CRM/email lead sink in production. Submit the sitemap in Google Search Console.
+`npm run check` runs typecheck, lint and unit tests. `npm run test:e2e` covers responsive
+layouts from 280px up, accessibility (axe, WCAG 2.2 AA), SEO tags, CSP violations, forms with
+and without JavaScript, and the marketplace and admin flows, against the memory store.

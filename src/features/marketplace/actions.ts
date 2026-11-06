@@ -12,9 +12,9 @@ import { createSharedLimiter } from '@/security/shared-limit'
 import { hashToken, isTokenShape, randomToken } from '@/security/tokens'
 import { PHOTOS_MIN, type ListingFormState, type UploadTicket } from './constants'
 import { CONFIRM_HOURS, listingConfirmEmail } from './emails'
-import { createUploadTicket, parsePhotos, photosExist } from './media'
+import { createUploadTicket, parsePhotos, photosExist } from '@/features/media/media'
 import { notifyConfirmed } from './notify'
-import { getStore, marketplaceEnabled } from './runtime'
+import { getStore, storeEnabled } from '@/store/runtime'
 import { LISTING_FIELDS, listingSchema, listingSlug } from './schema'
 
 const ticketLimit = createSharedLimiter('upload-ticket', { limit: 60, windowMs: 10 * 60_000 })
@@ -31,14 +31,14 @@ const limited = async (limiter: ReturnType<typeof createSharedLimiter>) => {
 
 /** A short-lived permission to upload one photo, straight from the browser. */
 export async function requestUploadTicket(): Promise<UploadTicket> {
-  if (!marketplaceEnabled) return { ok: false, reason: 'unavailable' }
+  if (!storeEnabled) return { ok: false, reason: 'unavailable' }
   if (await limited(ticketLimit)) return { ok: false, reason: 'rate-limited' }
   return createUploadTicket()
 }
 
 /** The sell form: validate, store as unconfirmed, and email the seller a confirmation link. */
 export async function submitListing(_previous: ListingFormState, form: FormData): Promise<ListingFormState> {
-  if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!storeEnabled) return { status: 'unavailable' }
   if (await limited(submitLimit)) return { status: 'rate-limited' }
 
   const raw = pickFields(form, LISTING_FIELDS)
@@ -130,7 +130,7 @@ export type ConfirmState =
 
 /** A button on the confirm page, not the email link itself: mail scanners follow links. */
 export async function confirmListing(_previous: ConfirmState, form: FormData): Promise<ConfirmState> {
-  if (!marketplaceEnabled) return { status: 'unavailable' }
+  if (!storeEnabled) return { status: 'unavailable' }
   if (await limited(confirmLimit)) return { status: 'unavailable' }
   const token = form.get('token')
   if (!isTokenShape(token)) return { status: 'invalid' }
