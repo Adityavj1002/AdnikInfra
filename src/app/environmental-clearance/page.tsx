@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react'
+import { ArrowRight, Building2, Check, Factory, Mountain, Phone } from 'lucide-react'
 import Link from 'next/link'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -6,8 +6,10 @@ import { CtaBand } from '@/components/ui/CtaBand'
 import { FaqList } from '@/components/ui/FaqList'
 import { PageHero } from '@/components/ui/PageHero'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import blocks from '@/components/ui/blocks.module.css'
+import { site } from '@/config/site'
 import { clearanceFaqs } from '@/content/consultancy'
+import { photos } from '@/content/images'
+import { formatPhone } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, faqNode, graph, webPageNode, type Crumb } from '@/seo/schema'
@@ -29,6 +31,7 @@ const tracks = [
   {
     id: 'infra',
     name: 'Infrastructure',
+    icon: Building2,
     scope: 'Hospitals, institutions, hotels, commercial buildings, warehouses, townships, roads and utilities.',
     services: [
       {
@@ -52,6 +55,7 @@ const tracks = [
   {
     id: 'industrial',
     name: 'Industrial',
+    icon: Factory,
     scope: 'Manufacturing units, processing plants and industrial estates.',
     services: [
       {
@@ -75,6 +79,7 @@ const tracks = [
   {
     id: 'mining',
     name: 'Mining',
+    icon: Mountain,
     scope: 'Major and minor minerals, quarries and sand.',
     services: [
       {
@@ -91,11 +96,38 @@ const tracks = [
   },
 ] as const
 
+/** Facts drawn from the services below, not marketing figures. */
+const glance = [
+  { value: '3', label: 'Sectors', detail: 'Infrastructure, industrial and mining' },
+  { value: '12', label: 'Services', detail: 'Studies, filings, audits and monitoring' },
+  { value: 'A to Z', label: 'Coverage', detail: 'From screening to post-approval compliance' },
+  { value: 'RJ', label: 'Rajasthan focus', detail: 'SEIAA, RSPCB and CGWA filings' },
+] as const
+
+/** The stages of the EIA Notification, 2006. Which ones apply depends on the project's category. */
+const stages = [
+  { title: 'Screening', body: 'We place the project in Category A (MoEFCC) or B (SEIAA) and list every other permit it needs.' },
+  { title: 'Terms of Reference', body: 'The expert committee sets what the study must cover. Building and township projects skip this stage.' },
+  { title: 'Baseline study and EIA', body: 'Air, water, noise and soil data for a season, then the impact assessment and management plan.' },
+  { title: 'Public consultation', body: 'A public hearing held by the Pollution Control Board, where the category calls for one.' },
+  { title: 'Appraisal', body: 'We present to the Expert Appraisal Committee and answer its queries until it recommends the project.' },
+  { title: 'Clearance and compliance', body: 'The EC is granted with conditions; we keep the project compliant for its life.' },
+] as const
+
+const authorities = [
+  { permit: 'Environmental Clearance', body: 'MoEFCC for Category A projects, SEIAA Rajasthan for Category B.' },
+  { permit: 'Consent to Establish and Operate', body: 'Rajasthan State Pollution Control Board (RSPCB).' },
+  { permit: 'Groundwater NOC', body: 'Central Ground Water Authority (CGWA).' },
+  { permit: 'Hazardous waste authorisation', body: 'RSPCB, under the Hazardous and Other Wastes Rules, 2016.' },
+  { permit: 'EPR registration', body: 'Central Pollution Control Board (CPCB).' },
+  { permit: 'Mine closure plan', body: 'Indian Bureau of Mines for major minerals; the state mines department for minor minerals.' },
+] as const
+
 const ongoing = [
-  'Six-monthly EC compliance reports',
-  'Consent renewals',
-  'Annual environmental statements',
-  'Monitoring and audits',
+  { title: 'Six-monthly EC compliance reports', when: 'Every six months' },
+  { title: 'Consent renewals', when: 'Before expiry' },
+  { title: 'Annual environmental statements', when: 'Every year' },
+  { title: 'Monitoring and audits', when: 'Ongoing' },
 ] as const
 
 const deliverables = [
@@ -113,6 +145,9 @@ const deliverables = [
 const tools = ['DesignBuilder', 'EnergyPlus', 'eQUEST', 'BEE ECBC-R tool', 'AutoCAD', 'ECBC', 'ENS', 'GRIHA'] as const
 
 export default function EnvironmentalClearancePage() {
+  const { phone } = site.contact
+  const enquiry = contactHref('proposal', 'environmental-clearance')
+
   return (
     <>
       <JsonLd
@@ -124,6 +159,8 @@ export default function EnvironmentalClearancePage() {
       />
       <Breadcrumbs crumbs={crumbs} />
       <PageHero
+        image={photos.aravalliLake}
+        eyebrow="Environmental consultancy"
         title="Environmental clearance and compliance for infrastructure, industrial and mining projects"
         lead={
           <p>
@@ -132,85 +169,176 @@ export default function EnvironmentalClearancePage() {
           </p>
         }
       >
-        {tracks.map((track) => (
-          <Link key={track.id} href={`#${track.id}`} className="button button--outline button--small">
-            {track.name}
-          </Link>
-        ))}
+        <Link href={enquiry} className="button button--gold">
+          Ask our consultants
+        </Link>
+        {phone && (
+          <a href={`tel:${phone}`} className="button button--light">
+            <Phone aria-hidden="true" strokeWidth={1.75} />
+            Call {formatPhone(phone)}
+          </a>
+        )}
       </PageHero>
 
-      {/* Three tracks */}
-      <section className="section section--tight" aria-labelledby="tracks-title">
+      <section className={styles.glance} aria-label="At a glance">
         <div className="container">
-          <SectionHeading id="tracks-title" title="Services by sector" />
-          {tracks.map((track) => (
-            <div key={track.id} id={track.id} className={`${blocks.block} ${styles.track}`}>
-              <div className={styles.trackHead}>
-                <h3 className={blocks.blockTitle}>{track.name}</h3>
-                <p className={blocks.lead}>{track.scope}</p>
-              </div>
-              <ul role="list" className={blocks.features}>
-                {track.services.map((service) => (
-                  <li key={service.title} className={blocks.feature}>
-                    <h4 className={blocks.featureTitle}>{service.title}</h4>
-                    <p className={blocks.featureBody}>{service.body}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <ul role="list" className={styles.glanceList}>
+            {glance.map((item) => (
+              <li key={item.label} className={styles.glanceItem}>
+                <span className={styles.glanceValue}>{item.value}</span>
+                <span className={styles.glanceLabel}>{item.label}</span>
+                <span className={styles.glanceDetail}>{item.detail}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* Ongoing compliance */}
+      <section className={`section ${styles.processSection}`} aria-labelledby="process-title">
+        <div className="container">
+          <header className={styles.darkHead}>
+            <p className={`eyebrow ${styles.darkEyebrow}`}>How it works</p>
+            <h2 id="process-title" className={styles.darkTitle}>
+              The road to an environmental clearance
+            </h2>
+            <p className={styles.darkIntro}>
+              Six stages under the EIA Notification, 2006. We tell you on day one which of them your project goes
+              through, and we handle each one.
+            </p>
+          </header>
+          <ol className={styles.process}>
+            {stages.map((step, i) => (
+              <li key={step.title} className={styles.processStep}>
+                <span className={styles.processNumber} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className={styles.processTitle}>{step.title}</h3>
+                <p className={styles.processBody}>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p className={styles.processNote}>
+            Building and construction projects are appraised on Form 1, Form 1A and a conceptual plan, without a
+            public hearing.
+          </p>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="tracks-title">
+        <div className="container">
+          <SectionHeading
+            id="tracks-title"
+            eyebrow="What we do"
+            title="Services by sector"
+            intro={<p>Pick your sector to see the approvals and reports we prepare for it.</p>}
+          />
+          <nav aria-label="Sectors" className={styles.sectorNav}>
+            {tracks.map(({ id, name, icon: Icon }) => (
+              <a key={id} href={`#${id}`} className={styles.sectorLink}>
+                <Icon aria-hidden="true" strokeWidth={1.75} />
+                {name}
+              </a>
+            ))}
+          </nav>
+          <div className={styles.tracks}>
+            {tracks.map(({ id, name, scope, services, icon: Icon }) => (
+              <article key={id} id={id} className={styles.track} aria-labelledby={`${id}-title`}>
+                <div className={styles.trackHead}>
+                  <span className={styles.trackIcon} aria-hidden="true">
+                    <Icon strokeWidth={1.5} />
+                  </span>
+                  <h3 id={`${id}-title`} className={styles.trackTitle}>
+                    {name}
+                  </h3>
+                  <p className={styles.trackScope}>{scope}</p>
+                </div>
+                <ul role="list" className={styles.services}>
+                  {services.map((service) => (
+                    <li key={service.title} className={styles.service}>
+                      <Check aria-hidden="true" className={styles.serviceIcon} strokeWidth={2} />
+                      <div>
+                        <h4 className={styles.serviceTitle}>{service.title}</h4>
+                        <p className={styles.serviceBody}>{service.body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--tint" aria-labelledby="authorities-title">
+        <div className="container">
+          <SectionHeading
+            id="authorities-title"
+            eyebrow="Who approves what"
+            title="Every permit, and the authority that issues it"
+            intro={<p>Most projects need more than one. We file them in the right order so none holds up another.</p>}
+          />
+          <ul role="list" className={styles.authorities}>
+            {authorities.map((item) => (
+              <li key={item.permit} className={styles.authority}>
+                <h3 className={styles.authorityPermit}>{item.permit}</h3>
+                <p className={styles.authorityBody}>{item.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section className="section section--ivory" aria-labelledby="ongoing-title">
-        <div className="container split">
-          <div className="stack">
-            <h2 id="ongoing-title" className={blocks.blockTitle}>
+        <div className={`container ${styles.ongoingWrap}`}>
+          <div className={styles.ongoingText}>
+            <p className="eyebrow">After the approval</p>
+            <h2 id="ongoing-title" className={styles.ongoingTitle}>
               After the approval, we stay on
             </h2>
-            <p className={blocks.lead}>
+            <p className={styles.ongoingLead}>
               Clearances come with conditions. We prepare your periodic compliance reports, consent renewals and annual
               returns so nothing lapses.
             </p>
           </div>
-          <ul role="list" className={blocks.checks}>
+          <ul role="list" className={styles.calendar}>
             {ongoing.map((item) => (
-              <li key={item}>
-                <Check aria-hidden="true" className="icon" strokeWidth={2} />
-                {item}
+              <li key={item.title} className={styles.calendarItem}>
+                <span className={styles.calendarWhen}>{item.when}</span>
+                <span className={styles.calendarTitle}>{item.title}</span>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      {/* Deliverables */}
       <section className="section" aria-labelledby="deliverables-title">
         <div className="container">
-          <SectionHeading id="deliverables-title" title="What you receive" />
-          <ul role="list" className={blocks.features}>
-            {deliverables.map((item) => (
-              <li key={item.title} className={blocks.feature}>
-                <h3 className={blocks.featureTitle}>{item.title}</h3>
-                <p className={blocks.featureBody}>{item.body}</p>
+          <SectionHeading id="deliverables-title" eyebrow="Deliverables" title="What you receive" />
+          <ol className={styles.deliverables}>
+            {deliverables.map((item, i) => (
+              <li key={item.title} className={styles.deliverable}>
+                <span className={styles.deliverableNumber} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className={styles.deliverableTitle}>{item.title}</h3>
+                <p className={styles.deliverableBody}>{item.body}</p>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </section>
 
-      {/* Tools */}
       <section className="section section--raised" aria-labelledby="tools-title">
         <div className="container">
           <SectionHeading
             id="tools-title"
+            eyebrow="Expertise"
             title="Tools and standards we work with"
             intro={<p>Energy modelling and drawing software, and the national codes your project is assessed against.</p>}
           />
           <ul role="list" className={styles.tools}>
             {tools.map((tool) => (
-              <li key={tool} className="badge">
+              <li key={tool} className={styles.tool}>
                 {tool}
               </li>
             ))}
@@ -218,11 +346,16 @@ export default function EnvironmentalClearancePage() {
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="section" aria-labelledby="faq-title">
         <div className={`container ${styles.faq}`}>
-          <SectionHeading id="faq-title" title="Environmental clearance in Rajasthan: common questions" />
+          <SectionHeading id="faq-title" eyebrow="Questions" title="Environmental clearance in Rajasthan: common questions" />
           <FaqList faqs={clearanceFaqs} />
+          <p className={styles.faqMore}>
+            Have a question about your project?{' '}
+            <Link href={enquiry}>
+              Ask our consultants <ArrowRight aria-hidden="true" className="icon" strokeWidth={1.75} />
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -230,7 +363,7 @@ export default function EnvironmentalClearancePage() {
         id="enquiry"
         title="Not sure which approvals you need?"
         body="Share your project type and location and we will list the clearances that apply."
-        primary={{ href: contactHref('proposal', 'environmental-clearance'), label: 'Ask our consultants' }}
+        primary={{ href: enquiry, label: 'Ask our consultants' }}
       />
     </>
   )

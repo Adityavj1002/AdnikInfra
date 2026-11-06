@@ -1,7 +1,7 @@
 import 'server-only'
 import { sendEmail, teamInbox } from '@/features/email/mailer'
 import { env } from '@/security/env'
-import { composeLeadEmail } from './lead-email'
+import { composeLeadEmail, composeLeadReceipt } from './lead-email'
 
 export type Lead = Readonly<{
   kind: 'enquiry' | 'site-visit'
@@ -38,12 +38,22 @@ export async function deliverLead(lead: Lead, reference: string): Promise<boolea
       })}`,
     )
   }
-  return sendEmail({
+  const delivered = await sendEmail({
     to: teamInbox(),
     message: composeLeadEmail(lead, reference),
     replyTo: lead.email ? { name: lead.name, address: lead.email } : undefined,
     tag: `lead ${reference}`,
   })
+  // The customer's receipt is a courtesy: the lead counts as delivered once the team has it.
+  if (delivered && lead.email) {
+    await sendEmail({
+      to: { name: lead.name, address: lead.email },
+      message: composeLeadReceipt(lead, reference),
+      replyTo: teamInbox(),
+      tag: `receipt ${reference}`,
+    })
+  }
+  return delivered
 }
 
 /** Short, human-friendly reference: ADN-7F3K2Q. */

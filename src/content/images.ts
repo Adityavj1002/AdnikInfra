@@ -24,6 +24,7 @@ import rowVillas from '@/assets/images/row-villas.jpg'
 import villaEntrance from '@/assets/images/villa-entrance.jpg'
 import villaPool from '@/assets/images/villa-pool.jpg'
 import warehouseRacking from '@/assets/images/warehouse-racking.jpg'
+import aravalliLake from '@/assets/images/aravalli-lake.jpg'
 import type { Img } from './types'
 
 /**
@@ -40,6 +41,7 @@ export const photos = {
   houseModernDay: { src: houseModernDay, alt: 'Contemporary white and charcoal house with large windows and a landscaped garden' },
   houseGlassNight: { src: houseGlassNight, alt: 'Three-storey glass-fronted home lit up at night' },
   villaEntrance: { src: villaEntrance, alt: 'Villa entrance with dark brick, glass doors and stone steps' },
+  aravalliLake: { src: aravalliLake, alt: 'Siliserh Lake in the Aravalli hills near Alwar, Rajasthan, under a clear sky' },
   warehouse: { src: warehouseRacking, alt: 'Inside a new steel-roofed warehouse: tall orange pallet racking on a smooth industrial floor' },
   rowVillas: { src: rowVillas, alt: 'Row of modern white townhouses along a paved, tree-lined lane' },
   apartmentsFacade: { src: apartmentsFacade, alt: 'Clean white apartment building facade with square windows' },

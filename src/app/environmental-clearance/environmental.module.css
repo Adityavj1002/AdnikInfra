@@ -1,25 +1,490 @@
 @layer components {
-  /* One sector per block; the anchor target clears the sticky header. */
-  .track {
-    scroll-margin-block-start: calc(var(--header-height) + var(--space-4));
+  /* At a glance: four facts on a navy band directly under the hero. */
+  .glance {
+    background-color: var(--c-navy-deep);
+    color: var(--text-on-inverse);
   }
 
-  .trackHead {
+  .glanceList {
     display: grid;
-    gap: var(--space-2);
-    max-inline-size: 48rem;
-  }
-
-  .tools {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin: var(--space-6) 0 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  @media (min-width: 64rem) {
+    .glanceList {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .glanceItem {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    padding: var(--space-6) var(--space-4);
+    border-block-start: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  .glanceItem:nth-child(odd) {
+    padding-inline-start: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .glanceItem,
+    .glanceItem:nth-child(odd) {
+      padding: var(--space-8) var(--space-6);
+      border-block-start: 0;
+      border-inline-start: 1px solid rgb(255 255 255 / 0.12);
+    }
+
+    .glanceItem:first-child {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+  }
+
+  .glanceValue {
+    color: var(--c-gold-bright);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .glanceLabel {
+    margin-block-start: var(--space-2);
+    font-weight: 700;
+  }
+
+  .glanceDetail {
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* The approval road: numbered stages on navy, joined by a gold line on wide screens. */
+  .processSection {
+    background-color: var(--c-navy);
+    color: var(--text-on-inverse);
+  }
+
+  .darkHead {
+    display: grid;
+    gap: var(--space-3);
+    max-inline-size: 44rem;
+    margin-block-end: var(--space-10);
+  }
+
+  .darkEyebrow {
+    color: var(--c-gold-bright);
+  }
+
+  .darkTitle {
+    color: #fff;
+    font-size: var(--text-3xl);
+  }
+
+  .darkIntro {
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-lg);
+  }
+
+  .process {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .process {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .process {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+
+  .processStep {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: var(--radius);
+    background-color: rgb(255 255 255 / 0.04);
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .processStep:hover {
+      border-color: var(--c-gold);
+      background-color: rgb(255 255 255 / 0.07);
+    }
+  }
+
+  .processNumber {
+    color: var(--c-gold-bright);
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .processTitle {
+    margin-block-start: var(--space-2);
+    color: #fff;
+    font-size: var(--text-lg);
+  }
+
+  .processBody {
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-sm);
+  }
+
+  .processNote {
+    margin-block-start: var(--space-6);
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--c-gold);
+    color: var(--text-on-inverse-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* Sector jump links, then one card per sector. */
+  .sectorNav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+  }
+
+  .sectorLink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .sectorLink svg {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    color: var(--text-accent);
+  }
+
+  @media (hover: hover) {
+    .sectorLink:hover {
+      border-color: var(--border-gold);
+      background-color: var(--surface-tint);
+    }
+  }
+
+  .tracks {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .track {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--surface-raised);
+    box-shadow: var(--shadow-sm);
+    scroll-margin-block-start: calc(var(--header-height) + var(--space-4));
+  }
+
+  @media (min-width: 64rem) {
+    .track {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    }
+  }
+
+  .trackHead {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-block-start: 3px solid var(--c-gold);
+    background-color: var(--surface-tint);
+  }
+
+  @media (min-width: 64rem) {
+    .trackHead {
+      padding: var(--space-8);
+      border-block-start: 0;
+      border-inline-start: 3px solid var(--c-gold);
+    }
+  }
+
+  .trackIcon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--radius);
+    background-color: var(--c-navy);
+    color: var(--c-gold-bright);
+  }
+
+  .trackIcon svg {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  .trackTitle {
+    font-size: var(--text-2xl);
+  }
+
+  .trackScope {
+    color: var(--text-muted);
+  }
+
+  .services {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: var(--space-6);
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .services {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .services {
+      padding: var(--space-8);
+    }
+  }
+
+  .service {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .serviceIcon {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin-block-start: 0.15em;
+    color: var(--c-success);
+  }
+
+  .serviceTitle {
+    font-size: var(--text-base);
+  }
+
+  .serviceBody {
+    margin-block-start: var(--space-1);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* Permits and the authorities that issue them. */
+  .authorities {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .authorities {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .authorities {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .authority {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6);
+    border: 1px solid var(--border);
+    border-inline-start: 3px solid var(--c-navy);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+  }
+
+  .authorityPermit {
+    font-size: var(--text-base);
+  }
+
+  .authorityBody {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  /* After approval: the compliance calendar. */
+  .ongoingWrap {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .ongoingWrap {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-12);
+    }
+  }
+
+  .ongoingText {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .ongoingTitle {
+    font-size: var(--text-3xl);
+  }
+
+  .ongoingLead {
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .calendar {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .calendar {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .calendarItem {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+  }
+
+  .calendarWhen {
+    justify-self: start;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    background-color: var(--c-gold-tint);
+    color: var(--c-gold-ink);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .calendarTitle {
+    font-weight: 700;
+  }
+
+  /* Deliverables: three numbered cards. */
+  .deliverables {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 64rem) {
+    .deliverables {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+    }
+  }
+
+  .deliverable {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border-block-start: 3px solid var(--c-gold);
+    background-color: var(--surface-tint);
+  }
+
+  .deliverableNumber {
+    color: var(--text-accent);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .deliverableTitle {
+    font-size: var(--text-lg);
+  }
+
+  .deliverableBody {
+    color: var(--text-muted);
+  }
+
+  .tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tool {
+    display: grid;
+    place-items: center;
+    min-block-size: 4rem;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    font-weight: 700;
+    text-align: center;
+  }
+
   .faq {
     max-inline-size: 56rem;
+  }
+
+  .faqMore {
+    margin-block-start: var(--space-6);
+    color: var(--text-muted);
+  }
+
+  .faqMore a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-weight: 600;
   }
 }

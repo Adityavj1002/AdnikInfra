@@ -34,4 +34,5 @@ export const cloudImages: Readonly<Record<string, string>> = {
   'villa-entrance': 'adnik/site/villa-entrance',
   'villa-pool': 'adnik/site/villa-pool',
   'warehouse-racking': 'adnik/site/warehouse-racking',
+  'aravalli-lake': 'adnik/site/aravalli-lake',
 }

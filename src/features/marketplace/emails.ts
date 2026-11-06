@@ -14,11 +14,12 @@ const at = (path: string) => new URL(path, env.SITE_URL).href
 
 const when = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
 
-function listingRows(listing: Listing): EmailBlock {
+/** The listing's details; seller emails show the reference in its own card instead. */
+function listingRows(listing: Listing, withReference = true): EmailBlock {
   return {
     type: 'rows',
     rows: [
-      ['Reference', listing.reference],
+      ['Reference', withReference ? listing.reference : null],
       ['Title', listing.title],
       ['Type', `${listingKindLabels[listing.kind]}, ${listingPurposeLabels[listing.purpose].toLowerCase()}`],
       ['Price', listingPrice(listing)],
@@ -32,18 +33,49 @@ function listingRows(listing: Listing): EmailBlock {
 
 export const CONFIRM_HOURS = 72
 
+type Stage = 'submitted' | 'confirmed' | 'live' | 'changes'
+
+/** The listing's journey, as the seller sees it in every email: done, now, next. */
+function journey(stage: Stage): EmailBlock {
+  const reached = { submitted: 0, confirmed: 1, live: 3, changes: 2 }[stage]
+  const state = (step: number) => (step < reached || stage === 'live' ? 'done' : step === reached ? 'current' : 'next') as 'done' | 'current' | 'next'
+  return {
+    type: 'steps',
+    steps: [
+      { label: 'Listing submitted', detail: 'Your details and photos reached us.', state: 'done' },
+      { label: 'Email confirmed', detail: 'One click on the link we sent you.', state: state(1) },
+      stage === 'changes'
+        ? { label: 'Changes needed', detail: 'Our team could not publish it as it is: see the reason above.', state: 'current' }
+        : { label: 'Checked by our team', detail: 'Details and photos checked, usually within one or two working days.', state: state(2) },
+      { label: 'Live on the marketplace', detail: 'Buyers can find it, and their enquiries reach our team first.', state: state(3) },
+    ],
+  }
+}
+
+const reference = (listing: Listing): EmailBlock => ({
+  type: 'reference',
+  label: 'Listing reference',
+  value: listing.reference,
+  note: 'Quote it whenever you call, WhatsApp or write to us about this property.',
+})
+
 export function listingConfirmEmail(listing: Listing, confirmUrl: string): RenderedEmail {
   return renderEmail({
     subject: `Confirm your listing: ${listing.title} [${listing.reference}]`,
     preheader: 'One click and your property goes to our team for review.',
-    eyebrow: 'Marketplace',
+    eyebrow: 'Marketplace · Step 2 of 4',
     title: 'Please confirm your listing',
     blocks: [
       { type: 'p', text: `Hello ${listing.sellerName}, thank you for listing your property on ${site.name}.` },
       { type: 'p', text: 'Confirm your email address and we will send the listing to our team for review.' },
       { type: 'button', label: 'Confirm my listing', url: confirmUrl },
-      listingRows(listing),
       { type: 'note', text: `This link works for ${CONFIRM_HOURS} hours. If you did not list a property with us, ignore this email and nothing will be published.` },
+      reference(listing),
+      { type: 'heading', text: 'Where your listing stands' },
+      journey('submitted'),
+      { type: 'heading', text: 'Your listing' },
+      listingRows(listing, false),
+      { type: 'contact', title: 'Questions about your listing?' },
     ],
     reason: `You received this because this address was entered on the ${site.name} sell form.`,
   })
@@ -52,21 +84,24 @@ export function listingConfirmEmail(listing: Listing, confirmUrl: string): Rende
 export function listingReceivedEmail(listing: Listing): RenderedEmail {
   return renderEmail({
     subject: `We have your listing: ${listing.title} [${listing.reference}]`,
-    preheader: 'Your property is in our review queue.',
-    eyebrow: 'Marketplace',
+    preheader: 'Email confirmed. Your property is in our review queue.',
+    eyebrow: 'Marketplace · Step 3 of 4',
     title: 'Your listing is with our team',
     blocks: [
       { type: 'p', text: `Thank you, ${listing.sellerName}. Your email is confirmed and the listing is now waiting for review.` },
+      reference(listing),
+      { type: 'heading', text: 'Where your listing stands' },
+      journey('confirmed'),
       {
         type: 'list',
         items: [
-          'Our team checks the details and photos, usually within one or two working days.',
           'We may call you on the number you gave to verify the property.',
           'You will get an email the moment it is approved and live, or if anything needs changing.',
         ],
       },
-      listingRows(listing),
-      { type: 'note', text: `Quote ${listing.reference} if you write to us about this listing.` },
+      { type: 'heading', text: 'Your listing' },
+      listingRows(listing, false),
+      { type: 'contact', title: 'Questions about your listing?' },
     ],
     reason: `You received this because you listed a property on ${site.name}.`,
   })
@@ -102,14 +137,24 @@ export function listingApprovedEmail(listing: Listing): RenderedEmail {
   return renderEmail({
     subject: `Your listing is live: ${listing.title} [${listing.reference}]`,
     preheader: 'Approved and published on the marketplace.',
-    eyebrow: 'Marketplace',
+    eyebrow: 'Marketplace · Live',
     title: 'Good news: your listing is live',
     blocks: [
       { type: 'p', text: `Hello ${listing.sellerName}, our team has approved your listing. Buyers can see it now.` },
       { type: 'button', label: 'See your listing', url },
-      { type: 'p', text: 'Enquiries come to our team first; we pass serious buyers on to you by phone.' },
-      listingRows(listing),
-      { type: 'note', text: `To change or remove the listing, reply to this email quoting ${listing.reference}.` },
+      reference(listing),
+      { type: 'heading', text: 'Where your listing stands' },
+      journey('live'),
+      {
+        type: 'list',
+        items: [
+          'Enquiries come to our team first; we pass serious buyers on to you by phone.',
+          `To change the price or details, or to take it down once sold, reply quoting ${listing.reference}.`,
+        ],
+      },
+      { type: 'heading', text: 'Your listing' },
+      listingRows(listing, false),
+      { type: 'contact', title: 'Talk to our team' },
     ],
     reason: `You received this because you listed a property on ${site.name}.`,
   })
@@ -126,8 +171,11 @@ export function listingRejectedEmail(listing: Listing, reason: string, unpublish
       { type: 'quote', label: 'Reason from our team', text: reason },
       { type: 'p', text: 'You are welcome to submit the property again with the details fixed.' },
       { type: 'button', label: 'List a property', url: at(routes.marketplaceSell) },
-      listingRows(listing),
-      { type: 'note', text: `Questions? Reply to this email quoting ${listing.reference}.` },
+      reference(listing),
+      ...(unpublished ? [] : [{ type: 'heading' as const, text: 'Where your listing stands' }, journey('changes')]),
+      { type: 'heading', text: 'Your listing' },
+      listingRows(listing, false),
+      { type: 'contact', title: 'Want help fixing it?' },
     ],
     reason: `You received this because you listed a property on ${site.name}.`,
   })
@@ -157,6 +205,7 @@ export function subscribeWelcomeEmail(unsubscribeUrl: string): RenderedEmail {
     blocks: [
       { type: 'p', text: 'You will hear from us when there is something worth sharing: new properties, projects and offers. A few emails a month at most.' },
       { type: 'button', label: 'Browse the marketplace', url: at(routes.marketplace) },
+      { type: 'contact', title: 'Looking for something specific?' },
     ],
     unsubscribeUrl,
     reason: `You received this because you subscribed on the ${site.name} website.`,

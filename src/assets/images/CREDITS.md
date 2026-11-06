@@ -30,5 +30,6 @@ Placeholder photography for development. Images are **CC0 / public domain** (fre
 | `handover-keys.jpg` | CC0 | rawpixel | [House Keys](https://www.rawpixel.com/image/5969541/house-keys) |
 | `jaipur-aerial.jpg` | CC0 | wordpress | [A panoramic view of Jaipur city from Nah](https://wordpress.org/photos/photo/89166f141c/) |
 | `agricultural-land.jpg` | CC0 | StockSnap | [Grass Field](https://stocksnap.io/photo/grass-field-PWKFFLPK2W) |
+| `aravalli-lake.jpg` | CC0 | wordpress, by Bigul Malayi | [Siliserh Lake in Alwar, Rajasthan](https://wordpress.org/photos/photo/64968975aa/) |
 | `hero-villa-pool.jpg` | **CC BY 4.0** | Wikimedia Commons, by Tuantranseo | [3D Rendering of Modern Luxury Villa Exterior with Pool](https://commons.wikimedia.org/wiki/File:3D_Rendering_of_Modern_Luxury_Villa_Exterior_with_Pool.jpg) (resized) |
 | `house-gable.jpg` | **CC BY 4.0** | Wikimedia Commons, by Tuantranseo | [Contemporary Residence with Gable Windows](https://commons.wikimedia.org/wiki/File:Contemporary_Residence_with_Gable_Windows_%E2%80%93_3D_Architectural_Visualization.jpg) (resized) |

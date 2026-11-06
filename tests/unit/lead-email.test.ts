@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { composeLeadEmail, escapeHtml, headerSafe } from '@/features/enquiry/lead-email'
+import { composeLeadEmail, composeLeadReceipt, escapeHtml, headerSafe } from '@/features/enquiry/lead-email'
 import type { Lead } from '@/features/enquiry/lead-sink'
 
 const lead: Lead = {
@@ -60,6 +60,27 @@ describe('header and HTML helpers', () => {
   })
 })
 
+describe('composeLeadReceipt', () => {
+  const at = new Date('2026-10-24T06:30:00Z')
+
+  it('gives the customer their reference, the visit and what happens next', () => {
+    const { subject, text } = composeLeadReceipt(lead, 'ADN-7F3K2Q', at)
+    expect(subject).toBe('Your site visit request is in [ADN-7F3K2Q]')
+    expect(text).toContain('Your reference: ADN-7F3K2Q')
+    expect(text).toContain('Preferred visit: Saturday, 7 November 2026, Morning (10 am – 1 pm)')
+    expect(text).toContain('[done] Request received: 24 Oct 2026, 12:00 pm IST')
+    expect(text).toContain('[now]  We confirm your visit')
+    expect(text).toContain('Saturday works.\nPlease share the brochure.')
+    expect(text).toContain('Call us: +91 77372 09850')
+  })
+
+  it('addresses an enquiry by first name and keeps visitor text inert', () => {
+    const { subject, html } = composeLeadReceipt({ kind: 'enquiry', topic: 'buy', name: 'Ravi <b>Kumar</b>', phone: '9829012345', email: 'r@example.com' }, 'ADN-AAAAAA', at)
+    expect(subject).toBe('We have your enquiry, Ravi [ADN-AAAAAA]')
+    expect(html).not.toContain('<b>Kumar')
+  })
+})
+
 describe('deliverLead over SMTP', () => {
   const sendMail = vi.fn()
 
@@ -78,16 +99,31 @@ describe('deliverLead over SMTP', () => {
     vi.doUnmock('nodemailer')
   })
 
-  it('emails the lead to support with the visitor as Reply-To', async () => {
+  it('emails the lead to support with the visitor as Reply-To, then a receipt to the visitor', async () => {
     sendMail.mockResolvedValue({ messageId: '<1@test>' })
     const { deliverLead } = await import('@/features/enquiry/lead-sink')
 
     await expect(deliverLead(lead, 'ADN-7F3K2Q')).resolves.toBe(true)
+    expect(sendMail).toHaveBeenCalledTimes(2)
+    const [team, receipt] = sendMail.mock.calls.map((call) => call[0])
+    expect(team.to).toEqual([{ name: 'Adnik Infra team', address: 'support@adnikinfra.com' }])
+    expect(team.from).toEqual({ name: 'Adnik Infra', address: 'support@adnikinfra.com' })
+    expect(team.replyTo).toEqual({ name: 'Asha Mehta', address: 'asha@example.com' })
+    expect(receipt.to).toEqual([{ name: 'Asha Mehta', address: 'asha@example.com' }])
+    expect(receipt.replyTo).toEqual({ name: 'Adnik Infra team', address: 'support@adnikinfra.com' })
+  })
+
+  it('sends no receipt without an email, and a failed receipt does not fail the lead', async () => {
+    const { deliverLead } = await import('@/features/enquiry/lead-sink')
+    sendMail.mockResolvedValue({ messageId: '<1@test>' })
+    await expect(deliverLead({ ...lead, email: undefined }, 'ADN-1')).resolves.toBe(true)
     expect(sendMail).toHaveBeenCalledOnce()
-    const message = sendMail.mock.calls[0]![0]
-    expect(message.to).toEqual([{ name: 'Adnik Infra team', address: 'support@adnikinfra.com' }])
-    expect(message.from).toEqual({ name: 'Adnik Infra', address: 'support@adnikinfra.com' })
-    expect(message.replyTo).toEqual({ name: 'Asha Mehta', address: 'asha@example.com' })
+
+    sendMail.mockReset()
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {})
+    sendMail.mockResolvedValueOnce({ messageId: '<2@test>' }).mockRejectedValueOnce(Object.assign(new Error('bounce'), { code: 'EENVELOPE' }))
+    await expect(deliverLead(lead, 'ADN-2')).resolves.toBe(true)
+    log.mockRestore()
   })
 
   it('reports failure, and logs no personal data, when the server rejects the message', async () => {

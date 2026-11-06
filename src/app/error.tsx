@@ -5,8 +5,11 @@ import { PageHero } from '@/components/ui/PageHero'
 import { routes } from '@/lib/routes'
 import styles from './status.module.css'
 
-/** Route-level error boundary. Shows no technical detail; the digest lets support find the log line. */
-export default function ErrorPage({ error, reset }: Readonly<{ error: Error & { digest?: string }; reset: () => void }>) {
+/**
+ * Route-level error boundary. Shows no technical detail; the digest lets support find the log line.
+ * "Try again" reloads the page: a tab opened before a deploy can only recover by fetching the new build.
+ */
+export default function ErrorPage({ error }: Readonly<{ error: Error & { digest?: string } }>) {
   return (
     <>
       <PageHero
@@ -16,7 +19,7 @@ export default function ErrorPage({ error, reset }: Readonly<{ error: Error & { 
       />
       <div className="container">
         <div className={styles.actions}>
-          <button type="button" className="button" onClick={reset}>
+          <button type="button" className="button" onClick={() => window.location.reload()}>
             Try again
           </button>
           <Link href={routes.home} className="button button--outline">

@@ -34,6 +34,20 @@ export const visitSlotLabels: Readonly<Record<VisitSlot, string>> = {
   evening: 'Evening (4 – 7 pm)',
 }
 
+/** What happens after an enquiry: shown on the thank-you panel and in the customer's email. */
+export const nextSteps: Readonly<Record<'visit' | 'default', readonly string[]>> = {
+  visit: [
+    'Our team calls you to confirm the date, time and meeting point.',
+    'A project specialist walks you through the site, plans and prices.',
+    'No booking amount is taken during a site visit.',
+  ],
+  default: [
+    'A member of our team reads your message and calls you back.',
+    'If it helps, we arrange a site visit or an office meeting.',
+    'Nothing is booked or charged until you confirm in writing.',
+  ],
+}
+
 /** Site visits can be requested up to this many days ahead. */
 export const VISIT_WINDOW_DAYS = 60
 

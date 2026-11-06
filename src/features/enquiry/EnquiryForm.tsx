@@ -13,6 +13,7 @@ import {
   VISIT_WINDOW_DAYS,
   indiaDay,
   initialFormState,
+  nextSteps,
   preferenceLabels,
   topicLabels,
   visitSlotLabels,
@@ -34,19 +35,6 @@ const labels = {
   message: 'Message',
   consent: 'Consent',
 } as const
-
-const nextSteps: Readonly<Record<'visit' | 'default', readonly string[]>> = {
-  visit: [
-    'Our team calls you to confirm the date, time and meeting point.',
-    'A project specialist walks you through the site, plans and prices.',
-    'No booking amount is taken during a site visit.',
-  ],
-  default: [
-    'A member of our team reads your message and calls you back.',
-    'If it helps, we arrange a site visit or an office meeting.',
-    'Nothing is booked or charged until you confirm in writing.',
-  ],
-}
 
 type Props = Readonly<{
   defaultTopic?: EnquiryTopic

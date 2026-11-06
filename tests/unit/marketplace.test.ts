@@ -226,6 +226,8 @@ describe('emails', () => {
 
   it('tell a rejected seller why', () => {
     expect(listingRejectedEmail(listing, 'Blurry photos', false).text).toContain('Blurry photos')
+    expect(listingRejectedEmail(listing, 'Blurry photos', false).text).toContain('[now]  Changes needed')
+    expect(listingRejectedEmail(listing, 'Blurry photos', true).text).not.toContain('Changes needed')
   })
 
   it('always carry an unsubscribe link on campaigns', () => {
