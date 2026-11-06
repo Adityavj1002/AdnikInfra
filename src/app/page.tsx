@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, Building2, Leaf, MapPin, MessageCircle, Phone, Pickaxe } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ProjectCard } from '@/components/ui/Cards'
@@ -78,13 +78,6 @@ const serviceIcons: Readonly<Record<string, typeof BuildingIcon>> = {
 
 /** Where an enquiry with no particular service in mind goes: the proposal request. */
 const proposalHref = contactHref('proposal')
-
-/** The three founding disciplines. Founder names, portraits and bios go here once supplied. */
-const disciplines = [
-  { icon: Building2, title: 'Head, Infrastructure' },
-  { icon: Pickaxe, title: 'Head, Mining' },
-  { icon: Leaf, title: 'Head, Environmental Clearance' },
-] as const
 
 /** How we work, bottom layer first: drives both the 3D stack and the step list. */
 const workSteps = [
@@ -287,18 +280,6 @@ export default async function HomePage() {
               ))}
             </ol>
           </div>
-        </div>
-      </section>
-
-      {/* About: one founder per discipline */}
-      <section id="team" className="section" aria-labelledby="team-title">
-        <div className="container">
-          <SectionHeading
-            id="team-title"
-            eyebrow="About us"
-            title="Three founders, three disciplines"
-          />
-          <TileGrid tiles={disciplines.map(({ icon, title: disciplineTitle }) => ({ href: routes.about, icon, title: disciplineTitle, cta: 'Meet the team' }))} />
         </div>
       </section>
 
