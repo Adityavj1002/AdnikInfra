@@ -93,7 +93,7 @@ export function PhotoManager({ initial, photoBase, limit, name = 'photos', label
           <li key={photo.ref} className={styles.photoRow}>
             <span className={styles.photoThumb}>
               {photo.preview ? (
-                // Bundled photos come with their asset URL; a fresh upload shows its local copy.
+                // Library photos come with their URL; a fresh upload shows its local copy.
                 <Image src={photo.preview} alt="" fill unoptimized={photo.preview.startsWith('blob:')} sizes="8rem" />
               ) : (
                 <MarketImage id={photo.ref.slice('upload:'.length)} base={photoBase} alt="" fill sizes="8rem" />

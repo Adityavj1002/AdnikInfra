@@ -3,9 +3,8 @@ import { site } from '@/config/site'
 import { packages, posts } from '@/content/fixtures/company'
 import { localities } from '@/content/fixtures/localities'
 import { seedProjects as projects } from './seed-projects'
-import { properties } from '@/content/fixtures/properties'
 import { towns } from '@/content/fixtures/towns'
-import { localityKeywords, postKeywords, projectKeywords, propertyKeywords, staticKeywords, townKeywords } from '@/seo/keywords'
+import { localityKeywords, postKeywords, projectKeywords, staticKeywords, townKeywords } from '@/seo/keywords'
 import { safeJsonLd } from '@/seo/safe-json-ld'
 import {
   breadcrumbNode,
@@ -13,7 +12,6 @@ import {
   graph,
   localityNode,
   projectNode,
-  propertyNode,
   siteNodes,
 } from '@/seo/schema'
 import { buildTitle, TITLE_MAX } from '@/seo/titles'
@@ -54,7 +52,6 @@ describe('keyword ownership', () => {
       ...localities.map((l) => localityKeywords(l).primary),
       ...towns.map((t) => townKeywords(t).primary),
       ...projects.map((p) => projectKeywords(p, localityOf(p.localitySlug)).primary),
-      ...properties.map((p) => propertyKeywords(p).primary),
       ...posts.map((p) => postKeywords(p).primary),
     ].map((p) => p.toLowerCase())
     expect(primaries.filter((p, i) => primaries.indexOf(p) !== i)).toEqual([])
@@ -90,7 +87,6 @@ describe('meta descriptions', () => {
 
   it.each([
     ...projects.map((p) => [p.slug, p.summary] as const),
-    ...properties.map((p) => [p.slug, p.summary] as const),
     ...localities.map((l) => [l.slug, l.summary] as const),
     ...towns.map((t) => [t.slug, t.summary] as const),
     ...posts.map((p) => [p.slug, p.summary] as const),
@@ -106,11 +102,11 @@ describe('content honesty', () => {
   })
 
   it('every listing points at a real locality', () => {
-    for (const item of [...projects, ...properties]) expect(localityOf(item.localitySlug), item.slug).toBeDefined()
+    for (const item of projects) expect(localityOf(item.localitySlug), item.slug).toBeDefined()
   })
 
   it('every image has meaningful alt text', () => {
-    for (const img of [...projects, ...properties].flatMap((item) => item.gallery)) {
+    for (const img of projects.flatMap((item) => item.gallery)) {
       expect(img.alt.length).toBeGreaterThan(15)
       expect(img.alt.toLowerCase()).not.toMatch(/^(image|photo|picture) of/)
     }
@@ -140,7 +136,6 @@ describe('JSON-LD graph integrity', () => {
     ...siteNodes(),
     ...localities.map(localityNode),
     ...projects.map((p) => projectNode(p, localityOf(p.localitySlug))),
-    ...properties.map(propertyNode),
     constructionServiceNode(packages),
     breadcrumbNode('/projects', [
       { name: 'Home', path: '/' },

@@ -1,9 +1,9 @@
-import type { Locality, Post, Project, Property, Town } from '@/content/types'
+import type { Locality, Post, Project, Town } from '@/content/types'
 import { routes } from '@/lib/routes'
 
 /**
  * Keyword ownership (ARCHITECTURE.md §3). Each URL owns exactly one primary phrase,
- * which must appear in its H1; supporting phrases belong in H2s, copy and descriptions —
+ * which must appear in its H1; supporting phrases belong in H2s, copy and descriptions,
  * written naturally, never stuffed. A unit test fails on any duplicate primary, so two
  * pages never compete for the same search.
  *
@@ -152,10 +152,6 @@ export function projectKeywords(project: Project, locality: Locality): KeywordTa
     primary: `${project.name}, ${locality.name}`,
     supporting: project.configurations.map((c) => `${c.label} in ${locality.name}`),
   }
-}
-
-export function propertyKeywords(property: Property): KeywordTarget {
-  return { primary: property.title, supporting: [] }
 }
 
 export function postKeywords(post: Post): KeywordTarget {

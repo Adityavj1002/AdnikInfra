@@ -87,8 +87,6 @@ export function photoUrl(id: string, width: number, siteUrl: string): string {
     : new URL(`${photoBase()}/${id}?w=${width}`, siteUrl).href
 }
 
-// ── Development uploads (memory mode only) ─────────────────────────────────────
-
 type DevPhoto = Readonly<{ bytes: Uint8Array; type: string }>
 const devHolder = globalThis as typeof globalThis & { __adnikDevPhotos?: Map<string, DevPhoto> }
 const devPhotos = () => (devHolder.__adnikDevPhotos ??= new Map())
@@ -105,8 +103,6 @@ export function saveDevPhoto(bytes: Uint8Array, type: string): string {
 export function readDevPhoto(id: string): DevPhoto | undefined {
   return devPhotos().get(id)
 }
-
-// ── Checking what the browser sent ─────────────────────────────────────────────
 
 /** Parses the photos field: ids we issued, real dimensions, no duplicates. Never trusts a URL. */
 export function parsePhotos(raw: string): readonly ListingPhoto[] | undefined {

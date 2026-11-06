@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { getProjects, getProperties, getTowns } from '@/content/repository'
+import { getProjects, getTowns } from '@/content/repository'
 import { services } from '@/content/services'
 import { resolveEnquiryAbout } from '@/features/enquiry/about'
 import { isSlug } from '@/lib/slug'
@@ -22,10 +22,9 @@ describe('enquiry deep links', () => {
     expect(await resolveEnquiryAbout(undefined)).toBeUndefined()
   })
 
-  it('resolve for every project, listing, town and service', async () => {
+  it('resolve for every project, town and service', async () => {
     const slugs = [
       ...(await getProjects()).map((p) => p.slug),
-      ...(await getProperties()).map((p) => p.slug),
       ...(await getTowns()).map((t) => t.slug),
       ...services.map((s) => s.slug),
     ]

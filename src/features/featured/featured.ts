@@ -13,7 +13,7 @@ const readFeatured = unstable_cache(async () => (await (await getStore()).getFea
 
 /**
  * The project an admin chose for the home-page spotlight. A database problem must not take the
- * home page down, so any failure falls back to the default in the project content.
+ * home page down, so any failure falls back to the first project.
  */
 export async function featuredProjectSlug(): Promise<string | undefined> {
   if (!marketplaceEnabled) return undefined

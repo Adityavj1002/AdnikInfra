@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { estimateCost, estimateMonths } from '@/features/calculators/CostEstimator'
 import { monthlyEmi } from '@/features/calculators/EmiCalculator'
-import { formatArea, formatAreaRange, formatDate, formatPrice, formatPriceFull, possessionText } from '@/lib/format'
+import { formatArea, formatAreaRange, formatDate, formatPrice } from '@/lib/format'
 
 describe('Indian price formatting', () => {
   it.each([
@@ -16,10 +16,6 @@ describe('Indian price formatting', () => {
 
   it('says "Price on request" instead of inventing a number', () => {
     expect(formatPrice(null)).toBe('Price on request')
-  })
-
-  it('groups full prices in lakh/crore style', () => {
-    expect(formatPriceFull({ amount: 14_500_000, currency: 'INR' })).toBe('₹1,45,00,000')
   })
 })
 
@@ -63,14 +59,7 @@ describe('construction estimator', () => {
   })
 })
 
-describe('possessionText', () => {
-  it('calls ready land "ready for registry", not "ready to move"', () => {
-    expect(possessionText('agricultural', 'ready')).toBe('Ready for registry')
-    expect(possessionText('plot', 'ready')).toBe('Ready for registry')
-    expect(possessionText('villa', 'ready')).toBe('Ready to move')
-    expect(possessionText('apartment', 'under-construction')).toBe('Under construction')
-  })
-
+describe('formatArea', () => {
   it('formats agricultural land in acres with square yards', () => {
     expect(formatArea({ value: 2.5, unit: 'acre' })).toBe('2.5 acres (12,100 sq yd)')
     expect(formatArea({ value: 1, unit: 'acre' })).toBe('1 acre (4,840 sq yd)')

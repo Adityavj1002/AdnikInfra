@@ -67,9 +67,8 @@ export interface MarketplaceStore {
   getFeaturedProject(): Promise<string | undefined>
   setFeaturedProject(slug: string, adminId: string): Promise<void>
 
-  /** Admin edits to bundled projects, as raw JSON: the caller validates before use. */
+  /** Every project, as raw JSON: the caller validates before use. */
   listProjectRecords(): Promise<readonly ProjectRow[]>
   saveProjectRecord(slug: string, data: unknown, adminId: string): Promise<void>
-  /** Removes a saved record: an admin-created project disappears, a bundled one reverts. */
-  deleteProjectRecord(slug: string): Promise<void>
+    deleteProjectRecord(slug: string): Promise<void>
 }

@@ -79,7 +79,6 @@ export const listingSchema = z
     bedrooms: KINDS_WITH_BEDROOMS.includes(listing.kind) ? (listing.bedrooms ?? null) : null,
   }))
 
-export type ListingInput = z.infer<typeof listingSchema>
 
 export const LISTING_FIELDS = [
   'kind',

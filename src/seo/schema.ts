@@ -14,9 +14,8 @@ import type {
   WebSite,
 } from 'schema-dts'
 import { site } from '@/config/site'
-import type { ConstructionPackage, Faq, Film, Locality, Post, Project, Property, Town } from '@/content/types'
+import type { ConstructionPackage, Faq, Film, Locality, Post, Project, Town } from '@/content/types'
 import type { PublicListing } from '@/features/marketplace/types'
-import { areaUnitLabel } from '@/lib/format'
 import { routes } from '@/lib/routes'
 import { env } from '@/security/env'
 
@@ -251,49 +250,6 @@ export function projectNode(project: Project, locality: Locality): RealEstateLis
       ...(project.address ? { address: project.address } : {}),
       geo: { '@type': 'GeoCoordinates', latitude: project.geo.lat, longitude: project.geo.lng },
       ...(project.rera ? { identifier: { '@type': 'PropertyValue', name: 'RERA registration', value: project.rera } } : {}),
-    },
-  } as RealEstateListing
-}
-
-const accommodationType: Record<Property['type'], string> = {
-  apartment: 'Apartment',
-  villa: 'SingleFamilyResidence',
-  plot: 'Place',
-  commercial: 'Place',
-  agricultural: 'Place',
-}
-
-export function propertyNode(property: Property): RealEstateListing {
-  const url = absoluteUrl(routes.property(property.slug))
-  return {
-    '@type': 'RealEstateListing',
-    '@id': `${url}#listing`,
-    url,
-    name: property.title,
-    description: property.summary,
-    datePosted: property.listedAt,
-    dateModified: property.updatedAt,
-    inLanguage: site.locale,
-    isPartOf: ref(ids.website),
-    breadcrumb: ref(`${url}#breadcrumb`),
-    image: property.gallery.map((img) => absoluteUrl(img.src.src)),
-    offers: {
-      '@type': 'Offer',
-      price: property.price.amount,
-      priceCurrency: property.price.currency,
-      availability: 'https://schema.org/InStock',
-      offeredBy: ref(ids.sales),
-    },
-    mainEntity: {
-      '@type': accommodationType[property.type],
-      name: property.title,
-      containedInPlace: ref(ids.locality(property.localitySlug)),
-      ...(property.bhk ? { numberOfBedrooms: property.bhk, numberOfRooms: property.bhk } : {}),
-      floorSize: {
-        '@type': 'QuantitativeValue',
-        value: property.area.value,
-        unitText: areaUnitLabel[property.area.unit],
-      },
     },
   } as RealEstateListing
 }

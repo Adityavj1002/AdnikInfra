@@ -188,9 +188,9 @@ const workSteps = [
 export default async function HomePage() {
   const [projects, localities, stats, chosen] = await Promise.all([getProjects(), getLocalities(), getStats(), featuredProjectSlug()])
   const localityOf = (slug: string) => localities.find((l) => l.slug === slug)
-  // An admin's choice (Admin → Projects) wins, including "none"; otherwise the project marked
-  // featured in content. A project without a photo is never featured: the layout is built on one.
-  const candidate = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects.find((p) => p.featured) ?? projects[0])
+  // An admin's choice (Admin → Projects) wins, including "none"; otherwise the first project.
+  // A project without a photo is never featured: the layout is built on one.
+  const candidate = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects[0])
   const spotlight = candidate && candidate.gallery.length > 0 ? candidate : undefined
   const moreProjects = projects.filter((p) => p.slug !== spotlight?.slug).slice(0, spotlight ? 3 : 6)
   const spotlightLocality = spotlight ? localityOf(spotlight.localitySlug) : undefined

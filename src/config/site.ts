@@ -2,10 +2,9 @@
  * Brand and business constants. Changing a value here updates titles, metadata, JSON-LD,
  * header, footer and contact actions everywhere.
  *
- * Contact and business details are deliberately empty until the real ones are supplied:
- * the site must never show or claim a phone number, address or RERA number we don't have.
- * Filling them in turns on the Call / WhatsApp buttons and local-SEO structured data
- * (ARCHITECTURE.md §8).
+ * Contact and business details stay empty until the real ones are supplied: the site must
+ * never show or claim a phone number, address or RERA number we don't have. Each one that is
+ * filled in turns on its buttons and local-SEO structured data (ARCHITECTURE.md §8).
  */
 
 export type PostalAddress = Readonly<{

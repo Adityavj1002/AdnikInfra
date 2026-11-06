@@ -18,7 +18,7 @@ export default async function AdminProjectsPage({ searchParams }: Props) {
   await requireAdmin()
   const { deleted } = await searchParams
   const [projects, localities, chosen, saved] = await Promise.all([getProjects(), getLocalities(), featuredProjectSlug(), savedProjects()])
-  const featured = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects.find((p) => p.featured) ?? projects[0])
+  const featured = chosen === NO_FEATURED ? undefined : (projects.find((p) => p.slug === chosen) ?? projects[0])
   const place = (slug: string) => localities.find((l) => l.slug === slug)?.name
 
   return (

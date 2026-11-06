@@ -1,4 +1,4 @@
-import type { Area, Configuration, Money, ProjectStatus, ProjectType, PropertyType } from '@/content/types'
+import type { Area, Configuration, Money, ProjectStatus, ProjectType } from '@/content/types'
 
 const LOCALE = 'en-IN'
 const SQFT_PER_SQYD = 9
@@ -18,11 +18,6 @@ export function formatPrice(money: Money | null): string {
   if (amount >= 10_000_000) return `₹${trimDecimals(amount / 10_000_000, 2)} Cr`
   if (amount >= 100_000) return `₹${trimDecimals(amount / 100_000, 2)} L`
   return `₹${grouped.format(amount)}`
-}
-
-/** Full grouped price with lakh/crore separators: ₹1,45,00,000. */
-export function formatPriceFull(money: Money): string {
-  return `₹${grouped.format(money.amount)}`
 }
 
 export function formatRupees(amount: number): string {
@@ -71,27 +66,6 @@ export const projectTypeLabel: Readonly<Record<ProjectType, string>> = {
   plot: 'Plots',
   commercial: 'Commercial',
 }
-
-export const propertyTypeLabel: Readonly<Record<PropertyType, string>> = {
-  apartment: 'Apartment',
-  villa: 'Villa',
-  plot: 'Plot',
-  commercial: 'Commercial',
-  agricultural: 'Agricultural land',
-}
-
-export const possessionLabel = { ready: 'Ready to move', 'under-construction': 'Under construction' } as const
-
-/** Land isn't "moved into": a ready plot or farm parcel is ready for registry. */
-export function possessionText(type: PropertyType, possession: keyof typeof possessionLabel): string {
-  return possession === 'ready' && (type === 'plot' || type === 'agricultural') ? 'Ready for registry' : possessionLabel[possession]
-}
-
-export const furnishingLabel = {
-  unfurnished: 'Unfurnished',
-  'semi-furnished': 'Semi-furnished',
-  furnished: 'Furnished',
-} as const
 
 /** "+917737209850" → "+91 77372 09850": an Indian mobile number the way people read it aloud. */
 export function formatPhone(e164: string): string {

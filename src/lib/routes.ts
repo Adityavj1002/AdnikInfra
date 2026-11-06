@@ -3,8 +3,6 @@ export const routes = {
   home: '/',
   projects: '/projects',
   project: (slug: string) => `/projects/${slug}`,
-  properties: '/properties',
-  property: (slug: string) => `/properties/${slug}`,
   construction: '/construction',
   warehouse: '/warehouse-construction',
   environmentalClearance: '/environmental-clearance',

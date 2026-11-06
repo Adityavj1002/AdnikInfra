@@ -116,31 +116,6 @@ export type Project = Readonly<{
   geo: GeoPoint
   gallery: readonly Img[]
   updates: readonly Readonly<{ date: string; text: string }>[]
-  /** The default home-page spotlight; an admin can choose another project (Admin → Home page). */
-  featured: boolean
-  updatedAt: string
-}>
-
-export type PropertyType = 'apartment' | 'villa' | 'plot' | 'commercial' | 'agricultural'
-
-export type Property = Readonly<{
-  slug: string
-  title: string
-  type: PropertyType
-  bhk: number | null
-  area: Area
-  price: Money
-  localitySlug: string
-  possession: 'ready' | 'under-construction'
-  furnishing?: 'unfurnished' | 'semi-furnished' | 'furnished'
-  floor?: string
-  facing?: string
-  /** ≤ 160 chars. */
-  summary: string
-  description: readonly string[]
-  features: readonly string[]
-  gallery: readonly Img[]
-  listedAt: string
   updatedAt: string
 }>
 
@@ -168,7 +143,7 @@ export type Post = Readonly<{
 
 export type Stat = Readonly<{ value: string; label: string }>
 
-/** A real film of a project. Optional until footage exists (§ cinematic video). */
+/** A real film of a project. */
 export type Film = Readonly<{
   title: string
   description: string

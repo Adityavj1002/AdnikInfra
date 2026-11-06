@@ -1,5 +1,5 @@
 import 'server-only'
-import { getLocality, getProject, getProperty, getTown } from '@/content/repository'
+import { getLocality, getProject, getTown } from '@/content/repository'
 import { services } from '@/content/services'
 import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
 
@@ -9,15 +9,14 @@ export type EnquiryAbout = Readonly<{ slug: string; name: string }>
 const pages: readonly EnquiryAbout[] = [{ slug: 'warehouse-construction', name: 'Warehouse construction' }]
 
 /**
- * What an enquiry is about, from the `ref` slug a page links with: a project, a listing, a
- * town near Jaipur, a Jaipur locality, a service or a live marketplace listing. Unknown slugs resolve to nothing.
+ * What an enquiry is about, from the `ref` slug a page links with: a project, a town near
+ * Jaipur, a Jaipur locality, a page, a service or a live marketplace listing. Unknown slugs
+ * resolve to nothing.
  */
 export async function resolveEnquiryAbout(ref: string | undefined): Promise<EnquiryAbout | undefined> {
   if (!ref) return undefined
   const project = await getProject(ref)
   if (project) return { slug: project.slug, name: project.name }
-  const property = await getProperty(ref)
-  if (property) return { slug: property.slug, name: property.title }
   const town = await getTown(ref)
   if (town) return { slug: town.slug, name: `${town.name}, near Jaipur` }
   const locality = await getLocality(ref)

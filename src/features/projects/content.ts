@@ -207,7 +207,6 @@ export function toProject(slug: string, record: ProjectRecord, updatedAt: string
     geo,
     gallery: resolve(record.photos),
     updates: [...record.updates].sort((a, b) => b.date.localeCompare(a.date)),
-    featured: false,
     updatedAt: updatedAt.slice(0, 10),
   }
 }
