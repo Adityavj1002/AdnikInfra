@@ -351,7 +351,7 @@ test('an admin edits the project, with clear errors, and the website follows', a
   const tagline = page.getByLabel('Tagline')
   const before = await tagline.inputValue()
   await tagline.fill('2 & 3 BHK homes beside SKIT College, Jagatpura')
-  await page.getByLabel('Choose project photos').setInputFiles([photo('terrace.png')])
+  await page.getByLabel('Choose photos').setInputFiles([photo('terrace.png')])
   await expect(page.getByText('11 of 30 photos')).toBeVisible()
   await page.getByRole('button', { name: 'Save project' }).click()
   await expect(page.getByRole('status').filter({ hasText: 'Liv Prime is updated' })).toBeVisible()
@@ -387,8 +387,55 @@ test('an admin can take the featured project off the home page and put it back',
   await expect(page.getByText(/^Featured ·/).first()).toBeVisible()
 })
 
+test('an admin adds a new project from scratch, and deletes it', async ({ page }) => {
+  await signIn(page)
+  await page.goto('/admin/projects')
+  await page.getByRole('link', { name: 'Add a project' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: 'Add a project' })).toBeVisible()
+
+  await page.getByLabel('Project name').fill('Test Heights')
+  await page.getByLabel('Tagline').fill('Ready-to-shift 3 BHK flats')
+  await page.getByLabel('Area', { exact: true }).selectOption('jagatpura')
+  await page.getByLabel('Status').selectOption('completed')
+  await page.getByLabel('Stage label').fill('Ready to shift')
+  await page.getByLabel('Possession').fill('Ready to shift')
+  await page.getByLabel('Summary').fill('Ready-to-shift 3 BHK flats in Jagatpura, Jaipur, close to schools, colleges and the airport road.')
+  await page.getByLabel('Description', { exact: true }).fill('A finished building with 3 BHK flats, lifts, parking and power backup.')
+  await page.getByLabel('Home types').fill('3 BHK | 1,350 | 1,650')
+  await page.getByLabel('Unit-wise areas').fill('101 / 601 | 3 | - | 1,173.61 | 1,643.05')
+  await page.getByLabel('Nearby places').fill('Suresh Gyan Vihar University')
+
+  // The photos are required: the form says so, and keeps what was typed.
+  await page.getByRole('button', { name: 'Create project' }).click()
+  await expect(page.getByRole('alert').filter({ hasText: 'Photos' })).toContainText('at least one photo')
+  await page.getByLabel('Choose photos').setInputFiles([photo('terrace.png')])
+  await expect(page.getByText('1 of 30 photos')).toBeVisible()
+  await page.getByLabel('Choose floor plans').setInputFiles([photo('terrace.png')])
+  await expect(page.getByText('1 of 12 plans')).toBeVisible()
+  await page.getByRole('button', { name: 'Create project' }).click()
+  await expect(page).toHaveURL(/\/admin\/projects\/test-heights\?created=1/)
+  await expect(page.getByRole('heading', { level: 1, name: 'Edit Test Heights' })).toBeVisible()
+
+  await page.goto('/projects')
+  await expect(page.getByRole('heading', { level: 2, name: 'Test Heights' })).toBeVisible()
+  await page.goto('/projects/test-heights')
+  await expect(page.getByRole('heading', { level: 1, name: 'Test Heights, Jagatpura' })).toBeVisible()
+  await expect(page.getByText('Ready to shift').first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'See a finished home at Test Heights' })).toBeVisible()
+  const units = page.getByRole('table', { name: /every unit at Test Heights/ })
+  await expect(units.getByRole('columnheader', { name: /Carpet/ })).toHaveCount(0)
+  await expect(units).toContainText('1,643.05')
+
+  await page.goto('/admin/projects/test-heights')
+  await page.getByLabel('Type “test-heights” to confirm').fill('test-heights')
+  await page.getByRole('button', { name: 'Delete project' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'deleted' })).toBeVisible()
+  const gone = await page.goto('/projects/test-heights')
+  expect(gone?.status()).toBe(404)
+})
+
 test('project editing needs a signed-in admin', async ({ page }) => {
-  for (const path of ['/admin/projects', '/admin/projects/liv-prime-jagatpura']) {
+  for (const path of ['/admin/projects', '/admin/projects/new', '/admin/projects/liv-prime-jagatpura']) {
     await page.goto(path)
     await expect(page).toHaveURL(/\/admin\/login/)
   }

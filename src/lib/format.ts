@@ -55,9 +55,14 @@ export function formatDate(isoDate: string): string {
 }
 
 export const projectStatusLabel: Readonly<Record<ProjectStatus, string>> = {
-  ongoing: 'Under construction',
+  ongoing: 'Ongoing',
   upcoming: 'Upcoming',
   completed: 'Completed',
+}
+
+/** The badge text for a project: its stage when one is set, else its status. */
+export function projectStage(project: Readonly<{ status: ProjectStatus; stage?: string }>): string {
+  return project.stage || projectStatusLabel[project.status]
 }
 
 export const projectTypeLabel: Readonly<Record<ProjectType, string>> = {

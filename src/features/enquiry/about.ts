@@ -5,6 +5,9 @@ import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
 
 export type EnquiryAbout = Readonly<{ slug: string; name: string }>
 
+/** Pages with their own enquiry reference that aren't a project, place or service line. */
+const pages: readonly EnquiryAbout[] = [{ slug: 'warehouse-construction', name: 'Warehouse construction' }]
+
 /**
  * What an enquiry is about, from the `ref` slug a page links with: a project, a listing, a
  * town near Jaipur, a Jaipur locality, a service or a live marketplace listing. Unknown slugs resolve to nothing.
@@ -19,6 +22,8 @@ export async function resolveEnquiryAbout(ref: string | undefined): Promise<Enqu
   if (town) return { slug: town.slug, name: `${town.name}, near Jaipur` }
   const locality = await getLocality(ref)
   if (locality) return { slug: locality.slug, name: `${locality.name}, Jaipur` }
+  const page = pages.find((p) => p.slug === ref)
+  if (page) return page
   const service = services.find((s) => s.slug === ref)
   if (service) return { slug: service.slug, name: service.title }
   if (!marketplaceEnabled) return undefined

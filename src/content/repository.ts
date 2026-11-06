@@ -1,10 +1,9 @@
 import 'server-only'
-import { applyRecord, hosted, hostedFilm, savedProjects } from '@/features/projects/content'
+import { savedProjects, toProject } from '@/features/projects/content'
 import { isSlug } from '@/lib/slug'
 import { packages, posts, stats } from './fixtures/company'
 import { faqGroups } from './fixtures/faqs'
 import { localities } from './fixtures/localities'
-import { projects } from './fixtures/projects'
 import { properties } from './fixtures/properties'
 import { towns } from './fixtures/towns'
 import type {
@@ -44,18 +43,11 @@ export async function getLocality(slug: string): Promise<Locality | undefined> {
 
 export type ProjectFilter = Readonly<{ status?: ProjectStatus; type?: ProjectType; locality?: string; featured?: boolean }>
 
-/** Bundled projects with any admin edits applied (Admin → Projects). */
+/** Projects come only from the database (Admin → Projects); none is written in the code. */
 async function currentProjects(): Promise<readonly Project[]> {
-  const saved = await savedProjects()
-  return projects.map((bundled) => {
-    const edit = saved[bundled.slug]
-    const project = edit ? applyRecord(bundled, edit.record, edit.updatedAt) : bundled
-    return {
-      ...project,
-      gallery: project.gallery.map(hosted),
-      ...(project.plans ? { plans: project.plans.map(hosted) } : {}),
-      ...(project.film ? { film: hostedFilm(project.film) } : {}),
-    }
+  return (await savedProjects()).flatMap(({ slug, record, updatedAt }) => {
+    const locality = localities.find((l) => l.slug === record.localitySlug)
+    return locality ? [toProject(slug, record, updatedAt, locality.geo)] : []
   })
 }
 

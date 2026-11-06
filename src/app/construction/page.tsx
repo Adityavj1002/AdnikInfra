@@ -116,6 +116,9 @@ export default async function ConstructionPage() {
               </li>
             ))}
           </ul>
+          <p className={styles.crossLink}>
+            Building a warehouse, godown or industrial shed? <Link href={routes.warehouse}>See warehouse construction</Link>
+          </p>
         </div>
       </section>
 

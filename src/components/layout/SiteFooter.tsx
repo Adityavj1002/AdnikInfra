@@ -10,6 +10,43 @@ import { FooterScene } from './FooterScene'
 import { Logo } from './Logo'
 import styles from './SiteFooter.module.css'
 
+const NETWORKS: Readonly<Record<string, string>> = {
+  'instagram.com': 'Instagram',
+  'facebook.com': 'Facebook',
+  'youtube.com': 'YouTube',
+  'linkedin.com': 'LinkedIn',
+  'x.com': 'X',
+}
+
+/** "https://www.instagram.com/adnik_infra" → Instagram, adnik_infra. */
+function profileOf(url: string): Readonly<{ network: string; handle?: string }> {
+  const { hostname, pathname } = new URL(url)
+  const host = hostname.replace(/^www\./, '')
+  const handle = pathname.split('/').find(Boolean)
+  return { network: NETWORKS[host] ?? host.split('.')[0] ?? host, ...(handle ? { handle } : {}) }
+}
+
+/** Instagram's glyph in its brand gradient, drawn inline (no third-party request). */
+function InstagramMark() {
+  return (
+    <svg className={styles.socialMark} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="ig-gradient" cx="0.3" cy="1.07" r="1.2">
+          <stop offset="0" stopColor="#fdd56e" />
+          <stop offset="0.25" stopColor="#fd8a3b" />
+          <stop offset="0.55" stopColor="#e1306c" />
+          <stop offset="0.8" stopColor="#c13584" />
+          <stop offset="1" stopColor="#5b51d8" />
+        </radialGradient>
+      </defs>
+      <rect width="32" height="32" rx="8" fill="url(#ig-gradient)" />
+      <rect x="7" y="7" width="18" height="18" rx="5.5" fill="none" stroke="#fff" strokeWidth="2.2" />
+      <circle cx="16" cy="16" r="4.3" fill="none" stroke="#fff" strokeWidth="2.2" />
+      <circle cx="21.6" cy="10.4" r="1.4" fill="#fff" />
+    </svg>
+  )
+}
+
 type FooterLink = Readonly<{ href: string; label: string }>
 
 const sectorLinks: readonly FooterLink[] = [
@@ -30,6 +67,7 @@ const exploreLinks: readonly FooterLink[] = [
   { href: routes.marketplace, label: 'Marketplace' },
   { href: routes.marketplaceSell, label: 'List your property' },
   { href: routes.construction, label: 'Home construction' },
+  { href: routes.warehouse, label: 'Warehouse construction' },
   { href: routes.locations, label: 'Locations' },
   { href: routes.blog, label: 'Guides & blog' },
   { href: routes.faq, label: 'FAQs' },
@@ -111,13 +149,20 @@ export function SiteFooter() {
           </ul>
           {profiles.length > 0 && (
             <ul role="list" className={styles.social} aria-label="Adnik Infra on social media">
-              {profiles.map((url) => (
-                <li key={url}>
-                  <a href={url} target="_blank" rel="noopener noreferrer me">
-                    {new URL(url).hostname.replace(/^www\./, '').split('.')[0]}
-                  </a>
-                </li>
-              ))}
+              {profiles.map((url) => {
+                const { network, handle } = profileOf(url)
+                return (
+                  <li key={url}>
+                    <a href={url} target="_blank" rel="noopener noreferrer me" className={styles.socialLink}>
+                      {network === 'Instagram' ? <InstagramMark /> : null}
+                      <span className={styles.socialText}>
+                        <span className={styles.socialNetwork}>{network}</span>
+                        {handle && <span className={styles.socialHandle}>@{handle}</span>}
+                      </span>
+                    </a>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </div>

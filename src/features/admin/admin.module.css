@@ -407,3 +407,34 @@
     gap: var(--space-3);
   }
 }
+
+@layer components {
+  .dangerZone {
+    margin-block-start: var(--space-10);
+    border-color: rgb(164 51 42 / 0.35);
+  }
+
+  .videoPreview,
+  .videoPortrait {
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 36rem;
+    border-radius: var(--radius);
+    background-color: #000;
+  }
+
+  .videoPortrait {
+    max-inline-size: 16rem;
+    aspect-ratio: 9 / 16;
+  }
+}
+
+@layer components {
+  .titleRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+}

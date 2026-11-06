@@ -65,27 +65,33 @@ export const facts = {
   format: (items: readonly Readonly<{ label: string; value: string }>[]) => items.map((item) => `${item.label} | ${item.value}`).join('\n'),
 }
 
+/** The distance is optional: a landmark without a known distance is listed on its own. */
 export const nearby = {
   shape: 'Place | km',
   parse: (raw: string) =>
     table(raw, 'Nearby places', nearby.shape, ([place, km, ...rest]) => {
+      if (!place || rest.length > 0) return undefined
+      if (!km) return { place }
       const distance = toNumber(km)
-      return place && !Number.isNaN(distance) && rest.length === 0 ? { place, km: distance } : undefined
+      return Number.isNaN(distance) ? undefined : { place, km: distance }
     }),
-  format: (items: readonly Readonly<{ place: string; km: number }>[]) => items.map((item) => `${item.place} | ${item.km}`).join('\n'),
+  format: (items: readonly Readonly<{ place: string; km?: number }>[]) =>
+    items.map((item) => (item.km === undefined ? item.place : `${item.place} | ${item.km}`)).join('\n'),
 }
 
+/** A carpet area the plan doesn't publish is written "-". */
 export const units = {
-  shape: 'Unit | BHK | Carpet | Built-up | Super built-up',
+  shape: 'Unit | BHK | Carpet (or -) | Built-up | Super built-up',
   parse: (raw: string) =>
     table(raw, 'Unit-wise areas', units.shape, ([unit, bhk, carpet, builtUp, superBuiltUp, ...rest]) => {
-      const values = [toNumber(bhk?.replace(/\s*bhk$/i, '')), toNumber(carpet), toNumber(builtUp), toNumber(superBuiltUp)]
+      const noCarpet = carpet === '-' || carpet === ''
+      const values = [toNumber(bhk?.replace(/\s*bhk$/i, '')), noCarpet ? 0 : toNumber(carpet), toNumber(builtUp), toNumber(superBuiltUp)]
       if (!unit || rest.length > 0 || values.some(Number.isNaN) || !Number.isInteger(values[0])) return undefined
       const [rooms, c, b, s] = values as [number, number, number, number]
-      return { unit, bhk: rooms, carpet: c, builtUp: b, superBuiltUp: s }
+      return noCarpet ? { unit, bhk: rooms, builtUp: b, superBuiltUp: s } : { unit, bhk: rooms, carpet: c, builtUp: b, superBuiltUp: s }
     }),
-  format: (items: readonly Readonly<{ unit: string; bhk: number; carpet: number; builtUp: number; superBuiltUp: number }>[]) =>
-    items.map((u) => [u.unit, u.bhk, u.carpet.toFixed(2), u.builtUp.toFixed(2), u.superBuiltUp.toFixed(2)].join(' | ')).join('\n'),
+  format: (items: readonly Readonly<{ unit: string; bhk: number; carpet?: number; builtUp: number; superBuiltUp: number }>[]) =>
+    items.map((u) => [u.unit, u.bhk, u.carpet === undefined ? '-' : u.carpet.toFixed(2), u.builtUp.toFixed(2), u.superBuiltUp.toFixed(2)].join(' | ')).join('\n'),
 }
 
 /** A heading line, then its points (a leading "-" or "•" is optional); groups split by a blank line. */
@@ -103,4 +109,22 @@ export const specifications = {
   },
   format: (items: readonly Readonly<{ group: string; items: readonly string[] }>[]) =>
     items.map((spec) => [spec.group, ...spec.items.map((item) => `- ${item}`)].join('\n')).join('\n\n'),
+}
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+/** Construction progress: "2026-11-04 | What happened", newest or oldest first (the page sorts). */
+export const updates = {
+  shape: 'YYYY-MM-DD | What happened',
+  parse: (raw: string) =>
+    table(raw, 'Progress', updates.shape, ([date, text, ...rest]) =>
+      date && ISO_DATE.test(date) && !Number.isNaN(Date.parse(date)) && text && rest.length === 0 ? { date, text } : undefined,
+    ),
+  format: (items: readonly Readonly<{ date: string; text: string }>[]) => items.map((item) => `${item.date} | ${item.text}`).join('\n'),
+}
+
+/** One line per point; blank lines are dropped. */
+export const bullets = {
+  parse: (raw: string): readonly string[] => lines(raw).filter(Boolean),
+  format: (items: readonly string[]) => items.join('\n'),
 }

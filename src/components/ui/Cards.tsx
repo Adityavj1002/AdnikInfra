@@ -7,7 +7,7 @@ import {
   formatAreaRange,
   formatPrice,
   possessionText,
-  projectStatusLabel,
+  projectStage,
   projectTypeLabel,
   propertyTypeLabel,
 } from '@/lib/format'
@@ -57,7 +57,7 @@ export function ProjectCard({ item: project, locality, headingLevel: Heading = '
               {...(priority ? { loading: 'eager' as const } : {})}
             />
           )}
-          <span className={`${statusBadge[project.status]} ${styles.status}`}>{projectStatusLabel[project.status]}</span>
+          <span className={`${statusBadge[project.status]} ${styles.status}`}>{projectStage(project)}</span>
         </div>
         <div className={styles.body}>
           <p className={styles.kicker}>

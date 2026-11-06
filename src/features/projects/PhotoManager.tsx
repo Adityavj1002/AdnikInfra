@@ -11,14 +11,25 @@ import styles from '@/features/admin/admin.module.css'
 
 export type ManagedPhoto = Readonly<{ ref: string; alt: string; width: number; height: number; preview?: string }>
 
-type Props = Readonly<{ initial: readonly ManagedPhoto[]; photoBase: string; limit: number }>
+type Props = Readonly<{
+  initial: readonly ManagedPhoto[]
+  photoBase: string
+  limit: number
+  /** The hidden field's name: "photos" (the gallery) or "plans". */
+  name?: string
+  label?: string
+  hint?: string
+  /** How many must stay: the gallery needs a cover; plans may be empty. */
+  min?: number
+}>
 
 /**
  * The project's photos in display order. The first is the cover (cards, home page, share image).
  * New photos go straight to the photo host; the list travels to the server as one hidden field.
  */
-export function PhotoManager({ initial, photoBase, limit }: Props) {
+export function PhotoManager({ initial, photoBase, limit, name = 'photos', label = 'Photos', hint, min = 1 }: Props) {
   const [photos, setPhotos] = useState<readonly ManagedPhoto[]>(initial)
+  const noun = name === 'plans' ? 'plan' : 'photo'
   const [uploading, setUploading] = useState(0)
   const [error, setError] = useState('')
   const input = useRef<HTMLInputElement>(null)
@@ -74,9 +85,9 @@ export function PhotoManager({ initial, photoBase, limit }: Props) {
 
   return (
     <fieldset className={styles.photoField}>
-      <legend className="visually-hidden">Photos</legend>
-      <p className="field__hint">The first photo is the cover. Describe each one for people who can’t see it, and for Google Images.</p>
-      <input type="hidden" name="photos" value={payload} />
+      <legend className="visually-hidden">{label}</legend>
+      <p className="field__hint">{hint ?? 'The first photo is the cover. Describe each one for people who can’t see it, and for Google Images.'}</p>
+      <input type="hidden" name={name} value={payload} />
       <ol className={styles.photoList}>
         {photos.map((photo, i) => (
           <li key={photo.ref} className={styles.photoRow}>
@@ -87,14 +98,14 @@ export function PhotoManager({ initial, photoBase, limit }: Props) {
               ) : (
                 <MarketImage id={photo.ref.slice('upload:'.length)} base={photoBase} alt="" fill sizes="8rem" />
               )}
-              {i === 0 && <span className={`badge badge--gold ${styles.coverBadge}`}>Cover</span>}
+              {i === 0 && min > 0 && <span className={`badge badge--gold ${styles.coverBadge}`}>Cover</span>}
             </span>
             <span className={styles.photoAlt}>
-              <label className="visually-hidden" htmlFor={`photo-alt-${i}`}>
-                Description of photo {i + 1}
+              <label className="visually-hidden" htmlFor={`${name}-alt-${i}`}>
+                Description of {noun} {i + 1}
               </label>
               <input
-                id={`photo-alt-${i}`}
+                id={`${name}-alt-${i}`}
                 className="input"
                 type="text"
                 value={photo.alt}
@@ -105,17 +116,17 @@ export function PhotoManager({ initial, photoBase, limit }: Props) {
               />
             </span>
             <span className={styles.photoActions}>
-              <button type="button" className="button button--outline button--small" aria-label={`Move photo ${i + 1} up`} disabled={i === 0} onClick={() => move(i, -1)}>
+              <button type="button" className="button button--outline button--small" aria-label={`Move ${noun} ${i + 1} up`} disabled={i === 0} onClick={() => move(i, -1)}>
                 <ArrowUp aria-hidden="true" strokeWidth={1.75} />
               </button>
-              <button type="button" className="button button--outline button--small" aria-label={`Move photo ${i + 1} down`} disabled={i === photos.length - 1} onClick={() => move(i, 1)}>
+              <button type="button" className="button button--outline button--small" aria-label={`Move ${noun} ${i + 1} down`} disabled={i === photos.length - 1} onClick={() => move(i, 1)}>
                 <ArrowDown aria-hidden="true" strokeWidth={1.75} />
               </button>
               <button
                 type="button"
                 className={`button button--outline button--small ${styles.danger}`}
-                aria-label={`Remove photo ${i + 1}`}
-                disabled={photos.length === 1}
+                aria-label={`Remove ${noun} ${i + 1}`}
+                disabled={photos.length <= min}
                 onClick={() => setPhotos((current) => current.filter((_, j) => j !== i))}
               >
                 <Trash2 aria-hidden="true" strokeWidth={1.75} />
@@ -124,14 +135,14 @@ export function PhotoManager({ initial, photoBase, limit }: Props) {
           </li>
         ))}
       </ol>
-      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="visually-hidden" tabIndex={-1} aria-label="Choose project photos" onChange={add} />
+      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="visually-hidden" tabIndex={-1} aria-label={`Choose ${label.toLowerCase()}`} onChange={add} />
       <div className={styles.photoFoot}>
         <button type="button" className="button button--outline" disabled={photos.length + uploading >= limit} onClick={() => input.current?.click()}>
           <Upload aria-hidden="true" strokeWidth={1.75} />
-          Add photos
+          Add {label.toLowerCase()}
         </button>
         <p className="field__hint" role="status">
-          {uploading > 0 ? `Uploading ${uploading} ${uploading === 1 ? 'photo' : 'photos'}…` : `${photos.length} of ${limit} photos. Changes go live when you save.`}
+          {uploading > 0 ? `Uploading ${uploading} ${uploading === 1 ? noun : `${noun}s`}…` : `${photos.length} of ${limit} ${noun}s. Changes go live when you save.`}
         </p>
       </div>
       {error && <p className="field__error">{error}</p>}

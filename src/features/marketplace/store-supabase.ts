@@ -438,6 +438,10 @@ export function createSupabaseStore(url: string, serviceRoleKey: string): Market
     async saveProjectRecord(slug, data, adminId) {
       check(await db.from('project_content').upsert({ slug, data, updated_by: adminId, updated_at: new Date().toISOString() }))
     },
+
+    async deleteProjectRecord(slug) {
+      check(await db.from('project_content').delete().eq('slug', slug))
+    },
   }
   return store
 }

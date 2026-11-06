@@ -1,5 +1,7 @@
 import 'server-only'
 import { randomBytes } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { hashPassword } from '@/security/password'
 import { env } from '@/security/env'
 import type { MarketplaceStore } from './store'
@@ -24,13 +26,31 @@ function createRuntime(): Runtime {
   }
   const store = createMemoryStore()
   const password = env.MARKETPLACE_DEV_ADMIN_PASSWORD
-  const ready = password
+  const admin = password
     ? hashPassword(password).then(async (passwordHash) => {
         await store.createAdmin({ email: env.MARKETPLACE_DEV_ADMIN_EMAIL, name: 'Development admin', passwordHash })
       })
     : Promise.resolve()
+  const ready = Promise.all([admin, seedProjects(store)]).then(() => undefined)
   // Memory mode may run without a configured secret; links then last as long as the process.
   return { store, ready, secret: env.SIGNING_SECRET ?? randomBytes(32).toString('base64url') }
+}
+
+/**
+ * Memory mode starts with the same projects a fresh database is seeded with
+ * (supabase/seed/projects.json, scripts/seed-projects.mjs), so development and the e2e suite
+ * have content to show. Data, not code: the live site reads its projects from Supabase only.
+ */
+async function seedProjects(store: MarketplaceStore): Promise<void> {
+  try {
+    const seed = JSON.parse(await readFile(join(process.cwd(), 'supabase', 'seed', 'projects.json'), 'utf8')) as unknown
+    if (!Array.isArray(seed)) return
+    for (const item of seed as { slug?: unknown; record?: unknown }[]) {
+      if (typeof item.slug === 'string') await store.saveProjectRecord(item.slug, item.record, 'seed')
+    }
+  } catch (error) {
+    console.error(`[marketplace] no project seed ${JSON.stringify({ error: String(error).slice(0, 120) })}`)
+  }
 }
 
 function runtime(): Runtime {

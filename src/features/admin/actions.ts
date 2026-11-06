@@ -5,21 +5,22 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { after } from 'next/server'
 import { z } from 'zod'
-import { getProject, isValidSlug } from '@/content/repository'
-import { projects as bundledProjects } from '@/content/fixtures/projects'
+import { getLocality, getProject, isValidSlug } from '@/content/repository'
 import { nameField } from '@/features/enquiry/schema'
 import { sendEmail } from '@/features/email/mailer'
 import { adminWelcomeEmail, campaignEmail } from '@/features/marketplace/emails'
 import { NO_FEATURED } from '@/features/featured/featured'
-import { photosExist } from '@/features/marketplace/media'
+import { createVideoUploadTicket, photosExist, videoExists } from '@/features/marketplace/media'
+import type { UploadTicket } from '@/features/marketplace/constants'
 import { notifyDecision } from '@/features/marketplace/notify'
-import { AMENITY_KEYS, isKnownPhotoRef, recordSchema, savedProjects } from '@/features/projects/content'
-import { facts, homes, nearby, paragraphs, specifications, units, type Parsed } from '@/features/projects/text'
+import { AMENITY_KEYS, isKnownPhotoRef, recordSchema, savedProject } from '@/features/projects/content'
+import { bullets, facts, homes, nearby, paragraphs, specifications, units, updates, type Parsed } from '@/features/projects/text'
 import { getStore } from '@/features/marketplace/runtime'
 import type { ReviewDecision } from '@/features/marketplace/store'
 import { listUnsubscribeHeaders, unsubscribeUrl } from '@/features/marketplace/subscriptions'
 import { cacheTags } from '@/lib/cache-tags'
 import { routes } from '@/lib/routes'
+import { toSlug } from '@/lib/slug'
 import { normalizeLine, normalizeMultiline } from '@/security/normalize'
 import { hashPassword, PASSWORD_MAX, PASSWORD_MIN, verifyAgainstDummy, verifyPassword } from '@/security/password'
 import { clientKey } from '@/security/rate-limit'
@@ -121,39 +122,64 @@ export async function setFeaturedProject(_previous: AdminFormState, form: FormDa
   return { status: 'ok', message: project ? `${project.name} is now featured on the home page.` : 'No project is featured on the home page now.' }
 }
 
-/** Saves an admin's edits to a project. Lists arrive as text; see features/projects/text. */
+/** Saves a project from Admin → Projects: a new one (mode=create) or edits to an existing one. */
 export async function saveProject(_previous: AdminFormState, form: FormData): Promise<AdminFormState> {
   const admin = await requireAdmin()
-  const slug = normalizeLine(form.get('slug'))
-  if (!isValidSlug(slug) || !bundledProjects.some((p) => p.slug === slug)) return failure('That project no longer exists.')
-
   const field = (name: string) => {
     const value = form.get(name)
     return typeof value === 'string' ? value.slice(0, 20_000) : ''
   }
+  const creating = field('mode') === 'create'
+  const name = normalizeLine(field('name'))
+  const slug = creating ? normalizeLine(field('slug')) || toSlug(name) : normalizeLine(field('slug'))
+  if (!isValidSlug(slug) || slug === 'new') return failure('Web address: please use lowercase words joined by hyphens, like liv-gyan-jagatpura.')
+  const existing = await savedProject(slug)
+  if (creating && existing) return failure('A project with this web address already exists. Please choose another.')
+  if (!creating && !existing) return failure('That project no longer exists.')
+  const locality = normalizeLine(field('locality'))
+  if (!(await getLocality(locality))) return failure('Area: please choose one.')
+
   const lists: Record<string, Parsed<readonly unknown[]>> = {
     configurations: homes.parse(field('configurations')),
     facts: facts.parse(field('facts')),
     specifications: specifications.parse(field('specifications')),
     nearby: nearby.parse(field('nearby')),
     units: units.parse(field('units')),
+    updates: updates.parse(field('updates')),
   }
   for (const list of Object.values(lists)) if (!list.ok) return failure(list.message)
-  const value = (name: string) => (lists[name] as Readonly<{ ok: true; value: readonly unknown[] }>).value
+  const value = (key: string) => (lists[key] as Readonly<{ ok: true; value: readonly unknown[] }>).value
 
   let photos: unknown
+  let plans: unknown
+  let video: unknown
   try {
     photos = JSON.parse(field('photos') || '[]')
+    plans = JSON.parse(field('plans') || '[]')
+    video = field('film') ? JSON.parse(field('film')) : undefined
   } catch {
-    return failure('Photos: please upload them again.')
+    return failure('Photos or video: please upload them again.')
   }
+  const summary = normalizeLine(field('summary'))
+  const filmFields =
+    video && typeof video === 'object'
+      ? {
+          ...(video as Record<string, unknown>),
+          title: normalizeLine(field('filmTitle')) || `${name}: video`,
+          description: normalizeLine(field('filmDescription')) || summary,
+          uploadDate: (video as Record<string, unknown>).uploadDate ?? new Date().toISOString().slice(0, 10),
+          transcript: bullets.parse(normalizeMultiline(field('filmTranscript'))),
+        }
+      : undefined
 
   const parsed = recordSchema.safeParse({
-    name: normalizeLine(field('name')),
+    name,
     tagline: normalizeLine(field('tagline')),
-    summary: normalizeLine(field('summary')),
+    summary,
     type: field('type'),
     status: field('status'),
+    localitySlug: locality,
+    stage: normalizeLine(field('stage')),
     possession: normalizeLine(field('possession')),
     address: normalizeLine(field('address')),
     description: paragraphs.parse(normalizeMultiline(field('description'))),
@@ -163,18 +189,26 @@ export async function saveProject(_previous: AdminFormState, form: FormData): Pr
     specifications: value('specifications'),
     nearby: value('nearby'),
     units: value('units'),
+    updates: value('updates'),
     photos,
+    plans,
+    film: filmFields,
+    createdAt: existing?.record.createdAt ?? (creating ? new Date().toISOString() : undefined),
   })
   if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? 'Please check the form.')
   const record = parsed.data
-  if (!record.photos.every((photo) => isKnownPhotoRef(photo.ref))) return failure('Photos: please upload them again.')
+  const images = [...record.photos, ...record.plans]
+  if (!images.every((photo) => isKnownPhotoRef(photo.ref))) return failure('Photos: please upload them again.')
 
   try {
-    // Photos saved before are trusted; a new upload must really exist on the photo host.
-    const before = new Set((await savedProjects())[slug]?.record.photos.map((p) => p.ref) ?? [])
-    const fresh = record.photos.filter((p) => p.ref.startsWith('upload:') && !before.has(p.ref))
+    // Media saved before is trusted; a new upload must really exist on the photo host.
+    const before = new Set([...(existing?.record.photos ?? []), ...(existing?.record.plans ?? [])].map((p) => p.ref))
+    const fresh = images.filter((p) => p.ref.startsWith('upload:') && !before.has(p.ref))
     if (fresh.length > 0 && !(await photosExist(fresh.map((p) => ({ id: p.ref.slice('upload:'.length), width: p.width, height: p.height }))))) {
       return failure('One of the new photos did not upload properly. Please add it again.')
+    }
+    if (record.film && record.film.video !== existing?.record.film?.video && !(await videoExists(record.film.video))) {
+      return failure('The video did not upload properly. Please add it again.')
     }
     await (await getStore()).saveProjectRecord(slug, record, admin.id)
   } catch (error) {
@@ -183,7 +217,31 @@ export async function saveProject(_previous: AdminFormState, form: FormData): Pr
   }
   updateTag(cacheTags.projects)
   for (const path of [routes.home, routes.projects, routes.project(slug), routes.adminProjects, routes.adminProject(slug)]) revalidatePath(path)
+  if (creating) redirect(`${routes.adminProject(slug)}?created=1`)
   return { status: 'ok', message: `Saved. ${record.name} is updated on the website.` }
+}
+
+/** Deletes a project from the website. Its photos stay on Cloudinary. */
+export async function deleteProject(_previous: AdminFormState, form: FormData): Promise<AdminFormState> {
+  await requireAdmin()
+  const slug = normalizeLine(form.get('slug'))
+  if (!isValidSlug(slug) || !(await savedProject(slug))) return failure('That project no longer exists.')
+  if (normalizeLine(form.get('confirm')).toLowerCase() !== slug) return failure(`To delete, type the web address “${slug}” in the box.`)
+  try {
+    await (await getStore()).deleteProjectRecord(slug)
+  } catch (error) {
+    console.error(`[admin] project delete failed ${JSON.stringify({ slug, error: String(error).slice(0, 120) })}`)
+    return failure(TRY_AGAIN)
+  }
+  updateTag(cacheTags.projects)
+  for (const path of [routes.home, routes.projects, routes.project(slug), routes.adminProjects]) revalidatePath(path)
+  redirect(`${routes.adminProjects}?deleted=1`)
+}
+
+/** A signed, short-lived ticket for uploading one project video straight to Cloudinary. */
+export async function requestVideoTicket(): Promise<UploadTicket> {
+  await requireAdmin()
+  return createVideoUploadTicket()
 }
 
 /** Pause between messages: Gmail and Workspace throttle bursts from one mailbox. */

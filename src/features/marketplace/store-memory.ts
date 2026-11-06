@@ -274,6 +274,10 @@ export function createMemoryStore(): MarketplaceStore {
     async saveProjectRecord(slug, data) {
       projectRecords.set(slug, { data: structuredClone(data), updatedAt: now() })
     },
+
+    async deleteProjectRecord(slug) {
+      projectRecords.delete(slug)
+    },
   }
   return store
 }

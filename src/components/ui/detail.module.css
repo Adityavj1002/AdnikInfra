@@ -82,6 +82,68 @@
     gap: var(--space-2) var(--space-6);
   }
 
+  /* Direct line to the sales team, inside the overview. */
+  .contactCard {
+    --focus-ring: var(--c-gold-light);
+    display: grid;
+    gap: var(--space-5);
+    margin-block-start: var(--space-2);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--c-navy) 0%, var(--c-navy-2) 100%);
+    color: #fff;
+  }
+
+  @media (min-width: 48rem) {
+    .contactCard {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding: var(--space-8);
+    }
+  }
+
+  .contactKicker {
+    color: var(--c-gold-light);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .contactTitle {
+    margin-block: var(--space-2);
+    color: #fff;
+    font-size: var(--text-2xl);
+  }
+
+  .contactBody {
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .contactActions {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  /* The phone number must never push a narrow phone sideways. */
+  .contactActions > :global(.button) {
+    white-space: normal;
+    text-align: center;
+  }
+
+  @media (max-width: 22rem) {
+    .contactCard {
+      padding: var(--space-4);
+    }
+  }
+
+  @media (min-width: 30rem) and (max-width: 47.99rem) {
+    .contactActions {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
   .similarTitle {
     margin-block-end: var(--space-8);
     font-size: var(--text-3xl);

@@ -1,0 +1,846 @@
+[
+  {
+    "slug": "liv-prime-jagatpura",
+    "record": {
+      "name": "Liv Prime",
+      "tagline": "2 & 3 BHK luxury apartments near SKIT College",
+      "summary": "2 and 3 BHK luxury apartments and penthouses on Ram Nagariya Road, near SKIT College, Jagatpura, Jaipur, with an indoor pool, gym and 20+ amenities.",
+      "type": "apartment",
+      "status": "ongoing",
+      "localitySlug": "jagatpura",
+      "stage": "Finishing stage",
+      "possession": "On request",
+      "address": "Ram Nagariya Road, near SKIT College, Jagatpura, Jaipur, Rajasthan 302017",
+      "description": [
+        "Liv Prime is a stilt-plus-six-floor residential building on Ram Nagariya Road in Jagatpura, a short walk from SKIT College. It offers 2 BHK and 3 BHK apartments and penthouses, with 17 homes on each floor: nine 3 BHK and eight 2 BHK.",
+        "Homes open off a 5′3″-wide central corridor served by three high-speed lifts and two staircases, with open terraces above. The layouts are Vastu-friendly, and every home has a modular kitchen, UPVC windows, wardrobes in each bedroom and a smart lock on the main door.",
+        "Residents share an amenity floor with an indoor swimming pool and deck, a gym, a library and reading room, a private theatre, a games room, a kids’ playroom, a banquet hall with a pre-function area and a guest room."
+      ],
+      "configurations": [
+        {
+          "label": "2 BHK",
+          "from": 1107.75,
+          "to": 1272.83
+        },
+        {
+          "label": "3 BHK",
+          "from": 1411.01,
+          "to": 1656.95
+        }
+      ],
+      "facts": [
+        {
+          "label": "Floors",
+          "value": "Stilt + 6"
+        },
+        {
+          "label": "Homes per floor",
+          "value": "17 (9 × 3 BHK, 8 × 2 BHK)"
+        },
+        {
+          "label": "Lifts",
+          "value": "3 high-speed"
+        },
+        {
+          "label": "Staircases",
+          "value": "2"
+        },
+        {
+          "label": "Penthouses",
+          "value": "Available"
+        },
+        {
+          "label": "Amenities",
+          "value": "20+"
+        }
+      ],
+      "amenities": [
+        "pool",
+        "gym",
+        "library",
+        "theatre",
+        "indoor-games",
+        "kids-play",
+        "banquet",
+        "guest-room",
+        "lift",
+        "security",
+        "power-backup",
+        "parking",
+        "water-supply",
+        "rainwater",
+        "ev-charging",
+        "vastu",
+        "accessible"
+      ],
+      "specifications": [
+        {
+          "group": "Structure",
+          "items": [
+            "RCC framed, earthquake-resistant structure",
+            "100% ISI standard steel",
+            "3-side open, with brick partition walls",
+            "Fire-fighting system and emergency exit"
+          ]
+        },
+        {
+          "group": "Flooring",
+          "items": [
+            "Vitrified tile flooring in all rooms",
+            "Designer ceramic tiles in bathrooms",
+            "POP finish on walls and ceilings",
+            "False ceiling in drawing, dining and bedroom"
+          ]
+        },
+        {
+          "group": "Kitchen",
+          "items": [
+            "Modular kitchen (without chimney)",
+            "Premium granite on the working counter",
+            "Stainless-steel sink and geyser provision",
+            "2 ft dado above the counter and RO provision"
+          ]
+        },
+        {
+          "group": "Bathrooms",
+          "items": [
+            "Designer ceramic tiles up to 8 ft",
+            "Vitrified tile flooring",
+            "Premium CP fittings and sanitary ware",
+            "Floor-mounted WC, false ceiling and exhaust"
+          ]
+        },
+        {
+          "group": "Electrical",
+          "items": [
+            "Premium wires and modular switches",
+            "AC copper piping in all rooms",
+            "Provision for an inverter",
+            "Fans and lights in every room"
+          ]
+        },
+        {
+          "group": "Doors & windows",
+          "items": [
+            "UPVC windows throughout",
+            "Premium laminated flush doors",
+            "Designer fittings on all doors",
+            "Wardrobes and TV cabinet in each bedroom",
+            "Smart lock on every flat’s main door"
+          ]
+        }
+      ],
+      "nearby": [
+        {
+          "place": "SKIT College",
+          "km": 0.3
+        },
+        {
+          "place": "Ram Nagariya Police Station",
+          "km": 0.4
+        },
+        {
+          "place": "SRN International School",
+          "km": 0.4
+        },
+        {
+          "place": "EuroKids Preschool",
+          "km": 0.5
+        },
+        {
+          "place": "Suresh Gyan Vihar University",
+          "km": 1.3
+        },
+        {
+          "place": "D-Mart, Jagatpura",
+          "km": 2.2
+        },
+        {
+          "place": "7 No. Chauraha",
+          "km": 2.5
+        },
+        {
+          "place": "Akshaya Patra (ISKCON)",
+          "km": 2.5
+        },
+        {
+          "place": "Jaipur Chaupati, Pratap Nagar",
+          "km": 2.5
+        },
+        {
+          "place": "Jeevan Rekha Hospital",
+          "km": 3
+        },
+        {
+          "place": "Jankidevi Public School",
+          "km": 3
+        },
+        {
+          "place": "Jayshree Periwal Global School",
+          "km": 4
+        },
+        {
+          "place": "Khatipura Railway Station",
+          "km": 4
+        },
+        {
+          "place": "Jagatpura Railway Station",
+          "km": 4.7
+        },
+        {
+          "place": "Ring Road",
+          "km": 5
+        },
+        {
+          "place": "Poornima University",
+          "km": 6
+        },
+        {
+          "place": "Ryan International School",
+          "km": 6
+        },
+        {
+          "place": "JECRC University",
+          "km": 6.5
+        },
+        {
+          "place": "Bombay Hospital",
+          "km": 7.4
+        },
+        {
+          "place": "Mahatma Gandhi Hospital",
+          "km": 7.5
+        },
+        {
+          "place": "Jaipur International Airport",
+          "km": 8.5
+        },
+        {
+          "place": "World Trade Park",
+          "km": 9
+        },
+        {
+          "place": "Gandhi Nagar Railway Station",
+          "km": 11
+        }
+      ],
+      "units": [
+        {
+          "unit": "103 / 503",
+          "bhk": 2,
+          "carpet": 702.02,
+          "builtUp": 830.82,
+          "superBuiltUp": 1163.15
+        },
+        {
+          "unit": "104 / 504",
+          "bhk": 2,
+          "carpet": 703.75,
+          "builtUp": 801.45,
+          "superBuiltUp": 1122.03
+        },
+        {
+          "unit": "107 / 507",
+          "bhk": 2,
+          "carpet": 671.35,
+          "builtUp": 814.97,
+          "superBuiltUp": 1140.96
+        },
+        {
+          "unit": "110 / 510",
+          "bhk": 2,
+          "carpet": 792.98,
+          "builtUp": 909.16,
+          "superBuiltUp": 1272.83
+        },
+        {
+          "unit": "111 / 511",
+          "bhk": 2,
+          "carpet": 658.54,
+          "builtUp": 792.56,
+          "superBuiltUp": 1109.58
+        },
+        {
+          "unit": "112 / 512",
+          "bhk": 2,
+          "carpet": 691.04,
+          "builtUp": 818.95,
+          "superBuiltUp": 1146.53
+        },
+        {
+          "unit": "114 / 514",
+          "bhk": 2,
+          "carpet": 698.9,
+          "builtUp": 791.25,
+          "superBuiltUp": 1107.75
+        },
+        {
+          "unit": "116 / 516",
+          "bhk": 2,
+          "carpet": 714.83,
+          "builtUp": 817,
+          "superBuiltUp": 1143.8
+        },
+        {
+          "unit": "101 / 501",
+          "bhk": 3,
+          "carpet": 960.68,
+          "builtUp": 1175.72,
+          "superBuiltUp": 1646
+        },
+        {
+          "unit": "102 / 502",
+          "bhk": 3,
+          "carpet": 963.48,
+          "builtUp": 1183.54,
+          "superBuiltUp": 1656.95
+        },
+        {
+          "unit": "105 / 505",
+          "bhk": 3,
+          "carpet": 889.32,
+          "builtUp": 1059.19,
+          "superBuiltUp": 1482.87
+        },
+        {
+          "unit": "106 / 506",
+          "bhk": 3,
+          "carpet": 876.18,
+          "builtUp": 1032.55,
+          "superBuiltUp": 1445.57
+        },
+        {
+          "unit": "108 / 508",
+          "bhk": 3,
+          "carpet": 929.68,
+          "builtUp": 1089.97,
+          "superBuiltUp": 1525.96
+        },
+        {
+          "unit": "109 / 509",
+          "bhk": 3,
+          "carpet": 938.72,
+          "builtUp": 1116.86,
+          "superBuiltUp": 1563.61
+        },
+        {
+          "unit": "113 / 513",
+          "bhk": 3,
+          "carpet": 851.1,
+          "builtUp": 1007.86,
+          "superBuiltUp": 1411.01
+        },
+        {
+          "unit": "115 / 515",
+          "bhk": 3,
+          "carpet": 935.06,
+          "builtUp": 1070.53,
+          "superBuiltUp": 1498.74
+        },
+        {
+          "unit": "117 / 517",
+          "bhk": 3,
+          "carpet": 920.86,
+          "builtUp": 1083.86,
+          "superBuiltUp": 1517.41
+        }
+      ],
+      "photos": [
+        {
+          "ref": "cloud:adnik/projects/liv-prime/exterior-front",
+          "alt": "Liv Prime, Jagatpura: seven-level apartment building in beige, grey and brown, seen from the road",
+          "width": 1600,
+          "height": 969
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/exterior-street",
+          "alt": "Liv Prime apartments along Ram Nagariya Road, Jagatpura, with landscaped frontage",
+          "width": 1600,
+          "height": 981
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/aerial",
+          "alt": "Aerial view of Liv Prime with landscaped terraces, surrounded by trees",
+          "width": 1600,
+          "height": 1200
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/indoor-pool",
+          "alt": "Indoor swimming pool at Liv Prime with timber walls and a slatted ceiling",
+          "width": 1488,
+          "height": 720
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/gym",
+          "alt": "Gym at Liv Prime with weight benches and mirrored walls",
+          "width": 847,
+          "height": 1264
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/library",
+          "alt": "Library and reading room at Liv Prime with timber shelves and lounge chairs",
+          "width": 1328,
+          "height": 800
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/private-theatre",
+          "alt": "Private theatre at Liv Prime with red recliner seats and a large screen",
+          "width": 1424,
+          "height": 752
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/games-room",
+          "alt": "Games room at Liv Prime with a pool table and sports equipment",
+          "width": 1424,
+          "height": 752
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/kids-playroom",
+          "alt": "Kids’ playroom at Liv Prime with a ball pit, toys and a colourful wall",
+          "width": 1424,
+          "height": 752
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/banquet-hall",
+          "alt": "Banquet hall at Liv Prime with a chandelier and dining tables",
+          "width": 1424,
+          "height": 752
+        }
+      ],
+      "plans": [
+        {
+          "ref": "cloud:adnik/projects/liv-prime/plan-2bhk-3d",
+          "alt": "3D plan of a 2 BHK apartment at Liv Prime: two bedrooms, two bathrooms, kitchen, living and dining",
+          "width": 737,
+          "height": 571
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-prime/plan-3bhk-3d",
+          "alt": "3D plan of a 3 BHK apartment at Liv Prime: three bedrooms, kitchen, living and dining",
+          "width": 556,
+          "height": 375
+        }
+      ],
+      "updates": [],
+      "createdAt": "2026-11-04T00:00:00.000Z"
+    }
+  },
+  {
+    "slug": "villas-near-skit-college-jagatpura",
+    "record": {
+      "name": "Villas near SKIT College",
+      "tagline": "4 BHK villas on 18 × 35 plots, JDA approved",
+      "summary": "4 BHK villas on 18 × 35 plots near SKIT College, Jagatpura: JDA approved, in a gated colony, with covered car parking. Now under construction.",
+      "type": "villa",
+      "status": "ongoing",
+      "localitySlug": "jagatpura",
+      "stage": "Under construction",
+      "possession": "On request",
+      "address": "Near SKIT College, Jagatpura, Jaipur, Rajasthan",
+      "description": [
+        "Independent 4 BHK villas on 18 × 35 ft plots in a gated, JDA-approved colony near SKIT College in Jagatpura, Jaipur. Each villa rises ground plus two floors, with a terrace above.",
+        "The ground floor has a covered car parking, a front lawn, a lobby with a puja space and a master bedroom. The first floor holds the kitchen, an 18-foot lounge and dining room, a second master bedroom and a balcony. The second floor has two more bedrooms and a balcony. Every bedroom has its own toilet.",
+        "Construction is under way: the structure is up to the second floor. Call or WhatsApp to visit the site."
+      ],
+      "configurations": [
+        {
+          "label": "4 BHK villa",
+          "from": 70
+        }
+      ],
+      "facts": [
+        {
+          "label": "Plot size",
+          "value": "18 × 35 ft (70 sq yd)"
+        },
+        {
+          "label": "Floors",
+          "value": "Ground + 2, with terrace"
+        },
+        {
+          "label": "Bedrooms",
+          "value": "4, each with a toilet"
+        },
+        {
+          "label": "Approval",
+          "value": "JDA approved"
+        },
+        {
+          "label": "Colony",
+          "value": "Gated"
+        },
+        {
+          "label": "Parking",
+          "value": "Covered car parking"
+        }
+      ],
+      "amenities": [
+        "gated",
+        "parking"
+      ],
+      "specifications": [
+        {
+          "group": "Ground floor",
+          "items": [
+            "Covered car parking",
+            "Front lawn (10 ft)",
+            "Lobby, 5′6″ wide, with a puja space",
+            "Master bedroom 12′0″ × 10′3″ with toilet",
+            "Store under the stair"
+          ]
+        },
+        {
+          "group": "First floor",
+          "items": [
+            "Lounge and dining 9′6″ × 18′0″",
+            "Kitchen 7′10½″ × 10′0″",
+            "Master bedroom 12′0″ × 10′3″ with toilet",
+            "Balcony, 4′0″ wide"
+          ]
+        },
+        {
+          "group": "Second floor",
+          "items": [
+            "Master bedroom 12′0″ × 10′3″ with toilet",
+            "Bedroom 12′0″ × 10′0″ with toilet",
+            "Balcony, 6′6″ wide",
+            "Passage, 4′0″ wide"
+          ]
+        }
+      ],
+      "nearby": [],
+      "units": [],
+      "photos": [
+        {
+          "ref": "cloud:adnik/projects/villas-skit/villa-front",
+          "alt": "Front of the 18 × 35 villa: ground plus two floors in brick, white and charcoal, with a covered car parking and a terrace pergola",
+          "width": 900,
+          "height": 1600
+        },
+        {
+          "ref": "cloud:adnik/projects/villas-skit/site-november-2026",
+          "alt": "The villas under construction in November 2026: concrete structure up to the second floor, plaster under way",
+          "width": 576,
+          "height": 1024
+        }
+      ],
+      "plans": [
+        {
+          "ref": "cloud:adnik/projects/villas-skit/floor-plans",
+          "alt": "Floor plans of the 18 × 35 villa: ground, first and second floors, with four bedrooms and four toilets",
+          "width": 2000,
+          "height": 1408
+        }
+      ],
+      "updates": [
+        {
+          "date": "2026-11-04",
+          "text": "The structure is up to the second floor; plaster work is under way."
+        }
+      ],
+      "createdAt": "2026-11-05T00:00:00.000Z",
+      "film": {
+        "video": "adnik/media/villas-skit-film",
+        "poster": "adnik/media/villas-skit-film-poster",
+        "portrait": true,
+        "title": "Villas near SKIT College: the design and the site today",
+        "description": "How the 18 × 35 villas near SKIT College, Jagatpura, will look, the construction in November 2026, and the floor plans for all three levels.",
+        "seconds": 21,
+        "uploadDate": "2026-11-05",
+        "transcript": [
+          "An artist’s impression of the villa: ground plus two floors in brick, white and charcoal, with a covered car parking. 4 BHK villas on 18 × 35 plots near SKIT College, Jagatpura. JDA approved, gated colony, car parking.",
+          "On site in November 2026: construction under way, with ground plus two floors taking shape.",
+          "Floor plans: ground floor with car parking, lawn and a bedroom with toilet; first floor with kitchen, lounge and a bedroom with toilet; second floor with two bedrooms, two toilets and a balcony.",
+          "Book a site visit. Call or WhatsApp 77372 09850."
+        ]
+      }
+    }
+  },
+  {
+    "slug": "liv-gyan-jagatpura",
+    "record": {
+      "name": "Liv Gyan",
+      "tagline": "Ready-to-shift 2 & 3 BHK flats opposite Gyan Vihar University",
+      "summary": "Ready-to-shift 2 & 3 BHK flats and penthouses on 80 ft Road, opposite Suresh Gyan Vihar University, Jagatpura, Jaipur. JDA approved, 3 sides open.",
+      "type": "apartment",
+      "status": "completed",
+      "localitySlug": "jagatpura",
+      "stage": "Ready to shift",
+      "possession": "Ready to shift",
+      "address": "Plot 369–371, 406 & 407, 80 ft Road, Pink City Enclave, Shrikishanpura, opposite Suresh Gyan Vihar University, Jagatpura, Jaipur, Rajasthan 302017",
+      "description": [
+        "Liv Gyan is a finished, JDA-approved apartment building on the 80 ft road in Pink City Enclave, Shrikishanpura, directly opposite Suresh Gyan Vihar University in Jagatpura. The building is open on three sides, so every flat gets daylight and cross-ventilation.",
+        "Each floor has ten homes, seven 3 BHK and three 2 BHK, and every one has a large balcony. The top floor has three 3 BHK penthouses with private terraces of 517 to 598 sq ft.",
+        "The building is complete and ready to shift into. Two high-speed lifts with automatic rescue devices, 24×7 CCTV, power backup for common areas, an open gym and garden on the rooftop and EV charging points are all in place. Being opposite a university, these flats are also a sound choice for rental income."
+      ],
+      "configurations": [
+        {
+          "label": "2 BHK",
+          "from": 1156.89,
+          "to": 1182.17
+        },
+        {
+          "label": "3 BHK",
+          "from": 1339.17,
+          "to": 1643.05
+        },
+        {
+          "label": "3 BHK penthouse with terrace",
+          "from": 1973.58,
+          "to": 2335.04
+        }
+      ],
+      "facts": [
+        {
+          "label": "Status",
+          "value": "Ready to shift"
+        },
+        {
+          "label": "Approval",
+          "value": "JDA approved"
+        },
+        {
+          "label": "Homes per floor",
+          "value": "10 (7 × 3 BHK, 3 × 2 BHK)"
+        },
+        {
+          "label": "Penthouses",
+          "value": "3, with private terraces"
+        },
+        {
+          "label": "Lifts",
+          "value": "2 high-speed, with auto rescue"
+        },
+        {
+          "label": "Building",
+          "value": "Open on 3 sides"
+        },
+        {
+          "label": "Road",
+          "value": "80 ft main road"
+        }
+      ],
+      "amenities": [
+        "lift",
+        "security",
+        "cctv",
+        "power-backup",
+        "gym",
+        "garden",
+        "community-hall",
+        "ev-charging",
+        "water-supply",
+        "rainwater"
+      ],
+      "specifications": [
+        {
+          "group": "Structure",
+          "items": [
+            "Earthquake-resistant RCC framed structure",
+            "Fire-fighting system",
+            "Emergency exit through the staircase",
+            "Energy-efficient, eco-friendly design",
+            "100% ISI standard steel",
+            "Brick partition walls",
+            "Open on 3 sides"
+          ]
+        },
+        {
+          "group": "Apartment",
+          "items": [
+            "Tile flooring",
+            "False ceiling in drawing and dining",
+            "POP finish and quality paint on walls and ceilings",
+            "AC copper piping in drawing, dining and all bedrooms",
+            "UPVC / aluminium windows",
+            "Premium laminated flush doors with designer fittings",
+            "Wardrobes, fans and lights in every room"
+          ]
+        },
+        {
+          "group": "Kitchen",
+          "items": [
+            "Modular kitchen (without chimney)",
+            "Premium tiles on the working counter",
+            "Stainless-steel sink",
+            "2 ft tile dado above the counter",
+            "Provision for geyser and RO"
+          ]
+        },
+        {
+          "group": "Bathrooms",
+          "items": [
+            "Designer ceramic wall tiles up to 8 ft",
+            "Vitrified tile flooring",
+            "Premium CP fittings and sanitary ware",
+            "Floor-mounted WC, false ceiling and exhaust fan"
+          ]
+        },
+        {
+          "group": "Electrical",
+          "items": [
+            "Premium wires and cables",
+            "Premium modular switches and accessories",
+            "Provision for an inverter",
+            "DTH wiring (MDU system)"
+          ]
+        },
+        {
+          "group": "Water and security",
+          "items": [
+            "24×7 water supply from the overhead tank",
+            "Underground tank for extra storage",
+            "Rainwater harvesting",
+            "24×7 CCTV and access control at the main entrance",
+            "Intercom / EPABX and a guard room"
+          ]
+        }
+      ],
+      "nearby": [
+        {
+          "place": "Suresh Gyan Vihar University (opposite)"
+        },
+        {
+          "place": "SKIT College"
+        },
+        {
+          "place": "VIT College"
+        },
+        {
+          "place": "D-Mart, Jagatpura"
+        },
+        {
+          "place": "Jeevan Rekha Hospital"
+        },
+        {
+          "place": "Akshaya Patra (ISKCON)"
+        },
+        {
+          "place": "NRI Circle"
+        },
+        {
+          "place": "7 No. Chauraha"
+        },
+        {
+          "place": "Jagatpura Railway Station"
+        },
+        {
+          "place": "R Tech Mall"
+        },
+        {
+          "place": "Mahatma Gandhi Hospital"
+        },
+        {
+          "place": "Bombay Hospital"
+        },
+        {
+          "place": "Jaipur International Airport"
+        }
+      ],
+      "units": [
+        {
+          "unit": "101 / 501",
+          "bhk": 3,
+          "builtUp": 1173.61,
+          "superBuiltUp": 1643.05
+        },
+        {
+          "unit": "102 / 602",
+          "bhk": 3,
+          "builtUp": 1070.4,
+          "superBuiltUp": 1498.56
+        },
+        {
+          "unit": "103 / 603",
+          "bhk": 3,
+          "builtUp": 963.28,
+          "superBuiltUp": 1348.59
+        },
+        {
+          "unit": "104 / 604",
+          "bhk": 3,
+          "builtUp": 991.43,
+          "superBuiltUp": 1388.0
+        },
+        {
+          "unit": "105 / 605",
+          "bhk": 3,
+          "builtUp": 1081.35,
+          "superBuiltUp": 1513.89
+        },
+        {
+          "unit": "106 / 606",
+          "bhk": 2,
+          "builtUp": 826.35,
+          "superBuiltUp": 1156.89
+        },
+        {
+          "unit": "107 / 607",
+          "bhk": 2,
+          "builtUp": 838.03,
+          "superBuiltUp": 1173.24
+        },
+        {
+          "unit": "108 / 608",
+          "bhk": 2,
+          "builtUp": 844.39,
+          "superBuiltUp": 1182.17
+        },
+        {
+          "unit": "109 / 509",
+          "bhk": 3,
+          "builtUp": 1058.38,
+          "superBuiltUp": 1481.73
+        },
+        {
+          "unit": "110 / 510",
+          "bhk": 3,
+          "builtUp": 956.55,
+          "superBuiltUp": 1339.17
+        }
+      ],
+      "photos": [
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/exterior-front",
+          "alt": "Liv Gyan, Jagatpura: seven-storey apartment building in beige and brown on the 80 ft road",
+          "width": 1700,
+          "height": 1068
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/aerial",
+          "alt": "Aerial view of Liv Gyan with the rooftop garden and car parking",
+          "width": 319,
+          "height": 284
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/corner",
+          "alt": "Liv Gyan from the corner, with balconies on three open sides",
+          "width": 318,
+          "height": 290
+        }
+      ],
+      "plans": [
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/plan-3bhk-corner-3d",
+          "alt": "3D plan of a 3 BHK corner flat (101 to 501) at Liv Gyan",
+          "width": 520,
+          "height": 379
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/plan-3bhk-3d",
+          "alt": "3D plan of a 3 BHK flat (102 to 602) at Liv Gyan",
+          "width": 519,
+          "height": 378
+        },
+        {
+          "ref": "cloud:adnik/projects/liv-gyan/plan-2bhk-3d",
+          "alt": "3D plan of a 2 BHK flat (106 to 606) at Liv Gyan",
+          "width": 519,
+          "height": 379
+        }
+      ],
+      "updates": [],
+      "createdAt": "2026-11-06T00:00:00.000Z"
+    }
+  }
+]

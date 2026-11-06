@@ -76,6 +76,6 @@ export const site: SiteConfig = {
     responseTime: 'We reply within one working day.',
   },
   business: {
-    profiles: [],
+    profiles: ['https://www.instagram.com/adnik_infra'],
   },
 }

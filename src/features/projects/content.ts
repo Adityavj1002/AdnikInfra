@@ -2,16 +2,16 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 import { z } from 'zod'
-import { livPrime, villasSkit } from '@/content/images'
-import type { AmenityKey, Film, Img, Project, UnitArea } from '@/content/types'
-import { photoBase, isPhotoId, useCloudinary } from '@/features/marketplace/media'
+import type { AmenityKey, Film, GeoPoint, Img, Project, UnitArea } from '@/content/types'
+import { cloudBase, photoBase, isPhotoId } from '@/features/marketplace/media'
 import { getStore, marketplaceEnabled } from '@/features/marketplace/runtime'
 import { CACHE_SECONDS, cacheTags } from '@/lib/cache-tags'
+import { isSlug } from '@/lib/slug'
 
 /**
- * Admin-editable project content. The bundled project (content/fixtures) is the default; what an
- * admin saves in Admin → Projects is stored as one JSON record per project and replaces those
- * fields. A missing, unreadable or invalid record falls back to the bundled content.
+ * Projects live only in the database: one JSON record per project, created and edited in
+ * Admin → Projects. Nothing about a project is written in the code. A record that doesn't
+ * validate is skipped (and logged) rather than breaking the site.
  */
 
 export const AMENITY_KEYS = [
@@ -42,62 +42,19 @@ export const AMENITY_KEYS = [
   'accessible',
 ] as const satisfies readonly AmenityKey[]
 
-/** Photos bundled with the site, by key; anything else is an uploaded photo id. */
-const library: Readonly<Record<string, Img>> = {
-  ...livPrime,
-  villaFront: villasSkit.front,
-  villaSite: villasSkit.site,
-  villaPlans: villasSkit.plans,
-}
-
-/**
- * The same brochure files on Cloudinary (uploaded once under these ids). With Cloudinary
- * configured they are served from there; the bundled copies stay as the fallback and supply
- * the size and blur placeholder.
- */
-const cloudIds: Readonly<Record<string, string>> = {
-  exteriorFront: 'adnik/projects/liv-prime/exterior-front',
-  exteriorStreet: 'adnik/projects/liv-prime/exterior-street',
-  aerial: 'adnik/projects/liv-prime/aerial',
-  indoorPool: 'adnik/projects/liv-prime/indoor-pool',
-  gym: 'adnik/projects/liv-prime/gym',
-  library: 'adnik/projects/liv-prime/library',
-  theatre: 'adnik/projects/liv-prime/private-theatre',
-  gamesRoom: 'adnik/projects/liv-prime/games-room',
-  kidsPlayroom: 'adnik/projects/liv-prime/kids-playroom',
-  banquetHall: 'adnik/projects/liv-prime/banquet-hall',
-  plan2bhk: 'adnik/projects/liv-prime/plan-2bhk-3d',
-  plan3bhk: 'adnik/projects/liv-prime/plan-3bhk-3d',
-  villaFront: 'adnik/projects/villas-skit/villa-front',
-  villaSite: 'adnik/projects/villas-skit/site-november-2026',
-  villaPlans: 'adnik/projects/villas-skit/floor-plans',
-}
-
-function hostedAs(key: string, img: Img): Img {
-  const id = useCloudinary ? cloudIds[key] : undefined
-  return id ? { alt: img.alt, src: { ...img.src, src: `${photoBase()}/${id}` } } : img
-}
-
-/** A film from public/media, streamed from Cloudinary when it is configured (same file, uploaded once). */
-export function hostedFilm(film: Film): Film {
-  if (!useCloudinary) return film
-  const cloud = photoBase().replace('/image/upload', '')
-  const name = (path: string) => path.slice('/media/'.length).replace(/\.[^.]+$/, '')
-  const local = (path: string) => path.startsWith('/media/')
-  return {
-    ...film,
-    poster: local(film.poster) ? `${cloud}/image/upload/f_auto,q_auto,w_720/adnik/media/${name(film.poster)}` : film.poster,
-    sources: film.sources.map((source) => (local(source.src) ? { ...source, src: `${cloud}/video/upload/q_auto/adnik/media/${name(source.src)}.mp4` } : source)),
-  }
-}
-
-/** A bundled photo, served from Cloudinary when it is configured. Other images pass through. */
-export function hosted(img: Img): Img {
-  const key = Object.entries(library).find(([, value]) => value === img)?.[0]
-  return key ? hostedAs(key, img) : img
-}
 const BLUR = 'data:image/gif;base64,R0lGODlhAQABAIAAAOrj1QAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='
 export const PHOTOS_LIMIT = 30
+export const PLANS_LIMIT = 12
+
+/** Media already in the site's own Cloudinary folders (the first projects' brochure files). */
+const LIBRARY_PART = /^[a-z0-9-]{1,80}$/
+const LIBRARY_FOLDERS = new Set(['projects', 'site', 'media'])
+function isLibraryId(id: string): boolean {
+  const [root, folder, ...rest] = id.split('/')
+  return root === 'adnik' && LIBRARY_FOLDERS.has(folder ?? '') && rest.length >= 1 && rest.length <= 2 && rest.every((part) => LIBRARY_PART.test(part))
+}
+/** Videos: uploaded from Admin → Projects, or the first project's film. */
+export const VIDEO_ID = /^adnik\/(?:videos\/[A-Za-z0-9_-]{6,100}|media\/[a-z0-9-]{1,80})$/
 
 const text = (min: number, max: number, label: string) =>
   z
@@ -108,10 +65,22 @@ const text = (min: number, max: number, label: string) =>
 const amount = z.number().positive().max(1_000_000)
 
 const photoSchema = z.object({
-  ref: z.string().regex(/^(static|upload):[\w./-]{1,200}$/),
+  ref: z.string().regex(/^(cloud|upload):[\w./-]{1,200}$/),
   alt: text(3, 200, 'Photo description'),
   width: z.number().int().min(1).max(20_000),
   height: z.number().int().min(1).max(20_000),
+})
+
+const filmSchema = z.object({
+  video: z.string().regex(VIDEO_ID, 'Video: please upload it again.'),
+  /** A still from the brochure; without one, a frame of the video is used. */
+  poster: z.string().refine(isLibraryId).optional(),
+  portrait: z.boolean(),
+  title: text(3, 120, 'Video title'),
+  description: text(10, 300, 'Video description'),
+  seconds: z.number().int().min(1).max(3600),
+  uploadDate: z.iso.date(),
+  transcript: z.array(text(1, 400, 'What the video shows')).max(20),
 })
 
 export const recordSchema = z.object({
@@ -120,6 +89,8 @@ export const recordSchema = z.object({
   summary: text(50, 160, 'Summary'),
   type: z.enum(['villa', 'apartment', 'plot', 'commercial']),
   status: z.enum(['ongoing', 'upcoming', 'completed']),
+  localitySlug: z.string().refine(isSlug, 'Area: please choose one.'),
+  stage: z.string().trim().max(40, 'Stage: please keep it under 40 characters.').optional(),
   possession: text(1, 60, 'Possession'),
   address: z.string().trim().max(200, 'Address: please keep it under 200 characters.'),
   description: z.array(text(20, 1500, 'Description paragraph')).min(1, 'Description: please write at least one paragraph.').max(8),
@@ -130,83 +101,113 @@ export const recordSchema = z.object({
   facts: z.array(z.object({ label: text(1, 40, 'Fact'), value: text(1, 80, 'Fact') })).max(12),
   amenities: z.array(z.enum(AMENITY_KEYS)).max(AMENITY_KEYS.length),
   specifications: z.array(z.object({ group: text(1, 40, 'Specification heading'), items: z.array(text(1, 160, 'Specification')).min(1).max(12) })).max(12),
-  nearby: z.array(z.object({ place: text(1, 80, 'Nearby place'), km: z.number().min(0).max(500) })).max(40),
+  nearby: z.array(z.object({ place: text(1, 80, 'Nearby place'), km: z.number().min(0).max(500).optional() })).max(40),
   units: z
-    .array(z.object({ unit: text(1, 30, 'Unit'), bhk: z.number().int().min(1).max(10), carpet: amount, builtUp: amount, superBuiltUp: amount }))
+    .array(z.object({ unit: text(1, 30, 'Unit'), bhk: z.number().int().min(1).max(10), carpet: amount.optional(), builtUp: amount, superBuiltUp: amount }))
     .max(80),
-  photos: z.array(photoSchema).min(1, 'Photos: please keep at least one photo.').max(PHOTOS_LIMIT),
+  photos: z.array(photoSchema).min(1, 'Photos: please add at least one photo.').max(PHOTOS_LIMIT),
+  plans: z.array(photoSchema).max(PLANS_LIMIT).default([]),
+  updates: z.array(z.object({ date: z.iso.date('Progress: dates are written 2026-11-04.'), text: text(3, 300, 'Progress update') })).max(30).default([]),
+  film: filmSchema.optional(),
+  // Set by the server when the project is created; lists projects oldest first.
+  createdAt: z.string().max(40).optional(),
 })
 
 export type ProjectRecord = z.infer<typeof recordSchema>
 export type PhotoRef = ProjectRecord['photos'][number]
+export type FilmRecord = z.infer<typeof filmSchema>
 
-const keyOf = (img: Img) => Object.entries(library).find(([, value]) => value === img)?.[0]
-
-/** The bundled project as a record: the admin form's starting point until a record is saved. */
-export function toRecord(project: Project): ProjectRecord {
+/** An empty form for a new project (not valid until the admin fills it in). */
+export function emptyRecord(localitySlug: string): ProjectRecord {
   return {
-    name: project.name,
-    tagline: project.tagline,
-    summary: project.summary,
-    type: project.type,
-    status: project.status,
-    possession: project.possession,
-    address: project.address ?? '',
-    description: [...project.description],
-    configurations: project.configurations.map((c) =>
-      Array.isArray(c.area) ? { label: c.label, from: c.area[0]!.value, to: c.area[1]!.value } : { label: c.label, from: (c.area as { value: number }).value },
-    ),
-    facts: project.facts.map((f) => ({ ...f })),
-    amenities: project.amenities.filter((a): a is (typeof AMENITY_KEYS)[number] => (AMENITY_KEYS as readonly string[]).includes(a)),
-    specifications: project.specifications.map((s) => ({ group: s.group, items: [...s.items] })),
-    nearby: project.nearby.map((n) => ({ ...n })),
-    units: (project.units ?? []).map((u) => ({ ...u })),
-    photos: project.gallery.flatMap((img) => {
-      const key = keyOf(img)
-      // Sizes come from the build's image import; the fallback only matters outside Next (unit tests).
-      return key ? [{ ref: `static:${key}`, alt: img.alt, width: img.src.width || 1600, height: img.src.height || 1000 }] : []
-    }),
+    name: '',
+    tagline: '',
+    summary: '',
+    type: 'apartment',
+    status: 'ongoing',
+    localitySlug,
+    stage: '',
+    possession: '',
+    address: '',
+    description: [],
+    configurations: [],
+    facts: [],
+    amenities: [],
+    specifications: [],
+    nearby: [],
+    units: [],
+    photos: [],
+    plans: [],
+    updates: [],
   }
 }
 
-/** A photo reference as an image next/image can render: bundled, or uploaded to the photo host. */
+/** A photo reference as an image next/image can render: the site's library, or an admin upload. */
 export function resolvePhoto(photo: PhotoRef): Img | undefined {
-  const [kind, id] = [photo.ref.slice(0, photo.ref.indexOf(':')), photo.ref.slice(photo.ref.indexOf(':') + 1)]
-  if (kind === 'static') {
-    const img = library[id]
-    return img && { ...hostedAs(id, img), alt: photo.alt }
+  const at = photo.ref.indexOf(':')
+  const [kind, id] = [photo.ref.slice(0, at), photo.ref.slice(at + 1)]
+  const size = { width: photo.width, height: photo.height, blurDataURL: BLUR }
+  if (kind === 'cloud') {
+    const base = cloudBase('image')
+    return base && isLibraryId(id) ? { src: { src: `${base}/${id}`, ...size }, alt: photo.alt } : undefined
   }
   if (!isPhotoId(id)) return undefined
-  return { src: { src: `${photoBase()}/${id}`, width: photo.width, height: photo.height, blurDataURL: BLUR }, alt: photo.alt }
+  return { src: { src: `${photoBase()}/${id}`, ...size }, alt: photo.alt }
 }
 
-/** Photo refs the browser may send: bundled keys, or upload ids this site issued. */
+/** Photo refs the browser may send: library ids, or upload ids this site issued. */
 export function isKnownPhotoRef(ref: string): boolean {
   const id = ref.slice(ref.indexOf(':') + 1)
-  return ref.startsWith('static:') ? Object.hasOwn(library, id) : ref.startsWith('upload:') && isPhotoId(id)
+  return ref.startsWith('cloud:') ? isLibraryId(id) : ref.startsWith('upload:') && isPhotoId(id)
+}
+
+/** The film's player sources, streamed from Cloudinary. Undefined when no cloud is configured. */
+export function resolveFilm(film: FilmRecord): Film | undefined {
+  const [image, video] = [cloudBase('image'), cloudBase('video')]
+  if (!image || !video) return undefined
+  return {
+    title: film.title,
+    description: film.description,
+    poster: film.poster ? `${image}/f_auto,q_auto,w_720/${film.poster}` : `${video}/so_1,f_jpg,q_auto,w_720/${film.video}.jpg`,
+    sources: [{ src: `${video}/q_auto/${film.video}.mp4`, type: 'video/mp4' }],
+    duration: `PT${film.seconds}S`,
+    uploadDate: film.uploadDate,
+    transcript: film.transcript,
+    portrait: film.portrait,
+  }
 }
 
 const sqft = (value: number) => ({ value, unit: 'sqft' as const })
 
-export function applyRecord(base: Project, record: ProjectRecord, updatedAt: string): Project {
-  const gallery = record.photos.flatMap((photo) => resolvePhoto(photo) ?? [])
+/** A record as the project the pages render. */
+export function toProject(slug: string, record: ProjectRecord, updatedAt: string, geo: GeoPoint): Project {
+  const resolve = (photos: readonly PhotoRef[]) => photos.flatMap((photo) => resolvePhoto(photo) ?? [])
+  const film = record.film && resolveFilm(record.film)
   return {
-    ...base,
+    slug,
     name: record.name,
-    tagline: record.tagline,
-    summary: record.summary,
     type: record.type,
     status: record.status,
-    possession: record.possession,
-    address: record.address || undefined,
+    ...(record.stage ? { stage: record.stage } : {}),
+    localitySlug: record.localitySlug,
+    tagline: record.tagline,
+    summary: record.summary,
     description: record.description,
+    ...(record.address ? { address: record.address } : {}),
     configurations: record.configurations.map((c) => ({ label: c.label, area: c.to && c.to !== c.from ? ([sqft(c.from), sqft(c.to)] as const) : sqft(c.from) })),
+    units: record.units as readonly UnitArea[],
+    plans: resolve(record.plans),
+    ...(film ? { film } : {}),
+    possession: record.possession,
+    rera: null,
     facts: record.facts,
     amenities: record.amenities,
     specifications: record.specifications,
     nearby: record.nearby,
-    units: record.units as readonly UnitArea[],
-    gallery: gallery.length > 0 ? gallery : base.gallery,
+    geo,
+    gallery: resolve(record.photos),
+    updates: [...record.updates].sort((a, b) => b.date.localeCompare(a.date)),
+    featured: false,
     updatedAt: updatedAt.slice(0, 10),
   }
 }
@@ -216,20 +217,27 @@ const projectRows = unstable_cache(async () => (await getStore()).listProjectRec
   revalidate: CACHE_SECONDS,
 })
 
-/** Every saved record, read once per request. Any failure means "use the bundled content". */
-export const savedProjects = cache(async (): Promise<Readonly<Record<string, Readonly<{ record: ProjectRecord; updatedAt: string }>>>> => {
-  if (!marketplaceEnabled) return {}
+export type SavedProject = Readonly<{ slug: string; record: ProjectRecord; updatedAt: string }>
+
+/** Every valid project record, oldest first, read once per request. A failure means "no projects". */
+export const savedProjects = cache(async (): Promise<readonly SavedProject[]> => {
+  if (!marketplaceEnabled) return []
   try {
     const rows = await projectRows()
-    const valid: Record<string, Readonly<{ record: ProjectRecord; updatedAt: string }>> = {}
+    const valid: SavedProject[] = []
     for (const row of rows) {
       const parsed = recordSchema.safeParse(row.data)
-      if (parsed.success) valid[row.slug] = { record: parsed.data, updatedAt: row.updatedAt }
+      if (parsed.success && isSlug(row.slug)) valid.push({ slug: row.slug, record: parsed.data, updatedAt: row.updatedAt })
       else console.error(`[projects] ignoring an invalid saved record ${JSON.stringify({ slug: row.slug })}`)
     }
-    return valid
+    const created = (p: SavedProject) => p.record.createdAt ?? p.updatedAt
+    return valid.sort((a, b) => created(a).localeCompare(created(b)) || a.slug.localeCompare(b.slug))
   } catch (error) {
     console.error(`[projects] read failed ${JSON.stringify({ error: String(error).slice(0, 120) })}`)
-    return {}
+    return []
   }
 })
+
+export async function savedProject(slug: string): Promise<SavedProject | undefined> {
+  return (await savedProjects()).find((p) => p.slug === slug)
+}

@@ -46,6 +46,31 @@ export function createUploadTicket(now: Date = new Date()): UploadTicket {
   return { ok: false, reason: 'unavailable' }
 }
 
+/** Project videos: admin-only signed uploads, straight from the browser to Cloudinary. */
+export function createVideoUploadTicket(now: Date = new Date()): UploadTicket {
+  if (!(useCloudinary && env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET)) return { ok: false, reason: 'unavailable' }
+  const params = {
+    folder: 'adnik/videos',
+    timestamp: String(Math.floor(now.getTime() / 1000)),
+    allowed_formats: 'mp4,mov,webm,m4v',
+  }
+  return {
+    ok: true,
+    provider: 'cloudinary',
+    url: `https://api.cloudinary.com/v1_1/${env.CLOUDINARY_CLOUD_NAME}/video/upload`,
+    fields: { ...params, api_key: env.CLOUDINARY_API_KEY, signature: cloudinarySignature(params, env.CLOUDINARY_API_SECRET) },
+  }
+}
+
+/**
+ * The site's Cloudinary delivery URL, for media that lives there already (project photos and
+ * videos). Needs only the public cloud name: at runtime, or the one the build inlined.
+ */
+export function cloudBase(kind: 'image' | 'video'): string | undefined {
+  const cloud = env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_IMAGE_CLOUD
+  return cloud ? `https://res.cloudinary.com/${cloud}/${kind}/upload` : undefined
+}
+
 export function isPhotoId(id: string): boolean {
   return useCloudinary ? CLOUDINARY_ID.test(id) : devUploadsEnabled && DEV_ID.test(id)
 }
@@ -103,6 +128,18 @@ export function parsePhotos(raw: string): readonly ListingPhoto[] | undefined {
     photos.push({ id, width: width as number, height: height as number })
   }
   return photos
+}
+
+/** Confirms an uploaded project video is really on Cloudinary. */
+export async function videoExists(id: string): Promise<boolean> {
+  const base = cloudBase('video')
+  if (!base) return false
+  try {
+    const response = await fetch(`${base}/${id}.mp4`, { method: 'HEAD', signal: AbortSignal.timeout(8000) })
+    return response.ok
+  } catch {
+    return false
+  }
 }
 
 /** Confirms each photo really exists where we'd serve it from, so a forged id can't slip in. */

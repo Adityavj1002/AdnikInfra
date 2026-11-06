@@ -1,4 +1,4 @@
-import { Building2, CalendarCheck, ExternalLink, FileText, Key, MapPin, Phone, Ruler, ShieldCheck } from 'lucide-react'
+import { Building2, CalendarCheck, ExternalLink, FileText, Key, MapPin, MessageCircle, Phone, Ruler, ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,7 +16,7 @@ import { LazyVideo } from '@/features/cinematic/LazyVideo'
 import { EnquiryForm } from '@/features/enquiry/EnquiryForm'
 import { Gallery } from '@/features/gallery/Gallery'
 import { site } from '@/config/site'
-import { formatAreaRange, formatDate, formatPhone, projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { formatAreaRange, formatDate, formatPhone, projectStage, projectTypeLabel } from '@/lib/format'
 import { contactHref, mapsHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { breadcrumbNode, graph, localityNode, projectNode, videoNode } from '@/seo/schema'
@@ -72,8 +72,11 @@ export default async function ProjectPage({ params }: PageProps) {
   const shown = sections.filter(
     (section) => (section.id !== 'updates' || project.updates.length > 0) && (section.id !== 'film' || project.film),
   )
-  const { phone } = site.contact
+  const { phone, whatsapp } = site.contact
   const units = project.units ?? []
+  // Carpet area only where the plan publishes it for every unit; a column of blanks says nothing.
+  const showCarpet = units.length > 0 && units.every((unit) => unit.carpet !== undefined)
+  const ready = project.status === 'completed'
 
   return (
     <>
@@ -90,7 +93,7 @@ export default async function ProjectPage({ params }: PageProps) {
       <div className="container">
         <header className={styles.header}>
           <div className={styles.badges}>
-            <span className="badge badge--gold">{projectStatusLabel[project.status]}</span>
+            <span className={`badge ${project.status === 'completed' ? 'badge--success' : 'badge--gold'}`}>{projectStage(project)}</span>
             <span className="badge">{projectTypeLabel[project.type]}</span>
             {project.rera && (
               <span className="badge badge--success">
@@ -161,6 +164,38 @@ export default async function ProjectPage({ params }: PageProps) {
                   {paragraph}
                 </p>
               ))}
+              {phone && (
+                <div className={styles.contactCard}>
+                  <div>
+                    <p className={styles.contactKicker}>{ready ? 'Ready to move · visit today' : 'Talk to us directly'}</p>
+                    <h3 className={styles.contactTitle}>
+                      {ready ? `See a finished home at ${project.name}` : `Ask about ${project.name}`}
+                    </h3>
+                    <p className={styles.contactBody}>
+                      {ready
+                        ? 'The building is complete. Call or WhatsApp us and we’ll show you a flat the same day.'
+                        : 'Call or WhatsApp for availability, plans and a site visit.'}
+                    </p>
+                  </div>
+                  <div className={styles.contactActions}>
+                    <a href={`tel:${phone}`} className="button button--gold">
+                      <Phone aria-hidden="true" strokeWidth={1.75} />
+                      Call {formatPhone(phone)}
+                    </a>
+                    {whatsapp && (
+                      <a
+                        href={`https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi, I’m interested in ${project.name}, ${locality.name}.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="button button--light"
+                      >
+                        <MessageCircle aria-hidden="true" strokeWidth={1.75} />
+                        WhatsApp us
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </section>
 
             {project.film && (
@@ -168,7 +203,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 <h2 id="film-title" className={blocks.blockTitle}>
                   Video: the design and the site today
                 </h2>
-                <LazyVideo film={project.film} portrait className={blocks.film} />
+                <LazyVideo film={project.film} portrait={project.film.portrait ?? false} className={blocks.film} />
               </section>
             )}
 
@@ -220,12 +255,14 @@ export default async function ProjectPage({ params }: PageProps) {
                   {/* Wider than a phone: a focusable region, so keyboard users can scroll it too. */}
                   <div className={blocks.tableWrap} role="region" aria-labelledby="units-title" tabIndex={0}>
                     <table className={blocks.table}>
-                      <caption className="visually-hidden">Carpet, built-up and super built-up area of every unit at {project.name}, in sq ft</caption>
+                      <caption className="visually-hidden">
+                        {showCarpet ? 'Carpet, built-up' : 'Built-up'} and super built-up area of every unit at {project.name}, in sq ft
+                      </caption>
                       <thead>
                         <tr>
                           <th scope="col">Unit</th>
                           <th scope="col">Type</th>
-                          <th scope="col">Carpet (sq ft)</th>
+                          {showCarpet && <th scope="col">Carpet (sq ft)</th>}
                           <th scope="col">Built-up (sq ft)</th>
                           <th scope="col">Super built-up (sq ft)</th>
                         </tr>
@@ -235,7 +272,7 @@ export default async function ProjectPage({ params }: PageProps) {
                           <tr key={unit.unit}>
                             <th scope="row" className="nums">{unit.unit}</th>
                             <td>{unit.bhk} BHK</td>
-                            <td className="nums">{sqft.format(unit.carpet)}</td>
+                            {showCarpet && <td className="nums">{sqft.format(unit.carpet ?? 0)}</td>}
                             <td className="nums">{sqft.format(unit.builtUp)}</td>
                             <td className="nums">{sqft.format(unit.superBuiltUp)}</td>
                           </tr>
@@ -243,7 +280,9 @@ export default async function ProjectPage({ params }: PageProps) {
                       </tbody>
                     </table>
                   </div>
-                  <p className={blocks.note}>Unit 103 / 503 is the same plan on floors 1 to 5. Areas are approximate; the final area is as per the approved plan.</p>
+                  <p className={blocks.note}>
+                    A unit such as {units[0]?.unit} is the same plan on every floor in that range. Areas are approximate; the final area is as per the approved plan.
+                  </p>
                 </>
               )}
             </section>
@@ -288,7 +327,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 {project.nearby.map((place) => (
                   <li key={place.place}>
                     <span>{place.place}</span>
-                    <strong className="nums">≈ {place.km} km</strong>
+                    {place.km !== undefined && <strong className="nums">≈ {place.km} km</strong>}
                   </li>
                 ))}
               </ul>

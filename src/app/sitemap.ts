@@ -44,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(routes.projects, projectsUpdated, 0.9),
     ...projects.map((p) => entry(routes.project(p.slug), p.updatedAt, 0.9, p.gallery.map((img) => img.src.src))),
     entry(routes.construction, siteUpdated, 0.9),
+    entry(routes.warehouse, siteUpdated, 0.8),
     entry(routes.services, siteUpdated, 0.9),
     ...servicePages.map((page) => entry(routes.service(page.slug), siteUpdated, 0.8)),
     ...sectorPages.map((page) => entry(routes.sector(page.slug), siteUpdated, 0.8)),

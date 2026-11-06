@@ -25,7 +25,7 @@ import { getLocalities, getProjects, getStats } from '@/content/repository'
 import { homeFaqs } from '@/content/consultancy'
 import { services } from '@/content/services'
 import { NO_FEATURED, featuredProjectSlug } from '@/features/featured/featured'
-import { projectStatusLabel, projectTypeLabel } from '@/lib/format'
+import { projectStage, projectTypeLabel } from '@/lib/format'
 import { contactHref, routes } from '@/lib/routes'
 import { buildMetadata } from '@/seo/metadata'
 import { faqNode, graph, webPageNode } from '@/seo/schema'
@@ -244,7 +244,7 @@ export default async function HomePage() {
                 <Image src={spotlight.gallery[0].src} alt="" fill sizes="(min-width: 64rem) 22rem, 1px" />
               </span>
               <span className={styles.heroCardBody}>
-                <span className={styles.heroCardKicker}>Featured · {projectStatusLabel[spotlight.status]}</span>
+                <span className={styles.heroCardKicker}>Featured · {projectStage(spotlight)}</span>
                 <span className={styles.heroCardTitle}>{spotlight.name}</span>
                 {spotlightLocality && (
                   <span className={styles.heroCardMeta}>
@@ -436,7 +436,7 @@ export default async function HomePage() {
                       sizes="(min-width: 64rem) 45vw, 100vw"
                       placeholder="blur"
                     />
-                    <span className={`badge badge--gold ${styles.spotlightBadge}`}>{projectStatusLabel[spotlight.status]}</span>
+                    <span className={`badge badge--gold ${styles.spotlightBadge}`}>{projectStage(spotlight)}</span>
                   </div>
                 )}
               </div>

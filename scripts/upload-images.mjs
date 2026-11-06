@@ -18,11 +18,8 @@ const IMAGE = /\.(jpe?g|png|webp|mp4)$/i
 // Folder on disk → folder on Cloudinary. Keep in step with src/lib/cloud-images.ts.
 const folders = [
   ['src/assets/images', 'adnik/site'],
-  ['src/assets/images/liv-prime', 'adnik/projects/liv-prime'],
-  ['src/assets/images/villas-skit', 'adnik/projects/villas-skit'],
   ['public/brand', 'adnik/site'],
-  // Films and their posters (src/features/projects/content.ts streams them from here).
-  ['public/media', 'adnik/media'],
+  // Project photos, plans and films are not here: they are uploaded in Admin → Projects.
 ]
 
 const sign = (params) =>

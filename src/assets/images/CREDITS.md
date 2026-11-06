@@ -17,6 +17,7 @@ Placeholder photography for development. Images are **CC0 / public domain** (fre
 | `living-room.jpg` | CC0 | rawpixel | [Free modern living room black](https://www.rawpixel.com/image/5924316/photo-image-light-public-domain-black) |
 | `living-apartment.jpg` | CC0 | rawpixel | [Free modern living room image](https://www.rawpixel.com/image/5924880/photo-image-public-domain-living-room) |
 | `kitchen-island.jpg` | CC0 | rawpixel | [Free modern kitchen interior image](https://www.rawpixel.com/image/5924425/photo-image-public-domain-kitchen-living-room) |
+| `warehouse-racking.jpg` | CC0 | rawpixel | [Free logistic warehouse photo](https://www.rawpixel.com/image/5921256/photo-image-public-domain-free) |
 | `kitchen-modular.jpg` | CC0 | rawpixel | [Free modern kitchen interior image](https://www.rawpixel.com/image/5912749/image-public-domain-kitchen-interior) |
 | `bedroom-master.jpg` | CC0 | rawpixel | [Free bedroom interior image](https://www.rawpixel.com/image/5917601/image-public-domain-wood-house) |
 | `bedroom-city.jpg` | CC0 | rawpixel | [Bedroom interior design](https://www.rawpixel.com/image/5920688/photo-image-public-domain-house-home) |

@@ -70,4 +70,6 @@ export interface MarketplaceStore {
   /** Admin edits to bundled projects, as raw JSON: the caller validates before use. */
   listProjectRecords(): Promise<readonly ProjectRow[]>
   saveProjectRecord(slug: string, data: unknown, adminId: string): Promise<void>
+  /** Removes a saved record: an admin-created project disappears, a bundled one reverts. */
+  deleteProjectRecord(slug: string): Promise<void>
 }

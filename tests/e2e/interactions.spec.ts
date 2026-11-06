@@ -95,13 +95,15 @@ test('project status tabs filter the list', async ({ page }) => {
   await page.getByRole('navigation', { name: 'Project status' }).getByRole('link', { name: 'Completed' }).click()
   await expect(page).toHaveURL(/status=completed/)
   await expect(page.getByRole('heading', { level: 2, name: 'Liv Prime' })).toHaveCount(0)
-  await page.getByRole('navigation', { name: 'Project status' }).getByRole('link', { name: 'Under construction' }).click()
+  await page.getByRole('navigation', { name: 'Project status' }).getByRole('link', { name: 'Ongoing' }).click()
   await expect(page.getByRole('heading', { level: 2, name: 'Liv Prime' })).toBeVisible()
 })
 
 test('projects show plans and sizes, never a price', async ({ page }) => {
   await page.goto('/projects/liv-prime-jagatpura')
   await expect(page.getByRole('heading', { level: 1, name: 'Liv Prime, Jagatpura' })).toBeVisible()
+  // Finishing work is under way: the badge says so rather than "under construction".
+  await expect(page.locator('header').getByText('Finishing stage')).toBeVisible()
   const units = page.getByRole('table', { name: /every unit at Liv Prime/ })
   await expect(units.getByRole('row')).toHaveCount(18)
   await expect(units).toContainText('1,656.95')
@@ -121,7 +123,11 @@ test('projects show plans and sizes, never a price', async ({ page }) => {
 test('the villas page shows the plan, the film and a call button', async ({ page }) => {
   await page.goto('/projects/villas-near-skit-college-jagatpura')
   await expect(page.getByRole('heading', { level: 1, name: 'Villas near SKIT College, Jagatpura' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Call +91 77372 09850' })).toHaveAttribute('href', 'tel:+917737209850')
+  await expect(page.getByRole('link', { name: 'Call +91 77372 09850' }).first()).toHaveAttribute('href', 'tel:+917737209850')
+  // The overview's contact card: call and a WhatsApp message that names the project.
+  const card = page.locator('#overview')
+  await expect(card.getByRole('link', { name: 'Call +91 77372 09850' })).toHaveAttribute('href', 'tel:+917737209850')
+  await expect(card.getByRole('link', { name: 'WhatsApp us' })).toHaveAttribute('href', /^https:\/\/wa\.me\/917737209850\?text=.*Villas/)
   await expect(page.getByText('JDA approved').first()).toBeVisible()
   await expect(page.getByRole('img', { name: /Floor plans of the 18 × 35 villa/ })).toBeVisible()
 

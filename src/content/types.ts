@@ -82,14 +82,16 @@ export type Configuration = Readonly<{
   area: Area | readonly [Area, Area]
 }>
 
-/** One unit on a typical floor; areas in sq ft, as on the approved plan. */
-export type UnitArea = Readonly<{ unit: string; bhk: number; carpet: number; builtUp: number; superBuiltUp: number }>
+/** One unit on a typical floor; areas in sq ft, as on the approved plan. Carpet only when published. */
+export type UnitArea = Readonly<{ unit: string; bhk: number; carpet?: number; builtUp: number; superBuiltUp: number }>
 
 export type Project = Readonly<{
   slug: string
   name: string
   type: ProjectType
   status: ProjectStatus
+  /** A more precise stage for the status badge, e.g. "Finishing stage" or "Ready to move". */
+  stage?: string
   localitySlug: string
   tagline: string
   /** ≤ 160 chars: card text and meta description. */
@@ -109,7 +111,8 @@ export type Project = Readonly<{
   facts: readonly Readonly<{ label: string; value: string }>[]
   amenities: readonly AmenityKey[]
   specifications: readonly Readonly<{ group: string; items: readonly string[] }>[]
-  nearby: readonly Readonly<{ place: string; km: number }>[]
+  /** Landmarks, with the distance when it is known (never estimated). */
+  nearby: readonly Readonly<{ place: string; km?: number }>[]
   geo: GeoPoint
   gallery: readonly Img[]
   updates: readonly Readonly<{ date: string; text: string }>[]
@@ -175,4 +178,6 @@ export type Film = Readonly<{
   duration: string
   uploadDate: string
   transcript: readonly string[]
+  /** Shot upright (phone video): shown in a 9:16 frame. */
+  portrait?: boolean
 }>

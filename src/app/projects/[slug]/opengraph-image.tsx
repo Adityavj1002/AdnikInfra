@@ -1,5 +1,5 @@
 import { getLocality, getProject, isValidSlug } from '@/content/repository'
-import { formatAreaRange, projectStatusLabel } from '@/lib/format'
+import { formatAreaRange, projectStage } from '@/lib/format'
 import { ogContentType, ogSize, renderOgCard } from '@/seo/og-image'
 
 export const alt = 'Adnik Infra project'
@@ -13,7 +13,7 @@ export default async function Image({ params }: Readonly<{ params: Promise<{ slu
   const locality = await getLocality(project.localitySlug)
 
   return renderOgCard({
-    eyebrow: `${locality?.name ?? ''}, Jaipur · ${projectStatusLabel[project.status]}`,
+    eyebrow: `${locality?.name ?? ''}, Jaipur · ${projectStage(project)}`,
     title: project.name,
     facts: [
       { term: 'Homes', detail: project.configurations.map((c) => c.label).slice(0, 2).join(' · ') },

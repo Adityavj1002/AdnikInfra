@@ -87,4 +87,10 @@
   .faq {
     max-inline-size: 56rem;
   }
+
+  .crossLink {
+    margin-block-start: var(--space-8);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
 }

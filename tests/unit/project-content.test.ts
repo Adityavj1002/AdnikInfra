@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { projects } from '@/content/fixtures/projects'
-import { applyRecord, recordSchema, toRecord } from '@/features/projects/content'
-import { facts, homes, nearby, paragraphs, specifications, units } from '@/features/projects/text'
+import { recordSchema, toProject } from '@/features/projects/content'
+import { facts, homes, nearby, paragraphs, specifications, units, updates } from '@/features/projects/text'
+import { toSlug } from '@/lib/slug'
+import { seedProjects, seedRecords } from './seed-projects'
 
-const project = projects[0]!
+const { record: seeded } = seedRecords[0]!
+const villas = seedRecords[1]!.record
+const geo = { lat: 26.82, lng: 75.86 }
 
 describe('project editor text', () => {
   it('reads what it writes, for every list', () => {
-    const record = toRecord(project)
+    const record = seeded
+    expect(updates.parse(updates.format(villas.updates))).toEqual({ ok: true, value: villas.updates })
     expect(homes.parse(homes.format(record.configurations))).toEqual({ ok: true, value: record.configurations })
     expect(facts.parse(facts.format(record.facts))).toEqual({ ok: true, value: record.facts })
     expect(nearby.parse(nearby.format(record.nearby))).toEqual({ ok: true, value: record.nearby })
@@ -25,6 +29,18 @@ describe('project editor text', () => {
     expect(homes.parse('Penthouse | 2,400')).toEqual({ ok: true, value: [{ label: 'Penthouse', from: 2400 }] })
   })
 
+  it('leaves out what a brochure does not give: carpet areas and distances', () => {
+    expect(units.parse('106 / 606 | 2 | - | 826.35 | 1,156.89')).toEqual({ ok: true, value: [{ unit: '106 / 606', bhk: 2, builtUp: 826.35, superBuiltUp: 1156.89 }] })
+    expect(nearby.parse('Suresh Gyan Vihar University')).toEqual({ ok: true, value: [{ place: 'Suresh Gyan Vihar University' }] })
+    expect(units.format([{ unit: '106', bhk: 2, builtUp: 826.35, superBuiltUp: 1156.89 }])).toBe('106 | 2 | - | 826.35 | 1156.89')
+    expect(updates.parse('04-11-2026 | Plaster done')).toMatchObject({ ok: false })
+  })
+
+  it('makes a web address from a project name', () => {
+    expect(toSlug('Liv Gyan, Jagatpura')).toBe('liv-gyan-jagatpura')
+    expect(toSlug('  18 × 35 Villas — SKIT ')).toBe('18-35-villas-skit')
+  })
+
   it('names the line that does not parse', () => {
     expect(units.parse('101 | 3 | 1 | 2 | 3\n102 | three | 1 | 2 | 3')).toEqual({
       ok: false,
@@ -36,23 +52,25 @@ describe('project editor text', () => {
 })
 
 describe('project records', () => {
-  it('describes the bundled project as a valid record', () => {
-    expect(recordSchema.safeParse(toRecord(project)).success).toBe(true)
+  it('seeds a fresh database with valid records, nothing in the code', () => {
+    expect(seedRecords.map((p) => p.slug)).toEqual(['liv-prime-jagatpura', 'villas-near-skit-college-jagatpura', 'liv-gyan-jagatpura'])
+    expect(seedProjects[0]!.stage).toBe('Finishing stage')
   })
 
-  it('applies an edit without losing the bundled photos or plans', () => {
-    const record = { ...toRecord(project), tagline: 'Homes beside SKIT College', amenities: ['pool' as const] }
-    const edited = applyRecord(project, record, '2026-11-05T10:00:00Z')
-    expect(edited.tagline).toBe('Homes beside SKIT College')
-    expect(edited.amenities).toEqual(['pool'])
-    expect(edited.gallery.map((img) => img.src)).toEqual(project.gallery.map((img) => img.src))
-    expect(edited.plans).toBe(project.plans)
-    expect(edited.updatedAt).toBe('2026-11-05')
+  it('renders a record with Cloudinary photos, plans and film', () => {
+    const project = toProject('villas', villas, '2026-11-05T10:00:00Z', geo)
+    expect(project.gallery[0]!.src.src).toMatch(/^https:\/\/res\.cloudinary\.com\/[\w-]+\/image\/upload\/adnik\/projects\/villas-skit\/villa-front$/)
+    expect(project.plans).toHaveLength(1)
+    expect(project.film?.sources[0]!.src).toMatch(/\/video\/upload\/q_auto\/adnik\/media\/villas-skit-film\.mp4$/)
+    expect(project.film?.portrait).toBe(true)
+    expect(project.updatedAt).toBe('2026-11-05')
+    expect(project.rera).toBeNull()
   })
 
-  it('rejects photo references it did not issue', () => {
-    const record = { ...toRecord(project), photos: [{ ref: 'https://evil.example/x.jpg', alt: 'A photo', width: 10, height: 10 }] }
-    expect(recordSchema.safeParse(record).success).toBe(false)
+  it('rejects photo and video references it did not issue', () => {
+    expect(recordSchema.safeParse({ ...seeded, photos: [{ ref: 'https://evil.example/x.jpg', alt: 'A photo', width: 10, height: 10 }] }).success).toBe(false)
+    expect(recordSchema.safeParse({ ...villas, film: { ...villas.film, video: 'someone/else' } }).success).toBe(false)
+    expect(toProject('x', { ...seeded, photos: [{ ref: 'cloud:other/folder/x', alt: 'A photo', width: 10, height: 10 }] }, '2026-11-05', geo).gallery).toEqual([])
   })
 })
 
@@ -60,7 +78,7 @@ describe('images on Cloudinary', () => {
   it('lists every bundled image, so none is left on this server by mistake', async () => {
     const { readdirSync } = await import('node:fs')
     const { cloudImages } = await import('@/lib/cloud-images')
-    const names = ['src/assets/images', 'src/assets/images/liv-prime', 'src/assets/images/villas-skit', 'public/brand'].flatMap((dir) =>
+    const names = ['src/assets/images', 'public/brand'].flatMap((dir) =>
       readdirSync(dir)
         .filter((file) => /\.(jpe?g|png|webp)$/i.test(file))
         .map((file) => file.replace(/\.[^.]+$/, '')),

@@ -15,7 +15,7 @@ const walk = (dir: string): string[] =>
 
 describe('enquiry deep links', () => {
   it('name the project, listing, town or service they came from', async () => {
-    expect(await resolveEnquiryAbout('liv-prime-jagatpura')).toEqual({ slug: 'liv-prime-jagatpura', name: 'Liv Prime' })
+    // Projects come from the database, which unit tests don't have: e2e covers them (forms.spec).
     expect((await resolveEnquiryAbout('chaksu'))?.name).toBe('Chaksu, near Jaipur')
     expect((await resolveEnquiryAbout('construction-advisory'))?.name).toBe('Construction Advisory')
     expect(await resolveEnquiryAbout('not-a-thing')).toBeUndefined()

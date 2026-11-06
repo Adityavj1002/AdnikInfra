@@ -6,6 +6,7 @@ export const routes = {
   properties: '/properties',
   property: (slug: string) => `/properties/${slug}`,
   construction: '/construction',
+  warehouse: '/warehouse-construction',
   environmentalClearance: '/environmental-clearance',
   locations: '/locations',
   location: (slug: string) => `/locations/${slug}`,
@@ -38,6 +39,7 @@ export const routes = {
   adminTeam: '/admin/team',
   adminAccount: '/admin/account',
   adminProjects: '/admin/projects',
+  adminProjectNew: '/admin/projects/new',
   adminProject: (slug: string) => `/admin/projects/${slug}`,
 } as const
 

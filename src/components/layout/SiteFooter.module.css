@@ -146,15 +146,56 @@
     list-style: none;
   }
 
-  .social a {
+  .social {
+    margin-block-start: var(--space-5);
+  }
+
+  .socialLink {
     display: inline-flex;
     align-items: center;
+    gap: var(--space-3);
     min-block-size: var(--tap);
-    padding-inline: var(--space-4);
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
     border: 1px solid rgb(212 180 92 / 0.35);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
+    background-color: rgb(255 255 255 / 0.04);
+    color: inherit;
     text-decoration: none;
-    text-transform: capitalize;
+    transition:
+      border-color var(--dur-fast, 150ms) ease,
+      background-color var(--dur-fast, 150ms) ease,
+      transform var(--dur-fast, 150ms) ease;
+  }
+
+  @media (hover: hover) {
+    .socialLink:hover {
+      border-color: rgb(212 180 92 / 0.8);
+      background-color: rgb(255 255 255 / 0.08);
+      transform: translateY(-1px);
+    }
+  }
+
+  .socialMark {
+    flex: none;
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
+
+  .socialText {
+    display: grid;
+    line-height: 1.2;
+  }
+
+  .socialNetwork {
+    color: rgb(255 255 255 / 0.65);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .socialHandle {
+    color: #fff;
+    font-weight: 600;
   }
 
   .columns {

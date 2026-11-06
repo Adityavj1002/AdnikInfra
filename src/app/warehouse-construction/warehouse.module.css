@@ -1,0 +1,72 @@
+@layer components {
+  /* Four tiles: 1 / 2 / 4 columns, each under a gold rule like the feature lists. */
+  .builds {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .builds {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .builds {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .build {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface-raised);
+  }
+
+  .buildIcon {
+    inline-size: 2rem;
+    block-size: 2rem;
+    color: var(--text-accent);
+  }
+
+  .split {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  @media (min-width: 64rem) {
+    .split {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-12);
+    }
+  }
+
+  .photo {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--c-stone);
+  }
+
+  .photo img {
+    object-fit: cover;
+  }
+
+  .related {
+    margin-block-start: var(--space-6);
+    color: var(--text-muted);
+  }
+
+  .faq {
+    max-inline-size: 56rem;
+  }
+}

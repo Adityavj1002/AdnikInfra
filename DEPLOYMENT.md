@@ -132,6 +132,9 @@ so honestly; the rest of the site is unaffected. Email needs the SMTP settings f
 2. **Cloudinary:** copy the cloud name, API key and API secret from Settings → API Keys. Then upload
    the site's own images once (and again after adding any): `node --env-file=.env.local scripts/upload-images.mjs`.
    With Cloudinary set, every image is resized and served by its CDN.
+   **Projects live only in the database** (Admin → Projects: add, edit, delete). A fresh database
+   gets the first projects once with `node --env-file=.env.local scripts/seed-projects.mjs`; it only
+   adds what is missing and never overwrites an admin's edits. Without it the site shows no projects.
 3. **Signing secret:** `openssl rand -base64 48`.
 4. Add to the host's environment variables, then redeploy:
 

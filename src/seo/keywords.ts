@@ -52,6 +52,17 @@ export const staticKeywords = {
       'build your own house in Jaipur',
     ],
   },
+  [routes.warehouse]: {
+    primary: 'warehouse construction in Jaipur',
+    supporting: [
+      'PEB warehouse builders in Jaipur',
+      'industrial shed construction',
+      'godown construction in Jaipur',
+      'warehouse construction cost per sq ft',
+      'warehouse on agricultural land',
+      'built-to-suit warehouse Rajasthan',
+    ],
+  },
   [routes.locations]: {
     primary: 'best areas to buy property in Jaipur',
     supporting: ['Jaipur localities', 'where to buy a home in Jaipur'],
